@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <title>Dastavchiklar</title>
+</head>
+<body>
+    <h1>Dastavchiklar ro'yxati</h1>
+    <p><a href="{% url 'dastavchik_qoshish' %}">Dastavchik qo'shish</a></p>
+
+    <table border="1">
+        <tr>
+            <th>Username</th>
+            <th>Ism</th>
+            <th>Telefon</th>
+            <th>Faol (yetkazilmoqda) buyurtmalar</th>
+        </tr>
+        {% for dastavchik in dastavchiklar %}
+            <tr>
+                <td>{{ dastavchik.username }}</td>
+                <td>{{ dastavchik.first_name }}</td>
+                <td>{{ dastavchik.telefon }}</td>
+                <td>{{ dastavchik.faol_buyurtmalar_soni }}</td>
+            </tr>
+        {% empty %}
+            <tr><td colspan="4">Dastavchiklar yo'q.</td></tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

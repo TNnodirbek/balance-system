@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <title>Qarzni to'lash</title>
+</head>
+<body>
+    <h1>Qarzni to'lash</h1>
+    <p>Buyurtma #{{ buyurtma.pk }} - {{ buyurtma.dokon.nomi }}</p>
+    <p>Joriy qarz summasi: {{ buyurtma.qarz_summasi }}</p>
+
+    {% if xato %}
+        <p>{{ xato }}</p>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        <label>To'lov summasi: <input type="number" step="0.01" name="summa" max="{{ buyurtma.qarz_summasi }}" required></label><br>
+        <button type="submit">Saqlash</button>
+    </form>
+</body>
+</html>

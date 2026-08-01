@@ -1,0 +1,15 @@
+.main-header.navbar,
+.main-sidebar,
+.brand-link {
+    background-color: #185FA5 !important;
+}
+
+.btn-primary {
+    background-color: #185FA5 !important;
+    border-color: #185FA5 !important;
+}
+
+.sidebar-dark-primary .nav-sidebar > .nav-item > .nav-link.active,
+a.nav-link.active {
+    background-color: #185FA5 !important;
+}

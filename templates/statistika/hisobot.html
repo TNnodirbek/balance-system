@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <title>Hisobot</title>
+</head>
+<body>
+    <h1>Hisobot</h1>
+    <p><a href="{% url 'xarajat_qoshish' %}">Xarajat qo'shish</a></p>
+
+    <p>
+        Davr:
+        <a href="?filter=bugun">Bugun</a> |
+        <a href="?filter=hafta">Hafta</a> |
+        <a href="?filter=oy">Oy</a>
+        (joriy: {{ filtr }}, {{ boshlanish }} - {{ tugash }})
+    </p>
+
+    <form method="get">
+        <label>Boshlanish: <input type="date" name="boshlanish" value="{{ boshlanish|date:'Y-m-d' }}"></label>
+        <label>Tugash: <input type="date" name="tugash" value="{{ tugash|date:'Y-m-d' }}"></label>
+        <button type="submit">Oraliqni ko'rsatish</button>
+    </form>
+
+    <h2>Asosiy ko'rsatkichlar</h2>
+    <div>
+        <div>
+            <strong>Umumiy savdo</strong>
+            <p>{{ umumiy_savdo }}</p>
+        </div>
+        <div>
+            <strong>Jami xarajat</strong>
+            <p>{{ jami_xarajat }}</p>
+            <p>(kunlik xarajat: {{ umumiy_kunlik_xarajat }}, fura xarajati: {{ umumiy_fura_xarajat }})</p>
+        </div>
+        <div>
+            <strong>Sof foyda</strong>
+            <p>{{ sof_foyda }}</p>
+        </div>
+        <div>
+            <strong>Yig'ilgan qarz</strong>
+            <p>{{ yig_ilgan_qarz }}</p>
+        </div>
+    </div>
+
+    <h2>Mahsulot kesimida</h2>
+    <ul>
+        {% for hajm, ma in mahsulot_kesimida.items %}
+            <li>{{ hajm }}: {{ ma.soni }} dona - {{ ma.summa }}</li>
+        {% empty %}
+            <li>Ma'lumot yo'q.</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Dastavchiklar statistikasi</h2>
+    <table border="1">
+        <tr><th>Dastavchik</th><th>Yetkazgan buyurtmalar soni</th><th>Yig'gan summa</th></tr>
+        {% for nomi, stat in dastavchiklar_statistikasi.items %}
+            <tr><td>{{ nomi }}</td><td>{{ stat.soni }}</td><td>{{ stat.summa }}</td></tr>
+        {% empty %}
+            <tr><td colspan="3">Ma'lumot yo'q.</td></tr>
+        {% endfor %}
+    </table>
+
+    <h2>Qarzlar ro'yxati (joriy holat)</h2>
+    <table border="1">
+        <tr><th>Do'kon</th><th>Qarz summasi</th></tr>
+        {% for buyurtma in qarzlar_royxati %}
+            <tr><td>{{ buyurtma.dokon.nomi }}</td><td>{{ buyurtma.qarz_summasi }}</td></tr>
+        {% empty %}
+            <tr><td colspan="2">Qarz yo'q.</td></tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

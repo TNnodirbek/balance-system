@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <title>Dastavchik qo'shish</title>
+</head>
+<body>
+    <h1>Dastavchik qo'shish</h1>
+    {% if xabar %}
+        <p>{{ xabar }}</p>
+    {% endif %}
+    {% if xato %}
+        <p>{{ xato }}</p>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        <label>Username: <input type="text" name="username" required></label><br>
+        <label>Parol: <input type="password" name="parol" required></label><br>
+        <label>Ism: <input type="text" name="ism"></label><br>
+        <label>Telefon: <input type="text" name="telefon"></label><br>
+        <button type="submit">Saqlash</button>
+    </form>
+
+    <p><a href="{% url 'dastavchiklar_royxati' %}">Dastavchiklar ro'yxati</a></p>
+</body>
+</html>

@@ -10,6 +10,7 @@ from django.views.decorators.http import require_POST
 
 from dokonlar.models import Dokon
 from foydalanuvchilar.utils import tegishli_menejer
+from statistika.models import QarzTolovi
 
 from .models import Buyurtma, BuyurtmaMahsulot
 
@@ -175,3 +176,45 @@ def buyurtma_yetkazish(request, pk):
         return redirect('buyurtmalar_royxati')
 
     return render(request, 'buyurtmalar/yetkazish_formasi.html', {'buyurtma': buyurtma})
+
+
+@login_required
+def qarz_tolash(request, pk):
+    buyurtma = get_object_or_404(Buyurtma, pk=pk)
+    if tegishli_menejer(request.user) != buyurtma.menejer:
+        return HttpResponseForbidden("Bu buyurtma sizning menejeringizga tegishli emas.")
+    if buyurtma.tolov_holati != Buyurtma.TolovHolati.QARZ or buyurtma.qarz_summasi <= 0:
+        return HttpResponseForbidden("Bu buyurtmada to'lanadigan qarz yo'q.")
+
+    if request.method == 'POST':
+        xato = None
+        try:
+            summa = Decimal(request.POST.get('summa', ''))
+        except InvalidOperation:
+            summa = None
+            xato = "Summani to'g'ri kiriting."
+
+        if summa is not None and summa <= 0:
+            xato = "Summa noldan katta bo'lishi kerak."
+        elif summa is not None and summa > buyurtma.qarz_summasi:
+            xato = f"To'lov summasi qarzdan ({buyurtma.qarz_summasi}) katta bo'lishi mumkin emas."
+
+        if xato:
+            return render(request, 'buyurtmalar/qarz_tolash.html', {'buyurtma': buyurtma, 'xato': xato})
+
+        QarzTolovi.objects.create(
+            buyurtma=buyurtma,
+            menejer=buyurtma.menejer,
+            summa=summa,
+            qabul_qilgan=request.user,
+        )
+
+        buyurtma.qarz_summasi -= summa
+        if buyurtma.qarz_summasi <= 0:
+            buyurtma.qarz_summasi = Decimal('0')
+            buyurtma.tolov_holati = Buyurtma.TolovHolati.TOLANDI
+        buyurtma.save()
+
+        return redirect('buyurtmalar_royxati')
+
+    return render(request, 'buyurtmalar/qarz_tolash.html', {'buyurtma': buyurtma})

@@ -20,6 +20,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -114,8 +115,27 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [BASE_DIR / 'static']
 AUTH_USER_MODEL = 'foydalanuvchilar.Foydalanuvchi'
 
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'login'
 LOGOUT_REDIRECT_URL = 'login'
+
+
+# Jazzmin admin panel
+# https://django-jazzmin.readthedocs.io/
+
+JAZZMIN_SETTINGS = {
+    'site_title': 'Balance System Admin',
+    'site_header': 'Balance System',
+    'site_brand': 'Balance System',
+    'welcome_sign': 'Balance System boshqaruv paneliga xush kelibsiz',
+    'copyright': 'Balance System',
+    'custom_css': 'css/admin_custom.css',
+    'show_ui_builder': False,
+}
+
+JAZZMIN_UI_TWEAKS = {
+    'theme': 'cosmo',
+}

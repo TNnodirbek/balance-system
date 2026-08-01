@@ -45,6 +45,9 @@
                     {% if buyurtma.qarz_summasi %} (qarz: {{ buyurtma.qarz_summasi }}){% endif %}
                 </p>
             {% endif %}
+            {% if buyurtma.tolov_holati == 'qarz' and buyurtma.qarz_summasi > 0 %}
+                <a href="{% url 'qarz_tolash' buyurtma.pk %}">Qarzni to'lash</a>
+            {% endif %}
             <p>Zakaz olgan: {{ buyurtma.zakaz_olgan.username }}</p>
             {% if buyurtma.yetkazishga_olgan %}
                 <p>Yetkazishga olgan: {{ buyurtma.yetkazishga_olgan.username }}</p>
