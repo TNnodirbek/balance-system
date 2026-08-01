@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <title>Ombor</title>
+</head>
+<body>
+    <h1>Ombor</h1>
+    <p><a href="{% url 'fura_qoshish' %}">Fura qo'shish</a></p>
+
+    <h2>Umumiy qoldiq</h2>
+    <ul>
+        {% for hajm, son in qoldiq.items %}
+            <li>{{ hajm }}: {{ son }}</li>
+        {% empty %}
+            <li>Ma'lumot yo'q</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Furalar</h2>
+    {% for fura in furalar %}
+        <div>
+            <hr>
+            <p><strong>Fura - {{ fura.sana }}</strong></p>
+            <ul>
+                {% for mahsulot in fura.mahsulotlar.all %}
+                    <li>{{ mahsulot.hajm }}: {{ mahsulot.miqdor }}</li>
+                {% endfor %}
+            </ul>
+            <p>Suv narxi: {{ fura.suv_narxi }}</p>
+            <p>Dastavka narxi: {{ fura.dastavka_narxi }}</p>
+            <p>Jami xarajat: {{ fura.jami_xarajat }}</p>
+        </div>
+    {% empty %}
+        <p>Furalar topilmadi.</p>
+    {% endfor %}
+</body>
+</html>

@@ -1,3 +1,8 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import Dokon
+
+
+@admin.register(Dokon)
+class DokonAdmin(admin.ModelAdmin):
+    list_display = ('nomi', 'manzili', 'telefon', 'menejer', 'yaratilgan_vaqt')

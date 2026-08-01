@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <title>Buyurtmalar ro'yxati</title>
+</head>
+<body>
+    <h1>Buyurtmalar ro'yxati</h1>
+    <p><a href="{% url 'yangi_buyurtma' %}">Yangi buyurtma</a></p>
+
+    {% if messages %}
+        <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <p>
+        Filtr:
+        <a href="?filter=bugun">Bugun</a> |
+        <a href="?filter=kecha">Kecha</a> |
+        <a href="?filter=hafta">Hafta</a> |
+        <a href="?">Barchasi</a>
+        (joriy: {{ filtr }})
+    </p>
+
+    {% for buyurtma in buyurtmalar %}
+        <div>
+            <hr>
+            <p><strong>Buyurtma #{{ buyurtma.pk }}</strong> - {{ buyurtma.dokon.nomi }} ({{ buyurtma.dokon.manzili }}, {{ buyurtma.dokon.telefon }})</p>
+            <ul>
+                {% for mahsulot in buyurtma.mahsulotlar.all %}
+                    <li>{{ mahsulot.hajm }} x {{ mahsulot.soni_buyurtma_qilingan }} @ {{ mahsulot.narx }}
+                        {% if mahsulot.soni_yetkazilgan is not None %}
+                            (yetkazildi: {{ mahsulot.soni_yetkazilgan }})
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+            <p>Umumiy summa: {{ buyurtma.umumiy_summa }}</p>
+            <p>Holat: {{ buyurtma.get_holat_display }}</p>
+            {% if buyurtma.tolov_holati %}
+                <p>To'lov holati: {{ buyurtma.get_tolov_holati_display }}
+                    {% if buyurtma.qarz_summasi %} (qarz: {{ buyurtma.qarz_summasi }}){% endif %}
+                </p>
+            {% endif %}
+            <p>Zakaz olgan: {{ buyurtma.zakaz_olgan.username }}</p>
+            {% if buyurtma.yetkazishga_olgan %}
+                <p>Yetkazishga olgan: {{ buyurtma.yetkazishga_olgan.username }}</p>
+            {% endif %}
+
+            {% if buyurtma.holat == 'yangi' %}
+                <form method="post" action="{% url 'buyurtma_olish' buyurtma.pk %}">
+                    {% csrf_token %}
+                    <button type="submit">Men olaman</button>
+                </form>
+            {% elif buyurtma.holat == 'yetkazilmoqda' and buyurtma.yetkazishga_olgan_id == request.user.id %}
+                <a href="{% url 'buyurtma_yetkazish' buyurtma.pk %}">Yetkazdim</a>
+            {% endif %}
+        </div>
+    {% empty %}
+        <p>Buyurtmalar topilmadi.</p>
+    {% endfor %}
+</body>
+</html>

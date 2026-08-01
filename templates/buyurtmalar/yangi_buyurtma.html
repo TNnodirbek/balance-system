@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <title>Yangi buyurtma</title>
+</head>
+<body>
+    <h1>Yangi buyurtma</h1>
+    {% if xato %}
+        <p>{{ xato }}</p>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="dokon_id" id="dokon_id">
+
+        <h2>Do'kon</h2>
+        <label>Qidirish: <input type="text" id="dokon_qidirish" autocomplete="off"></label>
+        <ul id="qidirish_natijalari"></ul>
+
+        <label>Nomi: <input type="text" name="dokon_nomi" id="dokon_nomi" required></label><br>
+        <label>Manzil: <input type="text" name="dokon_manzil" id="dokon_manzil" required></label><br>
+        <label>Telefon: <input type="text" name="dokon_telefon" id="dokon_telefon" required></label><br>
+
+        <h2>Mahsulotlar</h2>
+        <label>5L narxi: <input type="number" step="0.01" name="narx_5L" id="narx_5L" value="0"></label>
+        <label>5L soni: <input type="number" name="soni_5L" id="soni_5L" value="0"></label><br>
+
+        <label>10L narxi: <input type="number" step="0.01" name="narx_10L" id="narx_10L" value="0"></label>
+        <label>10L soni: <input type="number" name="soni_10L" id="soni_10L" value="0"></label><br>
+
+        <p>Umumiy summa: <span id="umumiy_summa">0</span></p>
+
+        <button type="submit">Saqlash</button>
+    </form>
+
+    <script>
+        function hisoblaSumma() {
+            var narx5 = parseFloat(document.getElementById('narx_5L').value) || 0;
+            var soni5 = parseFloat(document.getElementById('soni_5L').value) || 0;
+            var narx10 = parseFloat(document.getElementById('narx_10L').value) || 0;
+            var soni10 = parseFloat(document.getElementById('soni_10L').value) || 0;
+            var summa = narx5 * soni5 + narx10 * soni10;
+            document.getElementById('umumiy_summa').textContent = summa;
+        }
+        ['narx_5L', 'soni_5L', 'narx_10L', 'soni_10L'].forEach(function (id) {
+            document.getElementById(id).addEventListener('input', hisoblaSumma);
+        });
+
+        var qidirishInput = document.getElementById('dokon_qidirish');
+        var natijalarEl = document.getElementById('qidirish_natijalari');
+
+        qidirishInput.addEventListener('input', function () {
+            document.getElementById('dokon_id').value = '';
+            var q = qidirishInput.value;
+            if (q.length < 2) {
+                natijalarEl.innerHTML = '';
+                return;
+            }
+            fetch('/buyurtmalar/dokon-qidirish/?q=' + encodeURIComponent(q))
+                .then(function (resp) { return resp.json(); })
+                .then(function (data) {
+                    natijalarEl.innerHTML = '';
+                    data.natijalar.forEach(function (d) {
+                        var li = document.createElement('li');
+                        li.textContent = d.nomi + ' - ' + d.manzil + ' - ' + d.telefon;
+                        li.style.cursor = 'pointer';
+                        li.addEventListener('click', function () {
+                            document.getElementById('dokon_id').value = d.id;
+                            document.getElementById('dokon_nomi').value = d.nomi;
+                            document.getElementById('dokon_manzil').value = d.manzil;
+                            document.getElementById('dokon_telefon').value = d.telefon;
+                            natijalarEl.innerHTML = '';
+                            qidirishInput.value = d.nomi;
+                        });
+                        natijalarEl.appendChild(li);
+                    });
+                });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <title>Fura qo'shish</title>
+</head>
+<body>
+    <h1>Fura qo'shish</h1>
+    {% if form.errors %}
+        <p>Formada xatolik bor, quyidagi maydonlarni tekshiring.</p>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <h2>Mahsulotlar</h2>
+        <div id="mahsulot_qatorlari">
+            <div>
+                <label>Hajm: <input type="text" name="hajm[]" value="5L"></label>
+                <label>Miqdor: <input type="number" name="miqdor[]" value="0"></label>
+            </div>
+            <div>
+                <label>Hajm: <input type="text" name="hajm[]" value="10L"></label>
+                <label>Miqdor: <input type="number" name="miqdor[]" value="0"></label>
+            </div>
+        </div>
+        <button type="button" onclick="qatorQoshish()">+ Boshqa hajm qo'shish</button>
+        <br><br>
+
+        <button type="submit">Saqlash</button>
+    </form>
+
+    <script>
+        function qatorQoshish() {
+            var konteyner = document.getElementById('mahsulot_qatorlari');
+            var qator = document.createElement('div');
+            qator.innerHTML =
+                '<label>Hajm: <input type="text" name="hajm[]" value=""></label>' +
+                '<label>Miqdor: <input type="number" name="miqdor[]" value="0"></label>';
+            konteyner.appendChild(qator);
+        }
+    </script>
+</body>
+</html>

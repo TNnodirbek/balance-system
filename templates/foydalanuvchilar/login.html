@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <title>Kirish</title>
+</head>
+<body>
+    <h1>Tizimga kirish</h1>
+    {% if xato %}
+        <p>{{ xato }}</p>
+    {% endif %}
+    <form method="post">
+        {% csrf_token %}
+        <label>Username: <input type="text" name="username"></label><br>
+        <label>Parol: <input type="password" name="password"></label><br>
+        <button type="submit">Kirish</button>
+    </form>
+</body>
+</html>

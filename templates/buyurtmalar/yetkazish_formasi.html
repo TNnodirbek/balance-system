@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <title>Buyurtmani yetkazish</title>
+</head>
+<body>
+    <h1>Buyurtma #{{ buyurtma.pk }} - {{ buyurtma.dokon.nomi }}</h1>
+    {% if xato %}
+        <p>{{ xato }}</p>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        <h2>Mahsulotlar</h2>
+        {% for mahsulot in buyurtma.mahsulotlar.all %}
+            <label>
+                {{ mahsulot.hajm }} (buyurtma qilingan: {{ mahsulot.soni_buyurtma_qilingan }}) -
+                necha dona yetkazildi:
+                <input type="number" min="0" max="{{ mahsulot.soni_buyurtma_qilingan }}"
+                       name="soni_yetkazilgan_{{ mahsulot.pk }}"
+                       value="{{ mahsulot.soni_buyurtma_qilingan }}">
+            </label><br>
+        {% endfor %}
+
+        <h2>To'lov</h2>
+        <label><input type="radio" name="tolov_holati" value="tolandi" onclick="qarzMaydoniniYashir()"> To'landi</label>
+        <label><input type="radio" name="tolov_holati" value="qarz" onclick="qarzMaydoniniKorsat()"> Qarz</label><br>
+
+        <div id="qarz_blok" style="display:none;">
+            <label>Qarz summasi: <input type="number" step="0.01" name="qarz_summasi" id="qarz_summasi"></label>
+        </div>
+
+        <button type="submit">Saqlash</button>
+    </form>
+
+    <script>
+        function qarzMaydoniniKorsat() {
+            document.getElementById('qarz_blok').style.display = 'block';
+        }
+        function qarzMaydoniniYashir() {
+            document.getElementById('qarz_blok').style.display = 'none';
+            document.getElementById('qarz_summasi').value = '';
+        }
+    </script>
+</body>
+</html>

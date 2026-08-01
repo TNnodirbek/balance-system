@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <title>Muvaffaqiyatli</title>
+</head>
+<body>
+    <h1>Buyurtma muvaffaqiyatli saqlandi</h1>
+    <p>Buyurtma #{{ buyurtma.pk }} - {{ buyurtma.dokon }}</p>
+    <p>Umumiy summa: {{ buyurtma.umumiy_summa }}</p>
+    <a href="{% url 'yangi_buyurtma' %}">Yana buyurtma qo'shish</a>
+</body>
+</html>
