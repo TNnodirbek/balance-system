@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <title>Narxlar sozlamasi</title>
+</head>
+<body>
+    <h1>Standart narxlar</h1>
+    {% if xabar %}
+        <p>{{ xabar }}</p>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        <label>5L narxi: <input type="number" step="0.01" name="narx_5l" value="{{ sozlama.narx_5l }}"></label><br>
+        <label>10L narxi: <input type="number" step="0.01" name="narx_10l" value="{{ sozlama.narx_10l }}"></label><br>
+        <button type="submit">Saqlash</button>
+    </form>
+
+    <p><a href="{% url 'sozlamalar_bosh' %}">Sozlamalarga qaytish</a></p>
+</body>
+</html>

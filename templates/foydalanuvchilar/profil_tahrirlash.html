@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <title>Profil</title>
+</head>
+<body>
+    <h1>Profilni tahrirlash</h1>
+    {% if xabar %}
+        <p>{{ xabar }}</p>
+    {% endif %}
+    {% if xato %}
+        <p>{{ xato }}</p>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        <label>Ism: <input type="text" name="ism" value="{{ user.first_name }}"></label><br>
+        <label>Telefon: <input type="text" name="telefon" value="{{ user.telefon }}"></label><br>
+
+        <h2>Parolni o'zgartirish (ixtiyoriy)</h2>
+        <label>Eski parol: <input type="password" name="eski_parol"></label><br>
+        <label>Yangi parol: <input type="password" name="yangi_parol"></label><br>
+        <label>Yangi parol (tasdiq): <input type="password" name="yangi_parol_tasdiq"></label><br>
+
+        <button type="submit">Saqlash</button>
+    </form>
+
+    <p><a href="{% url 'sozlamalar_bosh' %}">Sozlamalarga qaytish</a></p>
+</body>
+</html>

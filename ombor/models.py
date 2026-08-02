@@ -40,3 +40,21 @@ class FuraMahsulot(models.Model):
 
     def __str__(self):
         return f'{self.fura} - {self.hajm} x {self.miqdor}'
+
+
+class NarxSozlamasi(models.Model):
+    menejer = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='narx_sozlamasi',
+        limit_choices_to={'rol': Foydalanuvchi.Rol.MENEJER},
+    )
+    narx_5l = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    narx_10l = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+
+    class Meta:
+        verbose_name = 'Narx sozlamasi'
+        verbose_name_plural = 'Narx sozlamalari'
+
+    def __str__(self):
+        return f'{self.menejer.username} - narxlar'

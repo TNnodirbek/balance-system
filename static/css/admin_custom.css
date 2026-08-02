@@ -1,15 +1,253 @@
-.main-header.navbar,
-.main-sidebar,
-.brand-link {
-    background-color: #185FA5 !important;
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+
+/* ==========================================================================
+   Balance System admin — rang palitrasi va shrift
+   Ruxsat etilgan ranglar: oq #FFFFFF, ko'k #185FA5, to'q ko'k #0C2340,
+   qizil #A32D2D, yashil #3B6D11 — boshqa rang ishlatilmaydi.
+   ========================================================================== */
+
+:root,
+[data-bs-theme="light"],
+[data-bs-theme="dark"] {
+    --bs-font-sans-serif: 'Manrope', sans-serif;
+
+    --bs-body-bg: #FFFFFF;
+    --bs-body-color: #0C2340;
+
+    --bs-primary: #185FA5;
+    --bs-primary-rgb: 24, 95, 165;
+    --bs-primary-text-emphasis: #185FA5;
+    --bs-primary-bg-subtle: #E8F0F8;
+    --bs-primary-border-subtle: #185FA5;
+
+    --bs-secondary: #0C2340;
+    --bs-secondary-rgb: 12, 35, 64;
+    --bs-secondary-text-emphasis: #0C2340;
+    --bs-secondary-bg-subtle: #E9EBEE;
+    --bs-secondary-border-subtle: #0C2340;
+
+    --bs-success: #3B6D11;
+    --bs-success-rgb: 59, 109, 17;
+    --bs-success-text-emphasis: #3B6D11;
+    --bs-success-bg-subtle: #EAF1E2;
+    --bs-success-border-subtle: #3B6D11;
+
+    --bs-danger: #A32D2D;
+    --bs-danger-rgb: 163, 45, 45;
+    --bs-danger-text-emphasis: #A32D2D;
+    --bs-danger-bg-subtle: #F6E6E6;
+    --bs-danger-border-subtle: #A32D2D;
+
+    --bs-warning: #A32D2D;
+    --bs-warning-rgb: 163, 45, 45;
+
+    --bs-info: #185FA5;
+    --bs-info-rgb: 24, 95, 165;
+
+    --bs-light: #FFFFFF;
+    --bs-light-rgb: 255, 255, 255;
+    --bs-dark: #0C2340;
+    --bs-dark-rgb: 12, 35, 64;
+
+    --bs-link-color: #185FA5;
+    --bs-link-hover-color: #0C2340;
 }
 
-.btn-primary {
+body,
+body.bg-body-tertiary,
+.bg-body-tertiary,
+.app-wrapper,
+.app-main,
+.content-wrapper {
+    background-color: #FFFFFF !important;
+    color: #0C2340;
+    font-family: 'Manrope', sans-serif;
+    font-size: 14px;
+}
+
+.app-sidebar.bg-body-secondary {
+    background-color: #0C2340 !important;
+}
+
+h1, h2, h3, h4, h5, h6,
+.brand-text,
+.content-header h1 {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 700;
+    color: #0C2340;
+}
+
+h1, .h1 { font-size: 24px; }
+h2, .h2 { font-size: 22px; }
+h3, .h3 { font-size: 20px; }
+h4, .h4 { font-size: 18px; }
+
+label, .form-label, th, .field-label {
+    font-family: 'Manrope', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: #0C2340;
+}
+
+p, td, .form-control, .form-select, input, select, textarea {
+    font-family: 'Manrope', sans-serif;
+    font-size: 14px;
+}
+
+a {
+    color: #185FA5;
+}
+a:hover {
+    color: #0C2340;
+}
+
+/* ==========================================================================
+   Navbar (top) — AdminLTE4 / Jazzmin 3.x markup
+   ========================================================================== */
+
+.app-header {
+    background-color: #FFFFFF !important;
+    border-bottom: 1px solid rgba(12, 35, 64, 0.08);
+}
+.app-header .nav-link {
+    color: #0C2340 !important;
+}
+
+/* ==========================================================================
+   Sidebar — to'q ko'k fon, oq matn
+   ========================================================================== */
+
+.app-sidebar {
+    background-color: #0C2340 !important;
+}
+.app-sidebar .brand-link,
+.app-sidebar .brand-text,
+.app-sidebar .nav-link,
+.app-sidebar .nav-header,
+.app-sidebar .user-panel .info a,
+.app-sidebar .user-panel .info span {
+    color: #FFFFFF !important;
+}
+.app-sidebar .nav-link:hover,
+.app-sidebar .nav-link.active {
+    background-color: #185FA5 !important;
+    color: #FFFFFF !important;
+    border-radius: 8px;
+}
+.app-sidebar .nav-icon {
+    color: #FFFFFF !important;
+}
+
+/* ==========================================================================
+   Kartalar / panellar — yengil ajratish
+   ========================================================================== */
+
+.card,
+.module,
+.app-content-header {
+    background-color: #FFFFFF;
+    border: 1px solid rgba(12, 35, 64, 0.10);
+    border-radius: 10px;
+    box-shadow: 0 1px 4px rgba(12, 35, 64, 0.06);
+}
+
+.card-header {
+    background-color: #FFFFFF;
+    border-bottom: 1px solid rgba(12, 35, 64, 0.10);
+    font-weight: 700;
+    color: #0C2340;
+}
+
+/* ==========================================================================
+   Tugmalar — oval burchak, oq matn ko'k/qizil/yashil fonda, hover porlash
+   ========================================================================== */
+
+.btn,
+input[type="submit"],
+button {
+    font-family: 'Manrope', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 9px;
+    transition: all 0.2s ease;
+}
+
+.btn-primary,
+input[type="submit"].btn-primary,
+.btn-info,
+input[type="submit"].btn-info {
     background-color: #185FA5 !important;
     border-color: #185FA5 !important;
+    color: #FFFFFF !important;
+}
+.btn-primary:hover,
+input[type="submit"].btn-primary:hover,
+.btn-info:hover,
+input[type="submit"].btn-info:hover {
+    background-color: #1B6BBA !important;
+    border-color: #1B6BBA !important;
+    box-shadow: 0 0 0 3px rgba(24, 95, 165, 0.35);
 }
 
-.sidebar-dark-primary .nav-sidebar > .nav-item > .nav-link.active,
-a.nav-link.active {
-    background-color: #185FA5 !important;
+/* Save and add another / Save and continue editing / Save as new —
+   asosiy Save tugmasidan farqlash uchun to'q ko'k soyasi */
+input[name="_addanother"].btn-primary,
+input[name="_continue"].btn-primary,
+input[name="_saveasnew"].btn-primary {
+    background-color: #0C2340 !important;
+    border-color: #0C2340 !important;
+}
+input[name="_addanother"].btn-primary:hover,
+input[name="_continue"].btn-primary:hover,
+input[name="_saveasnew"].btn-primary:hover {
+    background-color: #143352 !important;
+    border-color: #143352 !important;
+    box-shadow: 0 0 0 3px rgba(12, 35, 64, 0.35);
+}
+
+.btn-danger,
+input[type="submit"].btn-danger,
+a.btn-danger {
+    background-color: #A32D2D !important;
+    border-color: #A32D2D !important;
+    color: #FFFFFF !important;
+}
+.btn-danger:hover,
+input[type="submit"].btn-danger:hover,
+a.btn-danger:hover {
+    background-color: #B83636 !important;
+    border-color: #B83636 !important;
+    box-shadow: 0 0 0 3px rgba(163, 45, 45, 0.35);
+}
+
+.btn-success,
+input[type="submit"].btn-success {
+    background-color: #3B6D11 !important;
+    border-color: #3B6D11 !important;
+    color: #FFFFFF !important;
+}
+.btn-success:hover,
+input[type="submit"].btn-success:hover {
+    background-color: #467F14 !important;
+    border-color: #467F14 !important;
+    box-shadow: 0 0 0 3px rgba(59, 109, 17, 0.35);
+}
+
+.btn-secondary,
+a.btn-secondary {
+    background-color: #FFFFFF !important;
+    border: 1px solid #0C2340 !important;
+    color: #0C2340 !important;
+}
+.btn-secondary:hover,
+a.btn-secondary:hover {
+    background-color: #F0F3F6 !important;
+    box-shadow: 0 0 0 3px rgba(12, 35, 64, 0.15);
+}
+
+/* Inputlar fokus holati */
+.form-control:focus,
+.form-select:focus {
+    border-color: #185FA5;
+    box-shadow: 0 0 0 3px rgba(24, 95, 165, 0.20);
 }

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <title>Do'konlar</title>
+</head>
+<body>
+    <h1>Do'konlar ro'yxati</h1>
+
+    <table border="1">
+        <tr>
+            <th>Nomi</th>
+            <th>Manzili</th>
+            <th>Telefon</th>
+        </tr>
+        {% for dokon in dokonlar %}
+            <tr>
+                <td>{{ dokon.nomi }}</td>
+                <td>{{ dokon.manzili }}</td>
+                <td>{{ dokon.telefon }}</td>
+            </tr>
+        {% empty %}
+            <tr><td colspan="3">Do'konlar topilmadi.</td></tr>
+        {% endfor %}
+    </table>
+
+    <p><a href="{% url 'sozlamalar_bosh' %}">Sozlamalarga qaytish</a></p>
+</body>
+</html>

@@ -1,0 +1,32 @@
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <title>Sozlamalar</title>
+</head>
+<body>
+    <h1>Sozlamalar</h1>
+
+    <ul>
+        {% if user.rol == 'menejer' %}
+            <li><a href="{% url 'dastavchiklar_royxati' %}">Dastavchiklar</a></li>
+            <li><a href="{% url 'dokonlar_royxati' %}">Do'konlar</a></li>
+            <li><a href="{% url 'narxlar_sozlamasi' %}">Narxlar</a></li>
+        {% endif %}
+        <li><a href="{% url 'profil_tahrirlash' %}">Profil</a></li>
+        <li><a href="{% url 'logout' %}">Chiqish</a></li>
+    </ul>
+
+    <h2>Til</h2>
+    {% get_available_languages as LANGUAGES %}
+    {% get_language_info_list for LANGUAGES as languages %}
+    <form action="{% url 'set_language' %}" method="post">
+        {% csrf_token %}
+        <input name="next" type="hidden" value="{{ request.path }}">
+        {% for language in languages %}
+            <button type="submit" name="language" value="{{ language.code }}">{{ language.name_local|title }}</button>
+        {% endfor %}
+    </form>
+</body>
+</html>

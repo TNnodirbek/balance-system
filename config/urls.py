@@ -15,9 +15,24 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import include, path
+from django.shortcuts import redirect
+from django.urls import include, path, reverse
+
+
+def admin_login_redirect(request, extra_context=None):
+    # Django admin'ning admin_view() ruxsat tekshiruvi LOGIN_URL sozlamasini
+    # hurmat qilmaydi, doim reverse('admin:login') ga qattiq bog'langan bo'ladi.
+    # Shu sababli admin:login'ning o'zini bizning login sahifamizga yo'naltiramiz.
+    if request.user.is_authenticated and request.user.is_staff:
+        return redirect(reverse('admin:index'))
+    next_url = request.GET.get('next') or reverse('admin:index')
+    return redirect(f"{reverse('login')}?next={next_url}")
+
+
+admin.site.login = admin_login_redirect
 
 urlpatterns = [
+    path('i18n/', include('django.conf.urls.i18n')),
     path('admin/', admin.site.urls),
     path('', include('foydalanuvchilar.urls')),
     path('buyurtmalar/', include('buyurtmalar.urls')),

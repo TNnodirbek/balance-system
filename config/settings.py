@@ -39,6 +39,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -102,7 +103,14 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'uz'
+
+LANGUAGES = [
+    ('uz', "O'zbekcha"),
+    ('ru', 'Русский'),
+]
+
+LOCALE_PATHS = [BASE_DIR / 'locale']
 
 TIME_ZONE = 'UTC'
 
@@ -134,8 +142,21 @@ JAZZMIN_SETTINGS = {
     'copyright': 'Balance System',
     'custom_css': 'css/admin_custom.css',
     'show_ui_builder': False,
+    'use_google_fonts_cdn': False,  # Manrope shrifti custom_css orqali @import qilinadi
+    'language_chooser': True,
 }
 
 JAZZMIN_UI_TWEAKS = {
     'theme': 'cosmo',
+    'navbar': 'navbar-white navbar-light',
+    'sidebar': 'sidebar-dark-primary',
+    'accent': 'accent-primary',
+    'button_classes': {
+        'primary': 'btn-primary',
+        'secondary': 'btn-secondary',
+        'info': 'btn-primary',
+        'warning': 'btn-danger',
+        'danger': 'btn-danger',
+        'success': 'btn-primary',
+    },
 }
