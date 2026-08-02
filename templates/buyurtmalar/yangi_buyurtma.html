@@ -1,38 +1,415 @@
+{% load l10n %}
 <!DOCTYPE html>
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Yangi buyurtma</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #FFFFFF;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            color: #0C2340;
+        }
+
+        .sahifa {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 20px 16px 40px;
+        }
+
+        .sarlavha-panel {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .orqaga {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: #F0F8FF;
+            color: #185FA5;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+
+        .orqaga svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        h1 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0C2340;
+            margin: 0;
+        }
+
+        .xato {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            background: #FCEBEB;
+            color: #A32D2D;
+            border-radius: 10px;
+            padding: 12px 14px;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 18px;
+        }
+
+        .xato svg {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .bolim {
+            margin-bottom: 22px;
+        }
+
+        .bolim-sarlavha {
+            font-size: 15px;
+            font-weight: 700;
+            color: #0C2340;
+            margin: 0 0 12px;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #0C2340;
+            margin-bottom: 6px;
+        }
+
+        .maydon {
+            margin-bottom: 12px;
+        }
+
+        .input-qobiq {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-qobiq svg.chap-ikonka {
+            position: absolute;
+            left: 14px;
+            width: 16px;
+            height: 16px;
+            color: #94A7BD;
+            pointer-events: none;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        textarea {
+            width: 100%;
+            height: 44px;
+            border: 1px solid #E4EDF6;
+            border-radius: 10px;
+            padding: 0 14px;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            font-size: 14px;
+            color: #0C2340;
+            background: #FFFFFF;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .input-qobiq input {
+            padding-left: 38px;
+        }
+
+        input:focus,
+        textarea:focus {
+            border-color: #185FA5;
+            box-shadow: 0 0 0 3px rgba(24, 95, 165, 0.15);
+        }
+
+        textarea {
+            height: auto;
+            min-height: 76px;
+            padding: 10px 14px;
+            resize: vertical;
+        }
+
+        /* Do'kon qidiruv natijalari */
+        .qidirish-qobiq {
+            position: relative;
+        }
+
+        #qidirish_natijalari {
+            list-style: none;
+            margin: 6px 0 0;
+            padding: 0;
+            position: absolute;
+            z-index: 5;
+            width: 100%;
+            background: #FFFFFF;
+            border: 1px solid #E4EDF6;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(12, 35, 64, 0.08);
+            overflow: hidden;
+        }
+
+        #qidirish_natijalari:empty {
+            display: none;
+            border: none;
+            box-shadow: none;
+        }
+
+        #qidirish_natijalari li {
+            padding: 10px 14px;
+            font-size: 13px;
+            color: #0C2340;
+            border-bottom: 1px solid #F0F3F7;
+            cursor: pointer;
+        }
+
+        #qidirish_natijalari li:last-child {
+            border-bottom: none;
+        }
+
+        #qidirish_natijalari li:hover {
+            background: #F0F8FF;
+        }
+
+        /* Mahsulot kartalari */
+        .mahsulot-karta {
+            background: #FFFFFF;
+            border: 1px solid #E4EDF6;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .mahsulot-qatori-tepa {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .mahsulot-nomi {
+            font-size: 15px;
+            font-weight: 700;
+            color: #0C2340;
+        }
+
+        .narx-maydoni {
+            width: 110px;
+            flex-shrink: 0;
+        }
+
+        .narx-maydoni label {
+            text-align: right;
+        }
+
+        .narx-maydoni input {
+            text-align: right;
+            height: 38px;
+        }
+
+        .stepper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+        }
+
+        .stepper-tugma {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1.5px solid #185FA5;
+            background: #FFFFFF;
+            color: #185FA5;
+            font-size: 18px;
+            font-weight: 700;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.2s ease, box-shadow 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .stepper-tugma:hover {
+            background: #F0F8FF;
+            box-shadow: 0 0 0 3px rgba(24, 95, 165, 0.15);
+        }
+
+        .stepper-input {
+            width: 72px;
+            height: 40px;
+            text-align: center;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .jami-panel {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #F0F8FF;
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin-bottom: 22px;
+        }
+
+        .jami-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #0C2340;
+        }
+
+        .jami-son {
+            font-size: 18px;
+            font-weight: 700;
+            color: #185FA5;
+        }
+
+        .yaratish-tugma {
+            width: 100%;
+            height: 52px;
+            border: none;
+            border-radius: 12px;
+            background: #185FA5;
+            color: #FFFFFF;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: box-shadow 0.2s ease, background-color 0.2s ease;
+        }
+
+        .yaratish-tugma:hover {
+            background: #1B6BBA;
+            box-shadow: 0 0 0 4px rgba(24, 95, 165, 0.2);
+        }
+    </style>
 </head>
 <body>
-    <h1>Yangi buyurtma</h1>
-    {% if xato %}
-        <p>{{ xato }}</p>
-    {% endif %}
+    <div class="sahifa">
+        <div class="sarlavha-panel">
+            <a href="{% url 'buyurtmalar_royxati' %}" class="orqaga" aria-label="Orqaga">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15 19L8 12L15 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </a>
+            <h1>Yangi buyurtma</h1>
+        </div>
 
-    <form method="post">
-        {% csrf_token %}
-        <input type="hidden" name="dokon_id" id="dokon_id">
+        {% if xato %}
+            <div class="xato">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 9V13M12 17H12.01M10.29 3.86L1.82 18A2 2 0 0 0 3.55 21H20.45A2 2 0 0 0 22.18 18L13.71 3.86A2 2 0 0 0 10.29 3.86Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span>{{ xato }}</span>
+            </div>
+        {% endif %}
 
-        <h2>Do'kon</h2>
-        <label>Qidirish: <input type="text" id="dokon_qidirish" autocomplete="off"></label>
-        <ul id="qidirish_natijalari"></ul>
+        <form method="post" autocomplete="off">
+            {% csrf_token %}
+            <input type="hidden" name="dokon_id" id="dokon_id">
 
-        <label>Nomi: <input type="text" name="dokon_nomi" id="dokon_nomi" required></label><br>
-        <label>Manzil: <input type="text" name="dokon_manzil" id="dokon_manzil" required></label><br>
-        <label>Telefon: <input type="text" name="dokon_telefon" id="dokon_telefon" required></label><br>
+            <div class="bolim">
+                <p class="bolim-sarlavha">Do'kon</p>
 
-        <h2>Mahsulotlar</h2>
-        <label>5L narxi: <input type="number" step="0.01" name="narx_5L" id="narx_5L" value="0"></label>
-        <label>5L soni: <input type="number" name="soni_5L" id="soni_5L" value="0"></label><br>
+                <div class="maydon qidirish-qobiq">
+                    <label for="dokon_qidirish">Qidirish</label>
+                    <div class="input-qobiq">
+                        <svg class="chap-ikonka" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.7"/>
+                            <path d="M21 21L16.65 16.65" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+                        </svg>
+                        <input type="text" id="dokon_qidirish" placeholder="Do'kon nomi yoki telefon">
+                    </div>
+                    <ul id="qidirish_natijalari"></ul>
+                </div>
 
-        <label>10L narxi: <input type="number" step="0.01" name="narx_10L" id="narx_10L" value="0"></label>
-        <label>10L soni: <input type="number" name="soni_10L" id="soni_10L" value="0"></label><br>
+                <div class="maydon">
+                    <label for="dokon_nomi">Nomi</label>
+                    <input type="text" name="dokon_nomi" id="dokon_nomi" required>
+                </div>
+                <div class="maydon">
+                    <label for="dokon_manzil">Manzil</label>
+                    <input type="text" name="dokon_manzil" id="dokon_manzil" required>
+                </div>
+                <div class="maydon">
+                    <label for="dokon_telefon">Telefon</label>
+                    <input type="text" name="dokon_telefon" id="dokon_telefon" required>
+                </div>
+            </div>
 
-        <p>Umumiy summa: <span id="umumiy_summa">0</span></p>
+            <div class="bolim">
+                <p class="bolim-sarlavha">Mahsulotlar</p>
 
-        <button type="submit">Saqlash</button>
-    </form>
+                <div class="mahsulot-karta">
+                    <div class="mahsulot-qatori-tepa">
+                        <span class="mahsulot-nomi">5L suv</span>
+                        <div class="narx-maydoni">
+                            <label for="narx_5L">Narx</label>
+                            <input type="number" step="0.01" min="0" name="narx_5L" id="narx_5L" value="{{ narx_5l_standart|unlocalize }}">
+                        </div>
+                    </div>
+                    <div class="stepper">
+                        <button type="button" class="stepper-tugma" data-target="soni_5L" data-delta="-1">&minus;</button>
+                        <input type="number" min="0" name="soni_5L" id="soni_5L" value="0" class="stepper-input">
+                        <button type="button" class="stepper-tugma" data-target="soni_5L" data-delta="1">+</button>
+                    </div>
+                </div>
+
+                <div class="mahsulot-karta">
+                    <div class="mahsulot-qatori-tepa">
+                        <span class="mahsulot-nomi">10L suv</span>
+                        <div class="narx-maydoni">
+                            <label for="narx_10L">Narx</label>
+                            <input type="number" step="0.01" min="0" name="narx_10L" id="narx_10L" value="{{ narx_10l_standart|unlocalize }}">
+                        </div>
+                    </div>
+                    <div class="stepper">
+                        <button type="button" class="stepper-tugma" data-target="soni_10L" data-delta="-1">&minus;</button>
+                        <input type="number" min="0" name="soni_10L" id="soni_10L" value="0" class="stepper-input">
+                        <button type="button" class="stepper-tugma" data-target="soni_10L" data-delta="1">+</button>
+                    </div>
+                </div>
+
+                <div class="jami-panel">
+                    <span class="jami-label">Jami</span>
+                    <span class="jami-son"><span id="umumiy_summa">0</span> so'm</span>
+                </div>
+            </div>
+
+            <div class="bolim">
+                <div class="maydon">
+                    <label for="izoh">Izoh (ixtiyoriy)</label>
+                    <textarea name="izoh" id="izoh" placeholder="Qo'shimcha izoh..."></textarea>
+                </div>
+            </div>
+
+            <button type="submit" class="yaratish-tugma">Buyurtma yaratish</button>
+        </form>
+    </div>
 
     <script>
         function hisoblaSumma() {
@@ -45,6 +422,18 @@
         }
         ['narx_5L', 'soni_5L', 'narx_10L', 'soni_10L'].forEach(function (id) {
             document.getElementById(id).addEventListener('input', hisoblaSumma);
+        });
+        hisoblaSumma();
+
+        document.querySelectorAll('.stepper-tugma').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var input = document.getElementById(btn.dataset.target);
+                var delta = parseInt(btn.dataset.delta, 10);
+                var qiymat = parseInt(input.value, 10) || 0;
+                qiymat = Math.max(0, qiymat + delta);
+                input.value = qiymat;
+                hisoblaSumma();
+            });
         });
 
         var qidirishInput = document.getElementById('dokon_qidirish');
@@ -64,7 +453,6 @@
                     data.natijalar.forEach(function (d) {
                         var li = document.createElement('li');
                         li.textContent = d.nomi + ' - ' + d.manzil + ' - ' + d.telefon;
-                        li.style.cursor = 'pointer';
                         li.addEventListener('click', function () {
                             document.getElementById('dokon_id').value = d.id;
                             document.getElementById('dokon_nomi').value = d.nomi;

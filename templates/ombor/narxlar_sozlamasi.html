@@ -1,3 +1,4 @@
+{% load l10n %}
 <!DOCTYPE html>
 <html lang="uz">
 <head>
@@ -12,8 +13,8 @@
 
     <form method="post">
         {% csrf_token %}
-        <label>5L narxi: <input type="number" step="0.01" name="narx_5l" value="{{ sozlama.narx_5l }}"></label><br>
-        <label>10L narxi: <input type="number" step="0.01" name="narx_10l" value="{{ sozlama.narx_10l }}"></label><br>
+        <label>5L narxi: <input type="number" step="0.01" name="narx_5l" value="{{ sozlama.narx_5l|unlocalize }}"></label><br>
+        <label>10L narxi: <input type="number" step="0.01" name="narx_10l" value="{{ sozlama.narx_10l|unlocalize }}"></label><br>
         <button type="submit">Saqlash</button>
     </form>
 

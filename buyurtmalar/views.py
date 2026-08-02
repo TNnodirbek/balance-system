@@ -10,6 +10,7 @@ from django.views.decorators.http import require_POST
 
 from dokonlar.models import Dokon
 from foydalanuvchilar.utils import tegishli_menejer
+from ombor.models import NarxSozlamasi
 from statistika.models import QarzTolovi
 
 from .models import Buyurtma, BuyurtmaMahsulot
@@ -57,7 +58,12 @@ def yangi_buyurtma(request):
 
         return redirect('buyurtma_muvaffaqiyatli', pk=buyurtma.pk)
 
-    return render(request, 'buyurtmalar/yangi_buyurtma.html')
+    menejer = tegishli_menejer(request.user)
+    sozlama = NarxSozlamasi.objects.filter(menejer=menejer).first() if menejer else None
+    return render(request, 'buyurtmalar/yangi_buyurtma.html', {
+        'narx_5l_standart': sozlama.narx_5l if sozlama else 0,
+        'narx_10l_standart': sozlama.narx_10l if sozlama else 0,
+    })
 
 
 @login_required
