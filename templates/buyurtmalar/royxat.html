@@ -1,8 +1,16 @@
+{% load l10n %}
 <!DOCTYPE html>
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
     <title>Buyurtmalar ro'yxati</title>
+    <style>
+        .xarita-link {
+            color: #185FA5;
+            font-size: 12px;
+            text-decoration: none;
+        }
+    </style>
 </head>
 <body>
     <h1>Buyurtmalar ro'yxati</h1>
@@ -47,6 +55,9 @@
             {% endif %}
             {% if buyurtma.tolov_holati == 'qarz' and buyurtma.qarz_summasi > 0 %}
                 <a href="{% url 'qarz_tolash' buyurtma.pk %}">Qarzni to'lash</a>
+            {% endif %}
+            {% if buyurtma.joylashuv_lat and buyurtma.joylashuv_lng %}
+                <p><a class="xarita-link" href="https://www.google.com/maps?q={{ buyurtma.joylashuv_lat|unlocalize }},{{ buyurtma.joylashuv_lng|unlocalize }}" target="_blank" rel="noopener">📍 Xaritada ko'rish</a></p>
             {% endif %}
             <p>Zakaz olgan: {{ buyurtma.zakaz_olgan.username }}</p>
             {% if buyurtma.yetkazishga_olgan %}

@@ -38,11 +38,18 @@ def yangi_buyurtma(request):
                 menejer=menejer,
             )
 
+        joylashuv_lat = request.POST.get('joylashuv_lat')
+        joylashuv_lng = request.POST.get('joylashuv_lng')
+        if not joylashuv_lat or not joylashuv_lng:
+            joylashuv_lat = joylashuv_lng = None
+
         buyurtma = Buyurtma.objects.create(
             dokon=dokon,
             menejer=menejer,
             zakaz_olgan=request.user,
             holat=Buyurtma.Holat.YANGI,
+            joylashuv_lat=joylashuv_lat,
+            joylashuv_lng=joylashuv_lng,
         )
 
         for hajm in HAJMLAR:
