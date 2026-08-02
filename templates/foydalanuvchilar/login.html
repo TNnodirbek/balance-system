@@ -1,20 +1,332 @@
+{% load i18n %}
 <!DOCTYPE html>
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Kirish</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #FFFFFF;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            color: #0C2340;
+            padding: 24px 16px;
+        }
+
+        .karta {
+            width: 100%;
+            max-width: 380px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .logo {
+            width: 64px;
+            height: 64px;
+            border-radius: 20px;
+            background: #F0F8FF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+
+        .logo svg {
+            width: 32px;
+            height: 32px;
+            color: #185FA5;
+        }
+
+        h1 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0C2340;
+            margin: 0 0 4px;
+            text-align: center;
+        }
+
+        .subtitle {
+            font-size: 13px;
+            color: #7C8B9E;
+            margin: 0 0 28px;
+            text-align: center;
+        }
+
+        form {
+            width: 100%;
+        }
+
+        .xato {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            background: #FCEBEB;
+            color: #A32D2D;
+            border-radius: 10px;
+            padding: 12px 14px;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 18px;
+        }
+
+        .xato svg {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .maydon {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #0C2340;
+            margin-bottom: 6px;
+        }
+
+        .input-qobiq {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-qobiq svg.chap-ikonka {
+            position: absolute;
+            left: 14px;
+            width: 18px;
+            height: 18px;
+            color: #94A7BD;
+            pointer-events: none;
+        }
+
+        .input-qobiq input {
+            width: 100%;
+            height: 44px;
+            border: 1px solid #E4EDF6;
+            border-radius: 10px;
+            padding: 0 14px 0 42px;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            font-size: 14px;
+            color: #0C2340;
+            background: #FFFFFF;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .input-qobiq input:focus {
+            border-color: #185FA5;
+            box-shadow: 0 0 0 3px rgba(24, 95, 165, 0.15);
+        }
+
+        .kozcha {
+            position: absolute;
+            right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            color: #94A7BD;
+            padding: 0;
+        }
+
+        .kozcha svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .kirish-tugma {
+            width: 100%;
+            height: 48px;
+            border: none;
+            border-radius: 12px;
+            background: #185FA5;
+            color: #FFFFFF;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: box-shadow 0.2s ease, background-color 0.2s ease;
+        }
+
+        .kirish-tugma:hover {
+            background: #1B6BBA;
+            box-shadow: 0 0 0 4px rgba(24, 95, 165, 0.25);
+        }
+
+        .yordam-matni {
+            text-align: center;
+            font-size: 12px;
+            color: #94A7BD;
+            margin: 14px 0 28px;
+        }
+
+        .til-qobiq {
+            display: flex;
+            justify-content: center;
+        }
+
+        .til-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #F0F8FF;
+            border: 1px solid #DCE9F5;
+            border-radius: 999px;
+            padding: 4px;
+        }
+
+        .til-pill button {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border: none;
+            background: transparent;
+            color: #185FA5;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .til-pill svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .til-pill button.faol {
+            background: #FFFFFF;
+            box-shadow: 0 1px 3px rgba(12, 35, 64, 0.12);
+        }
+
+        @media (max-width: 360px) {
+            .logo {
+                width: 56px;
+                height: 56px;
+            }
+
+            h1 {
+                font-size: 18px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>Tizimga kirish</h1>
-    {% if xato %}
-        <p>{{ xato }}</p>
-    {% endif %}
-    <form method="post">
-        {% csrf_token %}
-        <input type="hidden" name="next" value="{{ request.GET.next }}">
-        <label>Username: <input type="text" name="username"></label><br>
-        <label>Parol: <input type="password" name="password"></label><br>
-        <button type="submit">Kirish</button>
-    </form>
+    <div class="karta">
+        <div class="logo">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2C12 2 5 10.5 5 15.5C5 19.6421 8.13401 22 12 22C15.866 22 19 19.6421 19 15.5C19 10.5 12 2 12 2Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+            </svg>
+        </div>
+
+        <h1>Balance System</h1>
+        <p class="subtitle">Ombor va yetkazish tizimiga kirish</p>
+
+        <form method="post" autocomplete="off">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.GET.next }}">
+
+            {% if xato %}
+                <div class="xato">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 9V13M12 17H12.01M10.29 3.86L1.82 18A2 2 0 0 0 3.55 21H20.45A2 2 0 0 0 22.18 18L13.71 3.86A2 2 0 0 0 10.29 3.86Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span>{{ xato }}</span>
+                </div>
+            {% endif %}
+
+            <div class="maydon">
+                <label for="id_username">Login</label>
+                <div class="input-qobiq">
+                    <svg class="chap-ikonka" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20 21C20 17.134 16.4183 14 12 14C7.58172 14 4 17.134 4 21M12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7C16 9.20914 14.2091 11 12 11Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <input type="text" id="id_username" name="username" placeholder="Login" required autofocus>
+                </div>
+            </div>
+
+            <div class="maydon">
+                <label for="id_password">Parol</label>
+                <div class="input-qobiq">
+                    <svg class="chap-ikonka" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.7"/>
+                        <path d="M8 11V7A4 4 0 0 1 16 7V11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+                    </svg>
+                    <input type="password" id="id_password" name="password" placeholder="Parol" required>
+                    <button type="button" class="kozcha" id="parol-korsat" aria-label="Parolni ko'rsatish">
+                        <svg id="koz-ochiq" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M1 12S5 4 12 4S23 12 23 12S19 20 12 20S1 12 1 12Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+                            <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.7"/>
+                        </svg>
+                        <svg id="koz-yopiq" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:none">
+                            <path d="M3 3L21 21" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+                            <path d="M10.58 10.58A3 3 0 0 0 13.42 13.42" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+                            <path d="M6.53 6.66C4.19 8.15 2 11 1 12S5 4 12 4C14.09 4 15.9 4.62 17.4 5.5M20.83 8.5C22.03 10 23 12 23 12S21.5 15.4 18.5 17.83" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <button type="submit" class="kirish-tugma">Kirish</button>
+        </form>
+
+        <p class="yordam-matni">Login yoki parolni unutdingizmi? Menejeringizga murojaat qiling</p>
+
+        <div class="til-qobiq">
+            {% get_available_languages as LANGUAGES %}
+            {% get_language_info_list for LANGUAGES as languages %}
+            <form action="{% url 'set_language' %}" method="post" class="til-pill">
+                {% csrf_token %}
+                <input name="next" type="hidden" value="{{ request.path }}">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7"/>
+                    <path d="M3 12H21M12 3C14.5 5.6 15.8 8.8 15.8 12C15.8 15.2 14.5 18.4 12 21C9.5 18.4 8.2 15.2 8.2 12C8.2 8.8 9.5 5.6 12 3Z" stroke="currentColor" stroke-width="1.7"/>
+                </svg>
+                {% for language in languages %}
+                    <button type="submit" name="language" value="{{ language.code }}" class="{% if language.code == LANGUAGE_CODE %}faol{% endif %}">
+                        {% if language.code == 'uz' %}O'z{% else %}Ўз{% endif %}
+                    </button>
+                {% endfor %}
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const parolInput = document.getElementById('id_password');
+        const koKorsatBtn = document.getElementById('parol-korsat');
+        const kozOchiq = document.getElementById('koz-ochiq');
+        const kozYopiq = document.getElementById('koz-yopiq');
+
+        koKorsatBtn.addEventListener('click', function () {
+            const korinmoqda = parolInput.type === 'text';
+            parolInput.type = korinmoqda ? 'password' : 'text';
+            kozOchiq.style.display = korinmoqda ? '' : 'none';
+            kozYopiq.style.display = korinmoqda ? 'none' : '';
+        });
+    </script>
 </body>
 </html>
