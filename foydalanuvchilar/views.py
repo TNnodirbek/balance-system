@@ -1,12 +1,15 @@
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
+from django.db.models import Sum
 from django.http import HttpResponseForbidden
 from django.shortcuts import redirect, render
 from django.urls import reverse
+from django.utils import timezone
 
 from buyurtmalar.models import Buyurtma
 from dokonlar.models import Dokon
 from ombor.models import NarxSozlamasi
+from ombor.utils import ombor_qoldigi
 
 from .models import Foydalanuvchi
 from .utils import tegishli_menejer
@@ -40,7 +43,36 @@ def logout_view(request):
 
 @login_required
 def menejer_bosh_sahifa(request):
-    return render(request, 'foydalanuvchilar/menejer_bosh_sahifa.html')
+    menejer = tegishli_menejer(request.user)
+    bugun = timezone.localdate()
+
+    qoldiq = ombor_qoldigi(menejer) if menejer else {}
+    buyurtmalar_qs = Buyurtma.objects.filter(menejer=menejer) if menejer else Buyurtma.objects.none()
+
+    bugungi_buyurtmalar_soni = buyurtmalar_qs.filter(yaratilgan_vaqt__date=bugun).count()
+    bugun_yetkazilgan_soni = buyurtmalar_qs.filter(
+        holat=Buyurtma.Holat.YETKAZILDI, yetkazilgan_vaqt__date=bugun,
+    ).count()
+    qarzdorlik = buyurtmalar_qs.filter(
+        tolov_holati=Buyurtma.TolovHolati.QARZ,
+    ).aggregate(jami=Sum('qarz_summasi'))['jami'] or 0
+
+    songgi_buyurtmalar = list(
+        buyurtmalar_qs.select_related('dokon')
+        .prefetch_related('mahsulotlar')
+        .order_by('-yaratilgan_vaqt')[:5]
+    )
+    for buyurtma in songgi_buyurtmalar:
+        buyurtma.jami_miqdor = sum(m.soni_buyurtma_qilingan for m in buyurtma.mahsulotlar.all())
+
+    return render(request, 'foydalanuvchilar/menejer_bosh_sahifa.html', {
+        'qoldiq_5l': qoldiq.get('5L', 0),
+        'qoldiq_10l': qoldiq.get('10L', 0),
+        'bugungi_buyurtmalar_soni': bugungi_buyurtmalar_soni,
+        'bugun_yetkazilgan_soni': bugun_yetkazilgan_soni,
+        'qarzdorlik': qarzdorlik,
+        'songgi_buyurtmalar': songgi_buyurtmalar,
+    })
 
 
 @login_required
