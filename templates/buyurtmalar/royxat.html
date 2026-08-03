@@ -3,78 +3,462 @@
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Buyurtmalar ro'yxati</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #FFFFFF;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            color: #0C2340;
+        }
+
+        .sahifa {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 20px 16px 40px;
+        }
+
+        .sarlavha-panel {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .sarlavha-chap {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .orqaga {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: #F0F8FF;
+            color: #185FA5;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+
+        .orqaga svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        h1 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0C2340;
+            margin: 0;
+        }
+
+        .yangi-tugma {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            height: 34px;
+            padding: 0 12px;
+            border-radius: 10px;
+            background: #185FA5;
+            color: #FFFFFF;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            flex-shrink: 0;
+            transition: background-color 0.2s ease;
+        }
+
+        .yangi-tugma:hover {
+            background: #1B6BBA;
+        }
+
+        .xabarlar {
+            list-style: none;
+            margin: 0 0 16px;
+            padding: 0;
+        }
+
+        .xabarlar li {
+            background: #F0F8FF;
+            color: #185FA5;
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        /* Filtr pillari */
+        .filtr-qatori {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+            margin-bottom: 18px;
+        }
+
+        .filtr-pill {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 36px;
+            padding: 0 16px;
+            border-radius: 20px;
+            border: 1px solid #DCE9F5;
+            background: #F0F8FF;
+            color: #185FA5;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .filtr-pill.faol {
+            background: #185FA5;
+            color: #FFFFFF;
+            border-color: #185FA5;
+        }
+
+        /* Buyurtma kartasi */
+        .buyurtma-karta {
+            background: #FFFFFF;
+            border: 1px solid #E4EDF6;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .karta-tepa {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 4px;
+        }
+
+        .buyurtma-raqam {
+            font-size: 12px;
+            font-weight: 600;
+            color: #7C8B9E;
+            margin: 0 0 2px;
+        }
+
+        .dokon-nomi {
+            font-size: 16px;
+            font-weight: 700;
+            color: #0C2340;
+            margin: 0;
+        }
+
+        .holat-pill,
+        .tolov-pill {
+            flex-shrink: 0;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 12px;
+            white-space: nowrap;
+        }
+
+        .holat-yangi {
+            background: #FFF4E5;
+            color: #B8860B;
+        }
+
+        .holat-yetkazilmoqda {
+            background: #E8F1FB;
+            color: #185FA5;
+        }
+
+        .holat-yetkazildi {
+            background: #E8F5E9;
+            color: #2E7D32;
+        }
+
+        .dokon-detal {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: #7C8B9E;
+            margin: 4px 0;
+        }
+
+        .dokon-detal svg {
+            width: 13px;
+            height: 13px;
+            flex-shrink: 0;
+        }
+
+        .mahsulotlar-royxati {
+            list-style: none;
+            margin: 12px 0;
+            padding: 0;
+        }
+
+        .mahsulotlar-royxati li {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: #0C2340;
+            padding: 4px 0;
+        }
+
+        .yetkazildi-belgi {
+            color: #7C8B9E;
+            font-size: 11px;
+        }
+
+        .ajratuvchi {
+            border: none;
+            border-top: 1px solid #F0F0F0;
+            margin: 12px 0;
+        }
+
+        .jami-qatori {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .jami-label {
+            font-size: 13px;
+            color: #7C8B9E;
+        }
+
+        .jami-son {
+            font-size: 16px;
+            font-weight: 700;
+            color: #185FA5;
+        }
+
+        .tolov-qatori {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .tolov-tolandi {
+            background: #E8F5E9;
+            color: #2E7D32;
+        }
+
+        .tolov-qarz {
+            background: #FCEBEB;
+            color: #A32D2D;
+        }
+
+        .tolov-kutilmoqda {
+            background: #F0F3F7;
+            color: #7C8B9E;
+        }
+
+        .qarz-tolash-link {
+            display: inline-block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #A32D2D;
+            border: 1px solid #F0C4C4;
+            border-radius: 8px;
+            padding: 5px 10px;
+            text-decoration: none;
+        }
+
         .xarita-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
             color: #185FA5;
             font-size: 12px;
+            font-weight: 600;
             text-decoration: none;
+            margin-bottom: 10px;
+        }
+
+        .info-qatori {
+            font-size: 11px;
+            color: #94A7BD;
+            margin: 0 0 12px;
+        }
+
+        .harakat-tugma {
+            display: block;
+            width: 100%;
+            height: 44px;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            color: #FFFFFF;
+            text-align: center;
+            line-height: 44px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .tugma-olish {
+            background: #185FA5;
+        }
+
+        .tugma-yetkazdim {
+            background: #2E7D32;
+        }
+
+        /* Bo'sh holat */
+        .bosh-holat {
+            text-align: center;
+            padding: 60px 20px;
+            color: #94A7BD;
+        }
+
+        .bosh-holat svg {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 12px;
+            color: #DCE9F5;
+        }
+
+        .bosh-holat p {
+            font-size: 14px;
+            margin: 0;
         }
     </style>
 </head>
 <body>
-    <h1>Buyurtmalar ro'yxati</h1>
-    <p><a href="{% url 'yangi_buyurtma' %}">Yangi buyurtma</a></p>
+    <div class="sahifa">
+        <div class="sarlavha-panel">
+            <div class="sarlavha-chap">
+                <a href="{% url 'menejer_bosh_sahifa' %}" class="orqaga" aria-label="Orqaga">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M15 19L8 12L15 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </a>
+                <h1>Buyurtmalar</h1>
+            </div>
+            <a href="{% url 'yangi_buyurtma' %}" class="yangi-tugma">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+                </svg>
+                Yangi
+            </a>
+        </div>
 
-    {% if messages %}
-        <ul>
-            {% for message in messages %}
-                <li>{{ message }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-
-    <p>
-        Filtr:
-        <a href="?filter=bugun">Bugun</a> |
-        <a href="?filter=kecha">Kecha</a> |
-        <a href="?filter=hafta">Hafta</a> |
-        <a href="?">Barchasi</a>
-        (joriy: {{ filtr }})
-    </p>
-
-    {% for buyurtma in buyurtmalar %}
-        <div>
-            <hr>
-            <p><strong>Buyurtma #{{ buyurtma.pk }}</strong> - {{ buyurtma.dokon.nomi }} ({{ buyurtma.dokon.manzili }}, {{ buyurtma.dokon.telefon }})</p>
-            <ul>
-                {% for mahsulot in buyurtma.mahsulotlar.all %}
-                    <li>{{ mahsulot.hajm }} x {{ mahsulot.soni_buyurtma_qilingan }} @ {{ mahsulot.narx }}
-                        {% if mahsulot.soni_yetkazilgan is not None %}
-                            (yetkazildi: {{ mahsulot.soni_yetkazilgan }})
-                        {% endif %}
-                    </li>
+        {% if messages %}
+            <ul class="xabarlar">
+                {% for message in messages %}
+                    <li>{{ message }}</li>
                 {% endfor %}
             </ul>
-            <p>Umumiy summa: {{ buyurtma.umumiy_summa }}</p>
-            <p>Holat: {{ buyurtma.get_holat_display }}</p>
-            {% if buyurtma.tolov_holati %}
-                <p>To'lov holati: {{ buyurtma.get_tolov_holati_display }}
-                    {% if buyurtma.qarz_summasi %} (qarz: {{ buyurtma.qarz_summasi }}){% endif %}
-                </p>
-            {% endif %}
-            {% if buyurtma.tolov_holati == 'qarz' and buyurtma.qarz_summasi > 0 %}
-                <a href="{% url 'qarz_tolash' buyurtma.pk %}">Qarzni to'lash</a>
-            {% endif %}
-            {% if buyurtma.joylashuv_lat and buyurtma.joylashuv_lng %}
-                <p><a class="xarita-link" href="https://www.google.com/maps?q={{ buyurtma.joylashuv_lat|unlocalize }},{{ buyurtma.joylashuv_lng|unlocalize }}" target="_blank" rel="noopener">📍 Xaritada ko'rish</a></p>
-            {% endif %}
-            <p>Zakaz olgan: {{ buyurtma.zakaz_olgan.username }}</p>
-            {% if buyurtma.yetkazishga_olgan %}
-                <p>Yetkazishga olgan: {{ buyurtma.yetkazishga_olgan.username }}</p>
-            {% endif %}
+        {% endif %}
 
-            {% if buyurtma.holat == 'yangi' %}
-                <form method="post" action="{% url 'buyurtma_olish' buyurtma.pk %}">
-                    {% csrf_token %}
-                    <button type="submit">Men olaman</button>
-                </form>
-            {% elif buyurtma.holat == 'yetkazilmoqda' and buyurtma.yetkazishga_olgan_id == request.user.id %}
-                <a href="{% url 'buyurtma_yetkazish' buyurtma.pk %}">Yetkazdim</a>
-            {% endif %}
+        <div class="filtr-qatori">
+            <a href="?filter=bugun" class="filtr-pill{% if filtr == 'bugun' %} faol{% endif %}">Bugun</a>
+            <a href="?filter=kecha" class="filtr-pill{% if filtr == 'kecha' %} faol{% endif %}">Kecha</a>
+            <a href="?filter=hafta" class="filtr-pill{% if filtr == 'hafta' %} faol{% endif %}">Hafta</a>
+            <a href="?" class="filtr-pill{% if filtr == 'barchasi' %} faol{% endif %}">Barchasi</a>
         </div>
-    {% empty %}
-        <p>Buyurtmalar topilmadi.</p>
-    {% endfor %}
+
+        {% for buyurtma in buyurtmalar %}
+            <div class="buyurtma-karta">
+                <div class="karta-tepa">
+                    <div>
+                        <p class="buyurtma-raqam">Buyurtma #{{ buyurtma.pk }}</p>
+                        <p class="dokon-nomi">{{ buyurtma.dokon.nomi }}</p>
+                    </div>
+                    <span class="holat-pill holat-{{ buyurtma.holat }}">{{ buyurtma.get_holat_display }}</span>
+                </div>
+
+                <div class="dokon-detal">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 21C12 21 19 15 19 10A7 7 0 0 0 5 10C5 15 12 21 12 21Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+                        <circle cx="12" cy="10" r="2.3" stroke="currentColor" stroke-width="1.6"/>
+                    </svg>
+                    <span>{{ buyurtma.dokon.manzili }}</span>
+                </div>
+                <div class="dokon-detal">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M6.6 10.8C7.9 13.4 10 15.5 12.6 16.8L14.6 14.8C14.9 14.5 15.3 14.4 15.6 14.6C16.7 15 17.9 15.2 19 15.2C19.6 15.2 20 15.6 20 16.2V19.4C20 20 19.6 20.4 19 20.4C10.7 20.4 4 13.7 4 5.4C4 4.8 4.4 4.4 5 4.4H8.2C8.8 4.4 9.2 4.8 9.2 5.4C9.2 6.5 9.4 7.7 9.8 8.8C9.9 9.1 9.9 9.5 9.6 9.8L6.6 10.8Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
+                    </svg>
+                    <span>{{ buyurtma.dokon.telefon }}</span>
+                </div>
+
+                <ul class="mahsulotlar-royxati">
+                    {% for mahsulot in buyurtma.mahsulotlar.all %}
+                        <li>
+                            <span>
+                                {{ mahsulot.hajm }} x {{ mahsulot.soni_buyurtma_qilingan }}
+                                {% if mahsulot.soni_yetkazilgan is not None %}
+                                    <span class="yetkazildi-belgi">(yetkazildi: {{ mahsulot.soni_yetkazilgan }})</span>
+                                {% endif %}
+                            </span>
+                            <span>{% widthratio mahsulot.narx 1 mahsulot.soni_buyurtma_qilingan %} so'm</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+
+                <hr class="ajratuvchi">
+
+                <div class="jami-qatori">
+                    <span class="jami-label">Jami</span>
+                    <span class="jami-son">{{ buyurtma.umumiy_summa }} so'm</span>
+                </div>
+
+                {% if buyurtma.tolov_holati %}
+                    <div class="tolov-qatori">
+                        <span class="tolov-pill tolov-{{ buyurtma.tolov_holati }}">
+                            {{ buyurtma.get_tolov_holati_display }}
+                            {% if buyurtma.tolov_holati == 'qarz' and buyurtma.qarz_summasi %} &middot; {{ buyurtma.qarz_summasi }} so'm{% endif %}
+                        </span>
+                        {% if buyurtma.tolov_holati == 'qarz' and buyurtma.qarz_summasi > 0 %}
+                            <a href="{% url 'qarz_tolash' buyurtma.pk %}" class="qarz-tolash-link">Qarzni to'lash</a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+
+                {% if buyurtma.joylashuv_lat and buyurtma.joylashuv_lng %}
+                    <a class="xarita-link" href="https://www.google.com/maps?q={{ buyurtma.joylashuv_lat|unlocalize }},{{ buyurtma.joylashuv_lng|unlocalize }}" target="_blank" rel="noopener">📍 Xaritada ko'rish</a>
+                {% endif %}
+
+                <p class="info-qatori">
+                    Zakaz: {{ buyurtma.zakaz_olgan.username }}{% if buyurtma.yetkazishga_olgan %} &middot; Yetkazmoqda: {{ buyurtma.yetkazishga_olgan.username }}{% endif %}
+                </p>
+
+                {% if buyurtma.holat == 'yangi' %}
+                    <form method="post" action="{% url 'buyurtma_olish' buyurtma.pk %}">
+                        {% csrf_token %}
+                        <button type="submit" class="harakat-tugma tugma-olish">Men olaman</button>
+                    </form>
+                {% elif buyurtma.holat == 'yetkazilmoqda' and buyurtma.yetkazishga_olgan_id == request.user.id %}
+                    <a href="{% url 'buyurtma_yetkazish' buyurtma.pk %}" class="harakat-tugma tugma-yetkazdim">Yetkazdim</a>
+                {% endif %}
+            </div>
+        {% empty %}
+            <div class="bosh-holat">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M3 7L12 3L21 7V17L12 21L3 17V7Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                    <path d="M3 7L12 11L21 7M12 11V21" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                </svg>
+                <p>Buyurtmalar topilmadi</p>
+            </div>
+        {% endfor %}
+    </div>
 </body>
 </html>
