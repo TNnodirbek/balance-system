@@ -1,8 +1,8 @@
-from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
+﻿from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
 from django.http import HttpResponseForbidden
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse
 from django.utils import timezone
 
@@ -77,7 +77,26 @@ def menejer_bosh_sahifa(request):
 
 @login_required
 def dastavchik_bosh_sahifa(request):
-    return render(request, 'foydalanuvchilar/dastavchik_bosh_sahifa.html')
+    bugun = timezone.localdate()
+    bugungi_yetkazilgan = Buyurtma.objects.filter(
+        yetkazishga_olgan=request.user,
+        holat='yetkazildi',
+        yaratilgan_vaqt__date=bugun,
+    ).count()
+    faol_buyurtmalar = Buyurtma.objects.filter(
+        yetkazishga_olgan=request.user,
+        holat='yetkazilmoqda',
+    ).count()
+    yangi_buyurtmalar_soni = Buyurtma.objects.filter(
+        menejer=tegishli_menejer(request.user),
+        holat='yangi',
+    ).count()
+
+    return render(request, 'foydalanuvchilar/dastavchik_bosh_sahifa.html', {
+        'bugungi_yetkazilgan': bugungi_yetkazilgan,
+        'faol_buyurtmalar': faol_buyurtmalar,
+        'yangi_buyurtmalar_soni': yangi_buyurtmalar_soni,
+    })
 
 
 @login_required
@@ -128,6 +147,41 @@ def dastavchiklar_royxati(request):
 
     return render(request, 'foydalanuvchilar/dastavchiklar_royxati.html', {
         'dastavchiklar': dastavchiklar,
+    })
+
+
+@login_required
+def dastavchik_tahrirlash(request, pk):
+    if request.user.rol != Foydalanuvchi.Rol.MENEJER:
+        return HttpResponseForbidden("Bu sahifa faqat menejer uchun.")
+
+    dastavchik = get_object_or_404(Foydalanuvchi, pk=pk, menejer=request.user, rol=Foydalanuvchi.Rol.DASTAVCHIK)
+    xabar = None
+    xato = None
+
+    if request.method == 'POST':
+        username = request.POST.get('username', '').strip()
+        ism = request.POST.get('ism', '').strip()
+        telefon = request.POST.get('telefon', '').strip()
+        yangi_parol = request.POST.get('yangi_parol', '')
+
+        if not username:
+            xato = 'Username bo`sh bo`lishi mumkin emas.'
+        elif Foydalanuvchi.objects.filter(username=username).exclude(pk=dastavchik.pk).exists():
+            xato = 'Bu username allaqachon band.'
+        else:
+            dastavchik.username = username
+            dastavchik.first_name = ism
+            dastavchik.telefon = telefon
+            if yangi_parol:
+                dastavchik.set_password(yangi_parol)
+            dastavchik.save()
+            xabar = "Ma'lumotlar muvaffaqiyatli saqlandi."
+
+    return render(request, 'foydalanuvchilar/dastavchik_tahrirlash.html', {
+        'dastavchik': dastavchik,
+        'xabar': xabar,
+        'xato': xato,
     })
 
 
@@ -197,3 +251,29 @@ def dokonlar_royxati(request):
     menejer = tegishli_menejer(request.user)
     dokonlar = Dokon.objects.filter(menejer=menejer).order_by('nomi') if menejer else Dokon.objects.none()
     return render(request, 'dokonlar/royxat.html', {'dokonlar': dokonlar})
+
+
+@login_required
+def dokon_tahrirlash(request, pk):
+    if request.user.rol != Foydalanuvchi.Rol.MENEJER:
+        return HttpResponseForbidden("Bu sahifa faqat menejer uchun.")
+
+    dokon = get_object_or_404(Dokon, pk=pk, menejer=request.user)
+    xabar = None
+
+    if request.method == 'POST':
+        dokon.nomi = request.POST.get('nomi', '').strip()
+        dokon.manzili = request.POST.get('manzili', '').strip()
+        dokon.telefon = request.POST.get('telefon', '').strip()
+        dokon.save()
+        xabar = "Do'kon ma'lumotlari saqlandi."
+
+    return render(request, 'dokonlar/tahrirlash.html', {
+        'dokon': dokon,
+        'xabar': xabar,
+    })
+
+
+
+
+

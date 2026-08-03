@@ -1,30 +1,136 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Dastavchiklar</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            background: #FFFFFF;
+            color: #0C2340;
+        }
+        .qobiq { max-width: 480px; margin: 0 auto; padding: 20px 16px 40px; }
+        .sarlavha-panel {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .orqaga {
+            width: 36px; height: 36px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 10px;
+            background: #F0F8FF;
+            color: #185FA5;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+        .sarlavha-panel h1 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0C2340;
+            margin: 0;
+            flex: 1;
+        }
+        .qoshish-tugma {
+            background: #185FA5;
+            color: #FFFFFF;
+            border: none;
+            border-radius: 10px;
+            padding: 0 14px;
+            height: 36px;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+        .dastavchik-karta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #FFFFFF;
+            border: 1px solid #E4EDF6;
+            border-radius: 16px;
+            padding: 14px 16px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .avatar {
+            width: 42px; height: 42px;
+            border-radius: 50%;
+            background: #F0F8FF;
+            color: #185FA5;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 16px;
+            flex-shrink: 0;
+        }
+        .info { flex: 1; min-width: 0; }
+        .info .ism { font-weight: 600; font-size: 14px; color: #0C2340; }
+        .info .tafsilot { font-size: 12px; color: #7C8B9E; margin-top: 2px; }
+        .faol-pill {
+            background: #E8F1FB;
+            color: #185FA5;
+            font-size: 11px;
+            font-weight: 700;
+            border-radius: 12px;
+            padding: 4px 10px;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .faol-pill.nol {
+            background: #F0F0F0;
+            color: #7C8B9E;
+        }
+        .tahrirlash-tugma {
+            width: 32px; height: 32px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 8px;
+            background: #F0F8FF;
+            color: #185FA5;
+            flex-shrink: 0;
+        }
+        .bosh-holat {
+            text-align: center;
+            color: #7C8B9E;
+            font-size: 13px;
+            padding: 40px 0;
+        }
+    </style>
 </head>
 <body>
-    <h1>Dastavchiklar ro'yxati</h1>
-    <p><a href="{% url 'dastavchik_qoshish' %}">Dastavchik qo'shish</a></p>
+    <div class="qobiq">
+        <div class="sarlavha-panel">
+            <a href="{% url 'sozlamalar_bosh' %}" class="orqaga" aria-label="Orqaga">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+            <h1>Dastavchiklar</h1>
+            <a href="{% url 'dastavchik_qoshish' %}" class="qoshish-tugma">+ Qo'shish</a>
+        </div>
 
-    <table border="1">
-        <tr>
-            <th>Username</th>
-            <th>Ism</th>
-            <th>Telefon</th>
-            <th>Faol (yetkazilmoqda) buyurtmalar</th>
-        </tr>
         {% for dastavchik in dastavchiklar %}
-            <tr>
-                <td>{{ dastavchik.username }}</td>
-                <td>{{ dastavchik.first_name }}</td>
-                <td>{{ dastavchik.telefon }}</td>
-                <td>{{ dastavchik.faol_buyurtmalar_soni }}</td>
-            </tr>
+        <div class="dastavchik-karta">
+            <div class="avatar">{{ dastavchik.first_name|default:dastavchik.username|first|upper }}</div>
+            <div class="info">
+                <div class="ism">{{ dastavchik.first_name|default:dastavchik.username }}</div>
+                <div class="tafsilot">{{ dastavchik.username }}{% if dastavchik.telefon %} &middot; {{ dastavchik.telefon }}{% endif %}</div>
+            </div>
+            <div class="faol-pill{% if dastavchik.faol_buyurtmalar_soni == 0 %} nol{% endif %}">
+                {{ dastavchik.faol_buyurtmalar_soni }} faol
+            </div>
+            <a href="{% url 'dastavchik_tahrirlash' dastavchik.pk %}" class="tahrirlash-tugma" aria-label="Tahrirlash">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M11 4H4A2 2 0 0 0 2 6V20A2 2 0 0 0 4 22H18A2 2 0 0 0 20 20V13" stroke-linecap="round" stroke-linejoin="round"/><path d="M18.5 2.5A2.121 2.121 0 0 1 21.5 5.5L12 15L8 16L9 12L18.5 2.5Z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+        </div>
         {% empty %}
-            <tr><td colspan="4">Dastavchiklar yo'q.</td></tr>
+        <div class="bosh-holat">Dastavchiklar hali qo'shilmagan</div>
         {% endfor %}
-    </table>
+    </div>
 </body>
 </html>
+
+

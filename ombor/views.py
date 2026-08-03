@@ -1,6 +1,6 @@
-from django.contrib.auth.decorators import login_required
+﻿from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 
 from foydalanuvchilar.models import Foydalanuvchi
 from foydalanuvchilar.utils import tegishli_menejer
@@ -48,3 +48,29 @@ def fura_qoshish(request):
         return render(request, 'ombor/fura_qoshish.html', {'form': form})
 
     return render(request, 'ombor/fura_qoshish.html', {'form': FuraForm()})
+
+
+@login_required
+def fura_tahrirlash(request, pk):
+    if request.user.rol != Foydalanuvchi.Rol.MENEJER:
+        return HttpResponseForbidden("Bu sahifa faqat menejer uchun.")
+
+    fura = get_object_or_404(Fura, pk=pk, menejer=request.user)
+
+    if request.method == 'POST':
+        form = FuraForm(request.POST, instance=fura)
+        if form.is_valid():
+            form.save()
+            fura.mahsulotlar.all().delete()
+            hajmlar = request.POST.getlist('hajm[]')
+            miqdorlar = request.POST.getlist('miqdor[]')
+            for hajm, miqdor in zip(hajmlar, miqdorlar):
+                hajm = hajm.strip()
+                if hajm and miqdor and int(miqdor) > 0:
+                    FuraMahsulot.objects.create(fura=fura, hajm=hajm, miqdor=int(miqdor))
+            return redirect('ombor_royxati')
+        return render(request, 'ombor/fura_tahrirlash.html', {'form': form, 'fura': fura})
+
+    return render(request, 'ombor/fura_tahrirlash.html', {'form': FuraForm(instance=fura), 'fura': fura})
+
+

@@ -1,4 +1,4 @@
-from django.urls import path
+﻿from django.urls import path
 
 from . import views
 
@@ -10,4 +10,6 @@ urlpatterns = [
     path('<int:pk>/olish/', views.buyurtma_olish, name='buyurtma_olish'),
     path('<int:pk>/yetkazish/', views.buyurtma_yetkazish, name='buyurtma_yetkazish'),
     path('<int:pk>/qarz-tolash/', views.qarz_tolash, name='qarz_tolash'),
+    path('<int:pk>/tahrirlash/', views.buyurtma_tahrirlash, name='buyurtma_tahrirlash'),
 ]
+

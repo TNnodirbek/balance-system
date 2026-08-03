@@ -1,0 +1,180 @@
+﻿{% load l10n %}
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Buyurtmani tahrirlash</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            background: #FFFFFF;
+            color: #0C2340;
+        }
+        .qobiq { max-width: 480px; margin: 0 auto; padding: 20px 16px 40px; }
+        .sarlavha-panel {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .orqaga {
+            width: 36px; height: 36px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 10px;
+            background: #F0F8FF;
+            color: #185FA5;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+        .sarlavha-panel h1 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0C2340;
+            margin: 0;
+        }
+        .xabar-quti {
+            border-radius: 10px;
+            padding: 12px 14px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+        .xabar-xato { background: #FCEBEB; color: #A32D2D; }
+        .dokon-belgi {
+            background: #F0F8FF;
+            border: 1px solid #DCE9F5;
+            border-radius: 10px;
+            padding: 12px 14px;
+            font-size: 13px;
+            color: #185FA5;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        .bolim-sarlavha {
+            font-size: 12px;
+            font-weight: 600;
+            color: #7C8B9E;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            margin: 20px 0 12px 0;
+        }
+        .maydon { margin-bottom: 16px; }
+        .maydon label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #0C2340;
+            margin-bottom: 6px;
+        }
+        .maydon input, .maydon select {
+            width: 100%;
+            height: 44px;
+            border: 1px solid #E4EDF6;
+            border-radius: 10px;
+            padding: 0 14px;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            font-size: 14px;
+            color: #0C2340;
+            outline: none;
+            background: #FFFFFF;
+        }
+        .maydon input:focus, .maydon select:focus {
+            border-color: #185FA5;
+            background: #F7FAFD;
+        }
+        .mahsulot-qator {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .mahsulot-qator .maydon { flex: 1; margin-bottom: 0; }
+        .hajm-belgisi {
+            font-weight: 700;
+            font-size: 13px;
+            color: #185FA5;
+            margin-bottom: 8px;
+        }
+        .saqlash-tugma {
+            width: 100%;
+            height: 52px;
+            background: #185FA5;
+            color: #FFFFFF;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 12px;
+        }
+        .saqlash-tugma:hover {
+            box-shadow: 0 4px 14px rgba(24, 95, 165, 0.28);
+        }
+    </style>
+</head>
+<body>
+    <div class="qobiq">
+        <div class="sarlavha-panel">
+            <a href="{% url 'buyurtmalar_royxati' %}" class="orqaga" aria-label="Orqaga">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+            <h1>Buyurtma #{{ buyurtma.pk }}</h1>
+        </div>
+
+        {% if xato %}
+        <div class="xabar-quti xabar-xato">{{ xato }}</div>
+        {% endif %}
+
+        <div class="dokon-belgi">{{ buyurtma.dokon.nomi }} &middot; {{ buyurtma.dokon.manzili }}</div>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <p class="bolim-sarlavha">Mahsulotlar</p>
+            {% for qator in qatorlar %}
+            <div class="hajm-belgisi">{{ qator.hajm }}</div>
+            <div class="mahsulot-qator">
+                <div class="maydon">
+                    <label>Miqdor</label>
+                    <input type="number" name="soni_{{ qator.hajm }}" min="0" value="{{ qator.soni|unlocalize }}">
+                </div>
+                <div class="maydon">
+                    <label>Narx</label>
+                    <input type="number" step="0.01" name="narx_{{ qator.hajm }}" min="0" value="{{ qator.narx|unlocalize }}">
+                </div>
+            </div>
+            {% endfor %}
+
+            <p class="bolim-sarlavha">Holat va to'lov</p>
+            <div class="maydon">
+                <label>Holat</label>
+                <select name="holat">
+                    <option value="yangi" {% if buyurtma.holat == 'yangi' %}selected{% endif %}>Yangi</option>
+                    <option value="yetkazilmoqda" {% if buyurtma.holat == 'yetkazilmoqda' %}selected{% endif %}>Yetkazilmoqda</option>
+                    <option value="yetkazildi" {% if buyurtma.holat == 'yetkazildi' %}selected{% endif %}>Yetkazildi</option>
+                </select>
+            </div>
+            <div class="maydon">
+                <label>To'lov holati</label>
+                <select name="tolov_holati">
+                    <option value="">Belgilanmagan</option>
+                    <option value="kutilmoqda" {% if buyurtma.tolov_holati == 'kutilmoqda' %}selected{% endif %}>Kutilmoqda</option>
+                    <option value="tolandi" {% if buyurtma.tolov_holati == 'tolandi' %}selected{% endif %}>To'landi</option>
+                    <option value="qarz" {% if buyurtma.tolov_holati == 'qarz' %}selected{% endif %}>Qarz</option>
+                </select>
+            </div>
+            <div class="maydon">
+                <label>Qarz summasi</label>
+                <input type="number" step="0.01" name="qarz_summasi" min="0" value="{{ buyurtma.qarz_summasi|unlocalize }}">
+            </div>
+
+            <button type="submit" class="saqlash-tugma">Saqlash</button>
+        </form>
+    </div>
+</body>
+</html>
+
+

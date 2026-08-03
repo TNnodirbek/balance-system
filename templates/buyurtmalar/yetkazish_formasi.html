@@ -1,46 +1,212 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Buyurtmani yetkazish</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            background: #FFFFFF;
+            color: #0C2340;
+        }
+        .qobiq { max-width: 480px; margin: 0 auto; padding: 20px 16px 40px; }
+        .sarlavha-panel {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .orqaga {
+            width: 36px; height: 36px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 10px;
+            background: #F0F8FF;
+            color: #185FA5;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+        .sarlavha-panel h1 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #0C2340;
+            margin: 0;
+        }
+        .xabar-quti {
+            border-radius: 10px;
+            padding: 12px 14px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            background: #FCEBEB;
+            color: #A32D2D;
+        }
+        .bolim-sarlavha {
+            font-size: 12px;
+            font-weight: 600;
+            color: #7C8B9E;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            margin: 20px 0 12px 0;
+        }
+        .mahsulot-karta {
+            background: #FFFFFF;
+            border: 1px solid #E4EDF6;
+            border-radius: 14px;
+            padding: 14px 16px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .mahsulot-karta .sarlavha {
+            font-weight: 700;
+            font-size: 14px;
+            color: #0C2340;
+            margin-bottom: 4px;
+        }
+        .mahsulot-karta .izoh {
+            font-size: 12px;
+            color: #7C8B9E;
+            margin-bottom: 10px;
+        }
+        .mahsulot-karta input {
+            width: 100%;
+            height: 44px;
+            border: 1px solid #E4EDF6;
+            border-radius: 10px;
+            padding: 0 14px;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            font-size: 14px;
+            outline: none;
+        }
+        .mahsulot-karta input:focus {
+            border-color: #185FA5;
+            background: #F7FAFD;
+        }
+        .tolov-tanlov {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        .tolov-band {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            height: 48px;
+            border: 1px solid #E4EDF6;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            color: #0C2340;
+        }
+        .tolov-band input { display: none; }
+        .tolov-band.tanlangan-tolandi {
+            background: #E8F5E9;
+            border-color: #2E7D32;
+            color: #2E7D32;
+        }
+        .tolov-band.tanlangan-qarz {
+            background: #FCEBEB;
+            border-color: #A32D2D;
+            color: #A32D2D;
+        }
+        #qarz_blok { margin-bottom: 16px; }
+        #qarz_blok label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        #qarz_blok input {
+            width: 100%;
+            height: 44px;
+            border: 1px solid #E4EDF6;
+            border-radius: 10px;
+            padding: 0 14px;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            font-size: 14px;
+        }
+        .saqlash-tugma {
+            width: 100%;
+            height: 52px;
+            background: #185FA5;
+            color: #FFFFFF;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .saqlash-tugma:hover {
+            box-shadow: 0 4px 14px rgba(24, 95, 165, 0.28);
+        }
+    </style>
 </head>
 <body>
-    <h1>Buyurtma #{{ buyurtma.pk }} - {{ buyurtma.dokon.nomi }}</h1>
-    {% if xato %}
-        <p>{{ xato }}</p>
-    {% endif %}
+    <div class="qobiq">
+        <div class="sarlavha-panel">
+            <a href="{% url 'buyurtmalar_royxati' %}" class="orqaga" aria-label="Orqaga">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+            <h1>Buyurtma #{{ buyurtma.pk }} &middot; {{ buyurtma.dokon.nomi }}</h1>
+        </div>
 
-    <form method="post">
-        {% csrf_token %}
-        <h2>Mahsulotlar</h2>
-        {% for mahsulot in buyurtma.mahsulotlar.all %}
-            <label>
-                {{ mahsulot.hajm }} (buyurtma qilingan: {{ mahsulot.soni_buyurtma_qilingan }}) -
-                necha dona yetkazildi:
+        {% if xato %}
+        <div class="xabar-quti">{{ xato }}</div>
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+
+            <p class="bolim-sarlavha">Mahsulotlar</p>
+            {% for mahsulot in buyurtma.mahsulotlar.all %}
+            <div class="mahsulot-karta">
+                <div class="sarlavha">{{ mahsulot.hajm }}</div>
+                <div class="izoh">Buyurtma qilingan: {{ mahsulot.soni_buyurtma_qilingan }} dona</div>
                 <input type="number" min="0" max="{{ mahsulot.soni_buyurtma_qilingan }}"
                        name="soni_yetkazilgan_{{ mahsulot.pk }}"
                        value="{{ mahsulot.soni_buyurtma_qilingan }}">
-            </label><br>
-        {% endfor %}
+            </div>
+            {% endfor %}
 
-        <h2>To'lov</h2>
-        <label><input type="radio" name="tolov_holati" value="tolandi" onclick="qarzMaydoniniYashir()"> To'landi</label>
-        <label><input type="radio" name="tolov_holati" value="qarz" onclick="qarzMaydoniniKorsat()"> Qarz</label><br>
+            <p class="bolim-sarlavha">To'lov</p>
+            <div class="tolov-tanlov">
+                <label class="tolov-band" id="band_tolandi">
+                    <input type="radio" name="tolov_holati" value="tolandi" onclick="tolovTanlandi('tolandi')">
+                    To'landi
+                </label>
+                <label class="tolov-band" id="band_qarz">
+                    <input type="radio" name="tolov_holati" value="qarz" onclick="tolovTanlandi('qarz')">
+                    Qarz
+                </label>
+            </div>
 
-        <div id="qarz_blok" style="display:none;">
-            <label>Qarz summasi: <input type="number" step="0.01" name="qarz_summasi" id="qarz_summasi"></label>
-        </div>
+            <div id="qarz_blok" style="display:none;">
+                <label>Qarz summasi</label>
+                <input type="number" step="0.01" name="qarz_summasi" id="qarz_summasi">
+            </div>
 
-        <button type="submit">Saqlash</button>
-    </form>
+            <button type="submit" class="saqlash-tugma">Yetkazildi deb belgilash</button>
+        </form>
+    </div>
 
     <script>
-        function qarzMaydoniniKorsat() {
-            document.getElementById('qarz_blok').style.display = 'block';
-        }
-        function qarzMaydoniniYashir() {
-            document.getElementById('qarz_blok').style.display = 'none';
-            document.getElementById('qarz_summasi').value = '';
+        function tolovTanlandi(tur) {
+            document.getElementById('band_tolandi').classList.remove('tanlangan-tolandi');
+            document.getElementById('band_qarz').classList.remove('tanlangan-qarz');
+            if (tur === 'tolandi') {
+                document.getElementById('band_tolandi').classList.add('tanlangan-tolandi');
+                document.getElementById('qarz_blok').style.display = 'none';
+                document.getElementById('qarz_summasi').value = '';
+            } else {
+                document.getElementById('band_qarz').classList.add('tanlangan-qarz');
+                document.getElementById('qarz_blok').style.display = 'block';
+            }
         }
     </script>
 </body>

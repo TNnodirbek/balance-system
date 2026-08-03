@@ -1,10 +1,9 @@
-﻿{% load l10n %}
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Narxlar</title>
+    <title>Do'konni tahrirlash</title>
     <style>
         * { box-sizing: border-box; }
         body {
@@ -88,10 +87,10 @@
 <body>
     <div class="qobiq">
         <div class="sarlavha-panel">
-            <a href="{% url 'sozlamalar_bosh' %}" class="orqaga" aria-label="Orqaga">
+            <a href="{% url 'dokonlar_royxati' %}" class="orqaga" aria-label="Orqaga">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </a>
-            <h1>Standart narxlar</h1>
+            <h1>Do'konni tahrirlash</h1>
         </div>
 
         {% if xabar %}
@@ -101,12 +100,16 @@
         <form method="post">
             {% csrf_token %}
             <div class="maydon">
-                <label>5L narxi (so'm)</label>
-                <input type="number" step="0.01" name="narx_5l" value="{{ sozlama.narx_5l|unlocalize }}">
+                <label>Nomi</label>
+                <input type="text" name="nomi" value="{{ dokon.nomi }}" required>
             </div>
             <div class="maydon">
-                <label>10L narxi (so'm)</label>
-                <input type="number" step="0.01" name="narx_10l" value="{{ sozlama.narx_10l|unlocalize }}">
+                <label>Manzili</label>
+                <input type="text" name="manzili" value="{{ dokon.manzili }}">
+            </div>
+            <div class="maydon">
+                <label>Telefon</label>
+                <input type="text" name="telefon" value="{{ dokon.telefon }}">
             </div>
             <button type="submit" class="saqlash-tugma">Saqlash</button>
         </form>

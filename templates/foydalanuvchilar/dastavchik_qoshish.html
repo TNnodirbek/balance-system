@@ -1,27 +1,183 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Dastavchik qo'shish</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            background: #FFFFFF;
+            color: #0C2340;
+        }
+        .qobiq { max-width: 480px; margin: 0 auto; padding: 20px 16px 40px; }
+        .sarlavha-panel {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .orqaga {
+            width: 36px; height: 36px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 10px;
+            background: #F0F8FF;
+            color: #185FA5;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+        .sarlavha-panel h1 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0C2340;
+            margin: 0;
+        }
+        .xabar-quti {
+            border-radius: 10px;
+            padding: 12px 14px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+        .xabar-muvaffaqiyat { background: #E8F5E9; color: #2E7D32; }
+        .xabar-xato { background: #FCEBEB; color: #A32D2D; }
+        .maydon { margin-bottom: 16px; }
+        .maydon label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #0C2340;
+            margin-bottom: 6px;
+        }
+        .maydon input {
+            width: 100%;
+            height: 44px;
+            border: 1px solid #E4EDF6;
+            border-radius: 10px;
+            padding: 0 14px;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            font-size: 14px;
+            color: #0C2340;
+            outline: none;
+        }
+        .maydon input:focus {
+            border-color: #185FA5;
+            background: #F7FAFD;
+        }
+        .parol-qobiq {
+            position: relative;
+        }
+        .parol-qobiq input {
+            padding-right: 44px;
+        }
+        .koz-tugma {
+            position: absolute;
+            right: 4px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: transparent;
+            color: #7C8B9E;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            padding: 0;
+        }
+        .koz-tugma svg { width: 18px; height: 18px; }
+        .yordam-matn {
+            font-size: 11px;
+            color: #7C8B9E;
+            margin-top: 4px;
+        }
+        .saqlash-tugma {
+            width: 100%;
+            height: 52px;
+            background: #185FA5;
+            color: #FFFFFF;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+        .saqlash-tugma:hover {
+            box-shadow: 0 4px 14px rgba(24, 95, 165, 0.28);
+        }
+        .orqaga-havola {
+            display: block;
+            text-align: center;
+            margin-top: 18px;
+            color: #185FA5;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+        }
+    </style>
 </head>
 <body>
-    <h1>Dastavchik qo'shish</h1>
-    {% if xabar %}
-        <p>{{ xabar }}</p>
-    {% endif %}
-    {% if xato %}
-        <p>{{ xato }}</p>
-    {% endif %}
+    <div class="qobiq">
+        <div class="sarlavha-panel">
+            <a href="{% url 'dastavchiklar_royxati' %}" class="orqaga" aria-label="Orqaga">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+            <h1>Dastavchik qo'shish</h1>
+        </div>
 
-    <form method="post">
-        {% csrf_token %}
-        <label>Username: <input type="text" name="username" required></label><br>
-        <label>Parol: <input type="password" name="parol" required></label><br>
-        <label>Ism: <input type="text" name="ism"></label><br>
-        <label>Telefon: <input type="text" name="telefon"></label><br>
-        <button type="submit">Saqlash</button>
-    </form>
+        {% if xabar %}
+        <div class="xabar-quti xabar-muvaffaqiyat">{{ xabar }}</div>
+        {% endif %}
+        {% if xato %}
+        <div class="xabar-quti xabar-xato">{{ xato }}</div>
+        {% endif %}
 
-    <p><a href="{% url 'dastavchiklar_royxati' %}">Dastavchiklar ro'yxati</a></p>
+        <form method="post">
+            {% csrf_token %}
+            <div class="maydon">
+                <label>Username</label>
+                <input type="text" name="username" required>
+                <div class="yordam-matn">Tizimga kirish uchun foydalaniladi</div>
+            </div>
+            <div class="maydon">
+                <label>Parol</label>
+                <div class="parol-qobiq">
+                    <input type="password" name="parol" id="parol-input" required>
+                    <button type="button" class="koz-tugma" onclick="parolniAlmashtir('parol-input', this)" aria-label="Parolni ko'rsatish">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M1 12S5 4 12 4S23 12 23 12S19 20 12 20S1 12 1 12Z"/><circle cx="12" cy="12" r="3"/></svg>
+                    </button>
+                </div>
+            </div>
+            <div class="maydon">
+                <label>Ism</label>
+                <input type="text" name="ism">
+            </div>
+            <div class="maydon">
+                <label>Telefon</label>
+                <input type="text" name="telefon" placeholder="+998 90 123 45 67">
+            </div>
+            <button type="submit" class="saqlash-tugma">Saqlash</button>
+        </form>
+
+        <a href="{% url 'dastavchiklar_royxati' %}" class="orqaga-havola">Dastavchiklar ro'yxatiga qaytish</a>
+    </div>
+
+    <script>
+        function parolniAlmashtir(inputId, tugma) {
+            const input = document.getElementById(inputId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                tugma.style.color = '#185FA5';
+            } else {
+                input.type = 'password';
+                tugma.style.color = '#7C8B9E';
+            }
+        }
+    </script>
 </body>
 </html>

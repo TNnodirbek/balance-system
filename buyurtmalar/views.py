@@ -1,4 +1,4 @@
-from decimal import Decimal, InvalidOperation
+﻿from decimal import Decimal, InvalidOperation
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -14,6 +14,61 @@ from ombor.models import NarxSozlamasi
 from statistika.models import QarzTolovi
 
 from .models import Buyurtma, BuyurtmaMahsulot
+
+
+@login_required
+def buyurtma_tahrirlash(request, pk):
+    if request.user.rol != 'menejer':
+        return HttpResponseForbidden("Bu sahifa faqat menejer uchun.")
+
+    buyurtma = get_object_or_404(Buyurtma, pk=pk, menejer=request.user)
+    xato = None
+
+    if request.method == 'POST':
+        buyurtma.holat = request.POST.get('holat', buyurtma.holat)
+        tolov_holati = request.POST.get('tolov_holati')
+        buyurtma.tolov_holati = tolov_holati if tolov_holati else None
+        qarz_summasi = request.POST.get('qarz_summasi') or 0
+        try:
+            buyurtma.qarz_summasi = Decimal(qarz_summasi)
+        except InvalidOperation:
+            buyurtma.qarz_summasi = 0
+        buyurtma.save()
+
+        for hajm in HAJMLAR:
+            soni = request.POST.get(f'soni_{hajm}')
+            narx = request.POST.get(f'narx_{hajm}')
+            mahsulot = buyurtma.mahsulotlar.filter(hajm=hajm).first()
+            if soni and int(soni) > 0:
+                if mahsulot:
+                    mahsulot.soni_buyurtma_qilingan = int(soni)
+                    mahsulot.narx = narx or mahsulot.narx
+                    mahsulot.save()
+                else:
+                    BuyurtmaMahsulot.objects.create(
+                        buyurtma=buyurtma, hajm=hajm,
+                        soni_buyurtma_qilingan=int(soni), narx=narx or 0,
+                    )
+            elif mahsulot:
+                mahsulot.delete()
+
+        return redirect('buyurtmalar_royxati')
+
+    mavjud_mahsulotlar = {m.hajm: m for m in buyurtma.mahsulotlar.all()}
+    qatorlar = []
+    for hajm in HAJMLAR:
+        mahsulot = mavjud_mahsulotlar.get(hajm)
+        qatorlar.append({
+            'hajm': hajm,
+            'soni': mahsulot.soni_buyurtma_qilingan if mahsulot else '',
+            'narx': mahsulot.narx if mahsulot else '',
+        })
+
+    return render(request, 'buyurtmalar/tahrirlash.html', {
+        'buyurtma': buyurtma,
+        'qatorlar': qatorlar,
+        'xato': xato,
+    })
 
 HAJMLAR = ['5L', '10L']
 
@@ -231,3 +286,5 @@ def qarz_tolash(request, pk):
         return redirect('buyurtmalar_royxati')
 
     return render(request, 'buyurtmalar/qarz_tolash.html', {'buyurtma': buyurtma})
+
+

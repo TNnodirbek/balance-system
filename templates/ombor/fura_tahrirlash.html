@@ -1,0 +1,169 @@
+﻿{% load l10n %}
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Furani tahrirlash</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            background: #FFFFFF;
+            color: #0C2340;
+        }
+        .qobiq { max-width: 480px; margin: 0 auto; padding: 20px 16px 40px; }
+        .sarlavha-panel {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .orqaga {
+            width: 36px; height: 36px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 10px;
+            background: #F0F8FF;
+            color: #185FA5;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+        .sarlavha-panel h1 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0C2340;
+            margin: 0;
+        }
+        .maydon { margin-bottom: 16px; }
+        .maydon label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #0C2340;
+            margin-bottom: 6px;
+        }
+        .maydon input {
+            width: 100%;
+            height: 44px;
+            border: 1px solid #E4EDF6;
+            border-radius: 10px;
+            padding: 0 14px;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            font-size: 14px;
+            color: #0C2340;
+            outline: none;
+        }
+        .maydon input:focus {
+            border-color: #185FA5;
+            background: #F7FAFD;
+        }
+        .bolim-sarlavha {
+            font-size: 12px;
+            font-weight: 600;
+            color: #7C8B9E;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            margin: 22px 0 12px 0;
+        }
+        .mahsulot-qator {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .mahsulot-qator .maydon { flex: 1; margin-bottom: 0; }
+        .qator-qoshish-tugma {
+            width: 100%;
+            height: 40px;
+            background: #F0F8FF;
+            color: #185FA5;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 8px;
+        }
+        .saqlash-tugma {
+            width: 100%;
+            height: 52px;
+            background: #185FA5;
+            color: #FFFFFF;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 12px;
+        }
+        .saqlash-tugma:hover {
+            box-shadow: 0 4px 14px rgba(24, 95, 165, 0.28);
+        }
+    </style>
+</head>
+<body>
+    <div class="qobiq">
+        <div class="sarlavha-panel">
+            <a href="{% url 'ombor_royxati' %}" class="orqaga" aria-label="Orqaga">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+            <h1>Furani tahrirlash</h1>
+        </div>
+
+        {% if form.errors %}
+        <div class="maydon" style="background:#FCEBEB;color:#A32D2D;border-radius:10px;padding:12px 14px;font-size:13px;font-weight:600;">
+            Formada xatolik bor, maydonlarni tekshiring.
+        </div>
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="maydon">
+                <label>Sana</label>
+                <input type="date" name="sana" value="{{ fura.sana|date:'Y-m-d' }}">
+            </div>
+            <div class="maydon">
+                <label>Suv narxi</label>
+                <input type="number" step="0.01" name="suv_narxi" value="{{ fura.suv_narxi|unlocalize }}">
+            </div>
+            <div class="maydon">
+                <label>Dastavka narxi</label>
+                <input type="number" step="0.01" name="dastavka_narxi" value="{{ fura.dastavka_narxi|unlocalize }}">
+            </div>
+
+            <p class="bolim-sarlavha">Mahsulotlar</p>
+            <div id="mahsulot_qatorlari">
+                {% for mahsulot in fura.mahsulotlar.all %}
+                <div class="mahsulot-qator">
+                    <div class="maydon">
+                        <label>Hajm</label>
+                        <input type="text" name="hajm[]" value="{{ mahsulot.hajm }}">
+                    </div>
+                    <div class="maydon">
+                        <label>Miqdor</label>
+                        <input type="number" name="miqdor[]" value="{{ mahsulot.miqdor }}">
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <button type="button" class="qator-qoshish-tugma" onclick="qatorQoshish()">+ Yana bir hajm qo'shish</button>
+
+            <button type="submit" class="saqlash-tugma">Saqlash</button>
+        </form>
+    </div>
+
+    <script>
+        function qatorQoshish() {
+            const qobiq = document.getElementById('mahsulot_qatorlari');
+            const qator = document.createElement('div');
+            qator.className = 'mahsulot-qator';
+            qator.innerHTML =
+                '<div class="maydon"><label>Hajm</label><input type="text" name="hajm[]" value=""></div>' +
+                '<div class="maydon"><label>Miqdor</label><input type="number" name="miqdor[]" value="0"></div>';
+            qobiq.appendChild(qator);
+        }
+    </script>
+</body>
+</html>
