@@ -2,13 +2,191 @@
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
-    <title>Dastavchik bosh sahifa</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dastavchik</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            background: #FFFFFF;
+            color: #0C2340;
+            padding-bottom: 96px;
+        }
+        .qobiq { max-width: 480px; margin: 0 auto; padding: 20px 16px; }
+        .sarlavha-panel {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .sarlavha-panel h1 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0C2340;
+            margin: 0;
+        }
+        .sozlama-ikonka {
+            width: 36px; height: 36px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 10px;
+            background: #F0F8FF;
+            color: #185FA5;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .stat-karta {
+            background: #FFFFFF;
+            border: 1px solid #E4EDF6;
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .stat-karta .sarlavha {
+            font-size: 12px;
+            color: #7C8B9E;
+            margin-bottom: 6px;
+        }
+        .stat-karta .son {
+            font-size: 26px;
+            font-weight: 700;
+            color: #185FA5;
+        }
+        .yangi-buyurtma-bandi {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #FFF4E5;
+            border: 1px solid #F5DFB3;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 20px;
+            text-decoration: none;
+            color: #0C2340;
+        }
+        .yangi-buyurtma-bandi .matn { font-weight: 600; font-size: 14px; }
+        .yangi-buyurtma-bandi .son-pill {
+            background: #B8860B;
+            color: #FFFFFF;
+            font-size: 12px;
+            font-weight: 700;
+            border-radius: 12px;
+            padding: 4px 10px;
+        }
+        .tezkor-tugma {
+            display: block;
+            width: 100%;
+            text-align: center;
+            height: 52px;
+            line-height: 52px;
+            background: #185FA5;
+            color: #FFFFFF;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 14px;
+            text-decoration: none;
+            margin-bottom: 12px;
+        }
+        .ikkinchi-tugma {
+            display: block;
+            width: 100%;
+            text-align: center;
+            height: 48px;
+            line-height: 48px;
+            background: #F0F8FF;
+            color: #185FA5;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 14px;
+            text-decoration: none;
+        }
+        .pastki-nav {
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            background: #F0F8FF;
+            display: flex;
+            justify-content: space-around;
+            padding: 6px 8px calc(6px + env(safe-area-inset-bottom));
+            border-top: 1px solid #DCE9F5;
+        }
+        .nav-band {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 3px; min-height: 44px; min-width: 64px; padding: 4px 6px;
+            text-decoration: none; color: #7C8B9E; font-size: 11px; font-weight: 600;
+            border-radius: 10px;
+        }
+        .nav-band svg { width: 20px; height: 20px; }
+        .nav-band.faol { color: #185FA5; }
+    </style>
 </head>
 <body>
-    <h1>Dastavchik bosh sahifasi</h1>
-    <p>Xush kelibsiz, {{ user.username }}!</p>
-    <a href="{% url 'sozlamalar_bosh' %}">Sozlamalar</a>
-    <a href="{% url 'logout' %}">Chiqish</a>
+    <div class="qobiq">
+        <div class="sarlavha-panel">
+            <h1>Salom, {{ user.first_name|default:user.username }}</h1>
+            <a href="{% url 'sozlamalar_bosh' %}" class="sozlama-ikonka" aria-label="Sozlamalar">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3.2" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.7" stroke-dasharray="1.6 2.7" stroke-linecap="round"/></svg>
+            </a>
+        </div>
+
+        <div class="grid-2">
+            <div class="stat-karta">
+                <div class="sarlavha">5L qoldiq</div>
+                <div class="son">{{ qoldiq_5l }}</div>
+            </div>
+            <div class="stat-karta">
+                <div class="sarlavha">10L qoldiq</div>
+                <div class="son">{{ qoldiq_10l }}</div>
+            </div>
+        </div>
+
+        <div class="grid-2">
+            <div class="stat-karta">
+                <div class="sarlavha">Bugun yetkazilgan</div>
+                <div class="son">{{ bugungi_yetkazilgan }}</div>
+            </div>
+            <div class="stat-karta">
+                <div class="sarlavha">Yo'lda (faol)</div>
+                <div class="son">{{ faol_buyurtmalar }}</div>
+            </div>
+        </div>
+
+        {% if yangi_buyurtmalar_soni > 0 %}
+        <a href="{% url 'buyurtmalar_royxati' %}" class="yangi-buyurtma-bandi">
+            <span class="matn">Yangi buyurtmalar bor</span>
+            <span class="son-pill">{{ yangi_buyurtmalar_soni }}</span>
+        </a>
+        {% endif %}
+
+        <a href="{% url 'yangi_buyurtma' %}" class="tezkor-tugma">+ Yangi buyurtma</a>
+        <a href="{% url 'buyurtmalar_royxati' %}" class="ikkinchi-tugma">Barcha buyurtmalar</a>
+    </div>
+
+    <nav class="pastki-nav">
+        <a href="{% url 'dastavchik_bosh_sahifa' %}" class="nav-band faol">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3 11L12 4L21 11V20A1 1 0 0 1 20 21H4A1 1 0 0 1 3 20V11Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+            </svg>
+            Bosh sahifa
+        </a>
+        <a href="{% url 'buyurtmalar_royxati' %}" class="nav-band">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3 7L12 3L21 7V17L12 21L3 17V7Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+                <path d="M3 7L12 11L21 7M12 11V21" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+            </svg>
+            Buyurtmalar
+        </a>
+        <a href="{% url 'hisobot' %}" class="nav-band">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4 20V10M12 20V4M20 20V14" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Hisobot
+        </a>
+    </nav>
 </body>
 </html>
-
