@@ -26,6 +26,12 @@
             color: #0C2340;
             margin: 0;
         }
+        .header-tugmalar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
         .sozlama-ikonka {
             width: 36px; height: 36px;
             display: flex; align-items: center; justify-content: center;
@@ -34,6 +40,15 @@
             color: #185FA5;
             text-decoration: none;
             flex-shrink: 0;
+            position: relative;
+        }
+
+        .nuqta {
+            position: absolute;
+            top: 6px; right: 6px;
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: #A32D2D;
         }
         .grid-2 {
             display: grid;
@@ -129,9 +144,15 @@
     <div class="qobiq">
         <div class="sarlavha-panel">
             <h1>Salom, {{ user.first_name|default:user.username }}</h1>
-            <a href="{% url 'sozlamalar_bosh' %}" class="sozlama-ikonka" aria-label="Sozlamalar">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3.2" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.7" stroke-dasharray="1.6 2.7" stroke-linecap="round"/></svg>
-            </a>
+            <div class="header-tugmalar">
+                <a href="{% url 'bildirishnomalar_royxati' %}" class="sozlama-ikonka" aria-label="Bildirishnoma">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M18 8A6 6 0 0 0 6 8C6 15 3 17 3 17H21S18 15 18 8Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M13.73 21A2 2 0 0 1 10.27 21" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    {% if bildirishnoma_bor %}<span class="nuqta"></span>{% endif %}
+                </a>
+                <a href="{% url 'sozlamalar_bosh' %}" class="sozlama-ikonka" aria-label="Sozlamalar">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3.2" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.7" stroke-dasharray="1.6 2.7" stroke-linecap="round"/></svg>
+                </a>
+            </div>
         </div>
 
         <div class="grid-2">
@@ -190,3 +211,7 @@
     </nav>
 </body>
 </html>
+
+
+
+

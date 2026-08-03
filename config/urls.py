@@ -1,4 +1,4 @@
-"""
+﻿"""
 URL configuration for config project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
@@ -38,4 +38,6 @@ urlpatterns = [
     path('buyurtmalar/', include('buyurtmalar.urls')),
     path('ombor/', include('ombor.urls')),
     path('statistika/', include('statistika.urls')),
+    path('bildirishnomalar/', include('bildirishnomalar.urls')),
 ]
+

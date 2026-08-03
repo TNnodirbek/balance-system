@@ -1,13 +1,97 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Muvaffaqiyatli</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            background: #FFFFFF;
+            color: #0C2340;
+        }
+        .qobiq {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 60px 16px 40px;
+            text-align: center;
+        }
+        .belgi {
+            width: 72px; height: 72px;
+            border-radius: 50%;
+            background: #E8F5E9;
+            color: #2E7D32;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 20px;
+        }
+        h1 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0C2340;
+            margin: 0 0 8px;
+        }
+        .tafsilot {
+            background: #F0F8FF;
+            border: 1px solid #DCE9F5;
+            border-radius: 14px;
+            padding: 16px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        .tafsilot .qator {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: #0C2340;
+            padding: 6px 0;
+        }
+        .tafsilot .qator span:first-child { color: #7C8B9E; }
+        .tafsilot .qator span:last-child { font-weight: 600; }
+        .tugma {
+            display: block;
+            width: 100%;
+            height: 52px;
+            line-height: 52px;
+            background: #185FA5;
+            color: #FFFFFF;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 14px;
+            text-decoration: none;
+            margin-top: 8px;
+        }
+        .ikkinchi-tugma {
+            display: block;
+            width: 100%;
+            height: 48px;
+            line-height: 48px;
+            background: #F0F8FF;
+            color: #185FA5;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 14px;
+            text-decoration: none;
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Buyurtma muvaffaqiyatli saqlandi</h1>
-    <p>Buyurtma #{{ buyurtma.pk }} - {{ buyurtma.dokon }}</p>
-    <p>Umumiy summa: {{ buyurtma.umumiy_summa }}</p>
-    <a href="{% url 'yangi_buyurtma' %}">Yana buyurtma qo'shish</a>
+    <div class="qobiq">
+        <div class="belgi">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13L9 17L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h1>Buyurtma muvaffaqiyatli saqlandi</h1>
+
+        <div class="tafsilot">
+            <div class="qator"><span>Buyurtma raqami</span><span>#{{ buyurtma.pk }}</span></div>
+            <div class="qator"><span>Do'kon</span><span>{{ buyurtma.dokon }}</span></div>
+            <div class="qator"><span>Umumiy summa</span><span>{{ buyurtma.umumiy_summa }} so'm</span></div>
+        </div>
+
+        <a href="{% url 'yangi_buyurtma' %}" class="tugma">Yana buyurtma qo'shish</a>
+        <a href="{% url 'buyurtmalar_royxati' %}" class="ikkinchi-tugma">Buyurtmalar ro'yxati</a>
+    </div>
 </body>
 </html>

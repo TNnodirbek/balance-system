@@ -43,6 +43,7 @@ def logout_view(request):
 
 @login_required
 def menejer_bosh_sahifa(request):
+    bildirishnoma_bor = request.user.bildirishnomalar.filter(oqilgan=False).exists()
     menejer = tegishli_menejer(request.user)
     bugun = timezone.localdate()
 
@@ -66,6 +67,7 @@ def menejer_bosh_sahifa(request):
         buyurtma.jami_miqdor = sum(m.soni_buyurtma_qilingan for m in buyurtma.mahsulotlar.all())
 
     return render(request, 'foydalanuvchilar/menejer_bosh_sahifa.html', {
+        'bildirishnoma_bor': bildirishnoma_bor,
         'qoldiq_5l': qoldiq.get('5L', 0),
         'qoldiq_10l': qoldiq.get('10L', 0),
         'bugungi_buyurtmalar_soni': bugungi_buyurtmalar_soni,
@@ -93,8 +95,10 @@ def dastavchik_bosh_sahifa(request):
         menejer=menejer,
         holat='yangi',
     ).count()
+    bildirishnoma_bor = request.user.bildirishnomalar.filter(oqilgan=False).exists()
 
     return render(request, 'foydalanuvchilar/dastavchik_bosh_sahifa.html', {
+        'bildirishnoma_bor': bildirishnoma_bor,
         'qoldiq_5l': qoldiq.get('5L', 0),
         'qoldiq_10l': qoldiq.get('10L', 0),
         'bugungi_yetkazilgan': bugungi_yetkazilgan,
@@ -276,6 +280,9 @@ def dokon_tahrirlash(request, pk):
         'dokon': dokon,
         'xabar': xabar,
     })
+
+
+
 
 
 

@@ -1,0 +1,166 @@
+﻿<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bildirishnoma sozlamalari</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            background: #FFFFFF;
+            color: #0C2340;
+        }
+        .qobiq { max-width: 480px; margin: 0 auto; padding: 20px 16px 40px; }
+        .sarlavha-panel {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .orqaga {
+            width: 36px; height: 36px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 10px;
+            background: #F0F8FF;
+            color: #185FA5;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+        .sarlavha-panel h1 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0C2340;
+            margin: 0;
+        }
+        .xabar-quti {
+            border-radius: 10px;
+            padding: 12px 14px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            background: #E8F5E9;
+            color: #2E7D32;
+        }
+        .band {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #FFFFFF;
+            border: 1px solid #E4EDF6;
+            border-radius: 14px;
+            padding: 14px 16px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .band .matn { font-size: 14px; font-weight: 600; color: #0C2340; }
+        .band .izoh { font-size: 11px; color: #7C8B9E; margin-top: 2px; }
+        .toggle {
+            position: relative;
+            width: 44px; height: 26px;
+            flex-shrink: 0;
+        }
+        .toggle input { opacity: 0; width: 0; height: 0; }
+        .toggle .suriluvchi {
+            position: absolute; cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: #E4EDF6;
+            border-radius: 26px;
+            transition: 0.2s;
+        }
+        .toggle .suriluvchi:before {
+            position: absolute;
+            content: "";
+            height: 20px; width: 20px;
+            left: 3px; bottom: 3px;
+            background: #FFFFFF;
+            border-radius: 50%;
+            transition: 0.2s;
+        }
+        .toggle input:checked + .suriluvchi { background: #185FA5; }
+        .toggle input:checked + .suriluvchi:before { transform: translateX(18px); }
+        .bolim-sarlavha {
+            font-size: 12px;
+            font-weight: 600;
+            color: #7C8B9E;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            margin: 20px 0 12px 0;
+        }
+        .maydon input[type=time] {
+            width: 100%;
+            height: 44px;
+            border: 1px solid #E4EDF6;
+            border-radius: 10px;
+            padding: 0 14px;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            font-size: 14px;
+            color: #0C2340;
+        }
+        .saqlash-tugma {
+            width: 100%;
+            height: 52px;
+            background: #185FA5;
+            color: #FFFFFF;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 16px;
+        }
+        .saqlash-tugma:hover {
+            box-shadow: 0 4px 14px rgba(24, 95, 165, 0.28);
+        }
+    </style>
+</head>
+<body>
+    <div class="qobiq">
+        <div class="sarlavha-panel">
+            <a href="{% url 'bildirishnomalar_royxati' %}" class="orqaga" aria-label="Orqaga">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+            <h1>Bildirishnoma sozlamalari</h1>
+        </div>
+
+        {% if xabar %}
+        <div class="xabar-quti">{{ xabar }}</div>
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="band">
+                <div>
+                    <div class="matn">Yangi buyurtma eslatmasi</div>
+                    <div class="izoh">Yangi buyurtma tushganda xabar beriladi</div>
+                </div>
+                <label class="toggle">
+                    <input type="checkbox" name="yangi_buyurtma_eslatmasi" {% if sozlama.yangi_buyurtma_eslatmasi %}checked{% endif %}>
+                    <span class="suriluvchi"></span>
+                </label>
+            </div>
+
+            <div class="band">
+                <div>
+                    <div class="matn">Qarz eslatmasi</div>
+                    <div class="izoh">Yangi qarz qo'shilganda xabar beriladi</div>
+                </div>
+                <label class="toggle">
+                    <input type="checkbox" name="qarz_eslatmasi" {% if sozlama.qarz_eslatmasi %}checked{% endif %}>
+                    <span class="suriluvchi"></span>
+                </label>
+            </div>
+
+            <p class="bolim-sarlavha">Kunlik eslatma vaqti</p>
+            <div class="maydon">
+                <input type="time" name="eslatma_vaqti" value="{{ sozlama.eslatma_vaqti|time:'H:i' }}">
+            </div>
+
+            <button type="submit" class="saqlash-tugma">Saqlash</button>
+        </form>
+    </div>
+</body>
+</html>

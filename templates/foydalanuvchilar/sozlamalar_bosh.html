@@ -146,7 +146,7 @@
 <body>
     <div class="qobiq">
         <div class="sarlavha-panel">
-            <a href="{% url 'menejer_bosh_sahifa' %}" class="orqaga" aria-label="Orqaga">
+            <a href="{% if user.rol == 'menejer' %}{% url 'menejer_bosh_sahifa' %}{% else %}{% url 'dastavchik_bosh_sahifa' %}{% endif %}" class="orqaga" aria-label="Orqaga">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </a>
             <h1>Sozlamalar</h1>
@@ -190,6 +190,13 @@
         <p class="bolim-sarlavha">Shaxsiy</p>
         <ul class="menu-royxati">
             <li>
+                <a href="{% url 'bildirishnoma_sozlamasi' %}" class="menu-band">
+                    <span class="ikonka"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M18 8A6 6 0 0 0 6 8C6 15 3 17 3 17H21S18 15 18 8Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M13.73 21A2 2 0 0 1 10.27 21" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                    <span class="matn">Bildirishnomalar</span>
+                    <span class="strelka">&#8250;</span>
+                </a>
+            </li>
+            <li>
                 <a href="{% url 'profil_tahrirlash' %}" class="menu-band">
                     <span class="ikonka"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.7"/><path d="M4 21C4 17.134 7.582 14 12 14C16.418 14 20 17.134 20 21" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></span>
                     <span class="matn">Profil</span>
@@ -215,7 +222,7 @@
     </div>
 
     <nav class="pastki-nav">
-        <a href="{% url 'menejer_bosh_sahifa' %}" class="nav-band">
+        <a href="{% if user.rol == 'menejer' %}{% url 'menejer_bosh_sahifa' %}{% else %}{% url 'dastavchik_bosh_sahifa' %}{% endif %}" class="nav-band">
             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M3 11L12 4L21 11V20A1 1 0 0 1 20 21H4A1 1 0 0 1 3 20V11Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
             </svg>
@@ -243,15 +250,11 @@
             </svg>
             Hisobot
         </a>
-        <a href="{% url 'sozlamalar_bosh' %}" class="nav-band faol">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="12" cy="12" r="3.2" stroke="currentColor" stroke-width="1.7"/>
-                <circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.7" stroke-dasharray="1.6 2.7" stroke-linecap="round"/>
-            </svg>
-            Sozlamalar
-        </a>
-    </nav>
+        </nav>
 </body>
 </html>
+
+
+
 
 

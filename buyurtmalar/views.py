@@ -10,6 +10,9 @@ from django.views.decorators.http import require_POST
 
 from dokonlar.models import Dokon
 from foydalanuvchilar.utils import tegishli_menejer
+from foydalanuvchilar.models import Foydalanuvchi
+from bildirishnomalar.models import Bildirishnoma
+from bildirishnomalar.utils import bildirishnoma_yarat
 from ombor.models import NarxSozlamasi
 from statistika.models import QarzTolovi
 
@@ -18,10 +21,12 @@ from .models import Buyurtma, BuyurtmaMahsulot
 
 @login_required
 def buyurtma_tahrirlash(request, pk):
-    if request.user.rol != 'menejer':
-        return HttpResponseForbidden("Bu sahifa faqat menejer uchun.")
+    menejer = tegishli_menejer(request.user)
+    buyurtma = get_object_or_404(Buyurtma, pk=pk, menejer=menejer)
 
-    buyurtma = get_object_or_404(Buyurtma, pk=pk, menejer=request.user)
+    if request.user.rol != 'menejer':
+        if buyurtma.zakaz_olgan_id != request.user.id and buyurtma.yetkazishga_olgan_id != request.user.id:
+            return HttpResponseForbidden("Siz faqat o'zingiz olgan buyurtmalarni tahrirlay olasiz.")
     xato = None
 
     if request.method == 'POST':
@@ -118,6 +123,15 @@ def yangi_buyurtma(request):
                     narx=narx,
                 )
 
+        dastavchiklar = Foydalanuvchi.objects.filter(menejer=menejer, rol=Foydalanuvchi.Rol.DASTAVCHIK)
+        for d in dastavchiklar:
+            if d.id != request.user.id:
+                bildirishnoma_yarat(
+                    d, Bildirishnoma.Turi.YANGI_BUYURTMA,
+                    f"{dokon.nomi} uchun yangi buyurtma tushdi",
+                    havola='/buyurtmalar/',
+                )
+
         return redirect('buyurtma_muvaffaqiyatli', pk=buyurtma.pk)
 
     menejer = tegishli_menejer(request.user)
@@ -180,13 +194,19 @@ def buyurtmalar_royxati(request):
 @login_required
 @require_POST
 def buyurtma_olish(request, pk):
-    get_object_or_404(Buyurtma, pk=pk)
+    buyurtma = get_object_or_404(Buyurtma, pk=pk)
     yangilandi = Buyurtma.objects.filter(pk=pk, holat=Buyurtma.Holat.YANGI).update(
         holat=Buyurtma.Holat.YETKAZILMOQDA,
         yetkazishga_olgan=request.user,
     )
     if yangilandi == 0:
         messages.error(request, 'Bu buyurtmani allaqachon boshqa birov olgan.')
+    elif buyurtma.zakaz_olgan_id and buyurtma.zakaz_olgan_id != request.user.id:
+        bildirishnoma_yarat(
+            buyurtma.zakaz_olgan, Bildirishnoma.Turi.BUYURTMA_OLINDI,
+            f"Buyurtma #{buyurtma.pk} ni {request.user.first_name or request.user.username} oldi",
+            havola='/buyurtmalar/',
+        )
     return redirect('buyurtmalar_royxati')
 
 
@@ -241,6 +261,13 @@ def buyurtma_yetkazish(request, pk):
         buyurtma.yetkazilgan_vaqt = timezone.now()
         buyurtma.save()
 
+        if tolov_holati == Buyurtma.TolovHolati.QARZ:
+            bildirishnoma_yarat(
+                buyurtma.menejer, Bildirishnoma.Turi.QARZ,
+                f"{buyurtma.dokon.nomi} - {qarz_summasi} so'm qarz qoldi",
+                havola='/statistika/',
+            )
+
         return redirect('buyurtmalar_royxati')
 
     return render(request, 'buyurtmalar/yetkazish_formasi.html', {'buyurtma': buyurtma})
@@ -286,5 +313,10 @@ def qarz_tolash(request, pk):
         return redirect('buyurtmalar_royxati')
 
     return render(request, 'buyurtmalar/qarz_tolash.html', {'buyurtma': buyurtma})
+
+
+
+
+
 
 
