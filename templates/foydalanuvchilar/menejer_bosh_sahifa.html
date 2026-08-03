@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
@@ -31,6 +31,12 @@
             align-items: center;
             justify-content: space-between;
             margin-bottom: 20px;
+        }
+
+        .header-tugmalar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .salom {
@@ -287,12 +293,20 @@
     <div class="sahifa">
         <div class="sarlavha-panel">
             <div class="salom">Salom, {{ user.first_name|default:user.username }}</div>
-            <div class="qongiroq">
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M18 8A6 6 0 0 0 6 8C6 15 3 17 3 17H21S18 15 18 8Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M13.73 21A2 2 0 0 1 10.27 21" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-                {% if bildirishnoma_bor %}<span class="nuqta"></span>{% endif %}
+            <div class="header-tugmalar">
+                <div class="qongiroq">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M18 8A6 6 0 0 0 6 8C6 15 3 17 3 17H21S18 15 18 8Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M13.73 21A2 2 0 0 1 10.27 21" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    {% if bildirishnoma_bor %}<span class="nuqta"></span>{% endif %}
+                </div>
+                <a href="{% url 'sozlamalar_bosh' %}" class="qongiroq" aria-label="Sozlamalar">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="12" r="3.2" stroke="currentColor" stroke-width="1.7"/>
+                        <circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.7" stroke-dasharray="1.6 2.7" stroke-linecap="round"/>
+                    </svg>
+                </a>
             </div>
         </div>
 
@@ -370,6 +384,12 @@
             </svg>
             Ombor
         </a>
+        <a href="{% url 'hisobot' %}" class="nav-band">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4 20V10M12 20V4M20 20V14" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Hisobot
+        </a>
         <a href="{% url 'sozlamalar_bosh' %}" class="nav-band">
             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="12" cy="12" r="3.2" stroke="currentColor" stroke-width="1.7"/>
@@ -380,3 +400,6 @@
     </nav>
 </body>
 </html>
+
+
+

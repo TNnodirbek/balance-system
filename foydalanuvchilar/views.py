@@ -78,6 +78,8 @@ def menejer_bosh_sahifa(request):
 @login_required
 def dastavchik_bosh_sahifa(request):
     bugun = timezone.localdate()
+    menejer = tegishli_menejer(request.user)
+    qoldiq = ombor_qoldigi(menejer)
     bugungi_yetkazilgan = Buyurtma.objects.filter(
         yetkazishga_olgan=request.user,
         holat='yetkazildi',
@@ -88,11 +90,13 @@ def dastavchik_bosh_sahifa(request):
         holat='yetkazilmoqda',
     ).count()
     yangi_buyurtmalar_soni = Buyurtma.objects.filter(
-        menejer=tegishli_menejer(request.user),
+        menejer=menejer,
         holat='yangi',
     ).count()
 
     return render(request, 'foydalanuvchilar/dastavchik_bosh_sahifa.html', {
+        'qoldiq_5l': qoldiq.get('5L', 0),
+        'qoldiq_10l': qoldiq.get('10L', 0),
         'bugungi_yetkazilgan': bugungi_yetkazilgan,
         'faol_buyurtmalar': faol_buyurtmalar,
         'yangi_buyurtmalar_soni': yangi_buyurtmalar_soni,
@@ -272,6 +276,8 @@ def dokon_tahrirlash(request, pk):
         'dokon': dokon,
         'xabar': xabar,
     })
+
+
 
 
 
