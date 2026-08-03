@@ -2,37 +2,276 @@
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Ombor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #FFFFFF;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            color: #0C2340;
+        }
+
+        .sahifa {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 20px 16px 40px;
+        }
+
+        .sarlavha-panel {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .sarlavha-chap {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .orqaga {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: #F0F8FF;
+            color: #185FA5;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+
+        .orqaga svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        h1 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0C2340;
+            margin: 0;
+        }
+
+        .fura-tugma {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            height: 34px;
+            padding: 0 12px;
+            border-radius: 10px;
+            background: #185FA5;
+            color: #FFFFFF;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            flex-shrink: 0;
+            transition: background-color 0.2s ease;
+        }
+
+        .fura-tugma:hover {
+            background: #1B6BBA;
+        }
+
+        .fura-tugma svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .bolim-sarlavha {
+            font-size: 15px;
+            font-weight: 700;
+            color: #0C2340;
+            margin: 0 0 12px;
+        }
+
+        /* Umumiy qoldiq */
+        .qoldiq-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+
+        .qoldiq-karta {
+            background: #FFFFFF;
+            border: 1px solid #E4EDF6;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            padding: 16px;
+        }
+
+        .qoldiq-hajm {
+            font-size: 12px;
+            color: #7C8B9E;
+            margin: 0 0 6px;
+        }
+
+        .qoldiq-son {
+            font-size: 28px;
+            font-weight: 700;
+            color: #185FA5;
+            margin: 0;
+        }
+
+        .qoldiq-dona {
+            font-size: 14px;
+            font-weight: 600;
+            color: #185FA5;
+        }
+
+        .bosh-qoldiq {
+            grid-column: 1 / -1;
+            text-align: center;
+            color: #94A7BD;
+            font-size: 13px;
+            padding: 20px 0;
+        }
+
+        /* Furalar tarixi */
+        .fura-karta {
+            background: #FFFFFF;
+            border: 1px solid #E4EDF6;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .fura-tepa {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .fura-sana {
+            font-size: 14px;
+            font-weight: 600;
+            color: #0C2340;
+        }
+
+        .fura-xarajat {
+            font-size: 15px;
+            font-weight: 700;
+            color: #185FA5;
+        }
+
+        .fura-mahsulotlar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .mahsulot-pill {
+            background: #F0F8FF;
+            color: #185FA5;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 5px 10px;
+            border-radius: 999px;
+        }
+
+        .fura-detal {
+            font-size: 12px;
+            color: #7C8B9E;
+            margin: 0;
+        }
+
+        /* Bo'sh holat */
+        .bosh-holat {
+            text-align: center;
+            padding: 50px 20px;
+            color: #94A7BD;
+        }
+
+        .bosh-holat svg {
+            width: 44px;
+            height: 44px;
+            margin-bottom: 12px;
+            color: #DCE9F5;
+        }
+
+        .bosh-holat p {
+            font-size: 14px;
+            margin: 0;
+        }
+
+        @media (max-width: 360px) {
+            .qoldiq-son {
+                font-size: 24px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>Ombor</h1>
-    <p><a href="{% url 'fura_qoshish' %}">Fura qo'shish</a></p>
-
-    <h2>Umumiy qoldiq</h2>
-    <ul>
-        {% for hajm, son in qoldiq.items %}
-            <li>{{ hajm }}: {{ son }}</li>
-        {% empty %}
-            <li>Ma'lumot yo'q</li>
-        {% endfor %}
-    </ul>
-
-    <h2>Furalar</h2>
-    {% for fura in furalar %}
-        <div>
-            <hr>
-            <p><strong>Fura - {{ fura.sana }}</strong></p>
-            <ul>
-                {% for mahsulot in fura.mahsulotlar.all %}
-                    <li>{{ mahsulot.hajm }}: {{ mahsulot.miqdor }}</li>
-                {% endfor %}
-            </ul>
-            <p>Suv narxi: {{ fura.suv_narxi }}</p>
-            <p>Dastavka narxi: {{ fura.dastavka_narxi }}</p>
-            <p>Jami xarajat: {{ fura.jami_xarajat }}</p>
+    <div class="sahifa">
+        <div class="sarlavha-panel">
+            <div class="sarlavha-chap">
+                <a href="{% url 'menejer_bosh_sahifa' %}" class="orqaga" aria-label="Orqaga">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M15 19L8 12L15 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </a>
+                <h1>Ombor</h1>
+            </div>
+            <a href="{% url 'fura_qoshish' %}" class="fura-tugma">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+                </svg>
+                Fura
+            </a>
         </div>
-    {% empty %}
-        <p>Furalar topilmadi.</p>
-    {% endfor %}
+
+        <p class="bolim-sarlavha">Umumiy qoldiq</p>
+        <div class="qoldiq-grid">
+            {% for hajm, son in qoldiq.items %}
+                <div class="qoldiq-karta">
+                    <p class="qoldiq-hajm">{{ hajm }}</p>
+                    <p class="qoldiq-son">{{ son }} <span class="qoldiq-dona">dona</span></p>
+                </div>
+            {% empty %}
+                <p class="bosh-qoldiq">Ma'lumot yo'q</p>
+            {% endfor %}
+        </div>
+
+        <p class="bolim-sarlavha">Furalar tarixi</p>
+        {% for fura in furalar %}
+            <div class="fura-karta">
+                <div class="fura-tepa">
+                    <span class="fura-sana">{{ fura.sana }}</span>
+                    <span class="fura-xarajat">{{ fura.jami_xarajat }} so'm</span>
+                </div>
+
+                <div class="fura-mahsulotlar">
+                    {% for mahsulot in fura.mahsulotlar.all %}
+                        <span class="mahsulot-pill">{{ mahsulot.hajm }}: {{ mahsulot.miqdor }} dona</span>
+                    {% endfor %}
+                </div>
+
+                <p class="fura-detal">Suv narxi: {{ fura.suv_narxi }} &middot; Dastavka: {{ fura.dastavka_narxi }}</p>
+            </div>
+        {% empty %}
+            <div class="bosh-holat">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M3 9L12 3L21 9V20A1 1 0 0 1 20 21H4A1 1 0 0 1 3 20V9Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                    <path d="M8 21V13H16V21" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                </svg>
+                <p>Furalar topilmadi</p>
+            </div>
+        {% endfor %}
+    </div>
 </body>
 </html>
