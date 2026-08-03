@@ -2,42 +2,263 @@
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Fura qo'shish</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #FFFFFF;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            color: #0C2340;
+        }
+
+        .sahifa {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 20px 16px 40px;
+        }
+
+        .sarlavha-panel {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .orqaga {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: #F0F8FF;
+            color: #185FA5;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+
+        .orqaga svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        h1 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0C2340;
+            margin: 0;
+        }
+
+        .xato {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            background: #FCEBEB;
+            color: #A32D2D;
+            border-radius: 10px;
+            padding: 12px 14px;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 18px;
+        }
+
+        .xato svg {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .maydon-xatosi {
+            font-size: 11px;
+            color: #A32D2D;
+            margin: 4px 0 0;
+        }
+
+        .bolim {
+            margin-bottom: 22px;
+        }
+
+        .bolim-sarlavha {
+            font-size: 15px;
+            font-weight: 700;
+            color: #0C2340;
+            margin: 0 0 12px;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #0C2340;
+            margin-bottom: 6px;
+        }
+
+        .maydon {
+            margin-bottom: 14px;
+        }
+
+        .stil-input {
+            width: 100%;
+            height: 44px;
+            border: 1px solid #E4EDF6;
+            border-radius: 10px;
+            padding: 0 14px;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            font-size: 14px;
+            color: #0C2340;
+            background: #FFFFFF;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .stil-input:focus {
+            border-color: #185FA5;
+            box-shadow: 0 0 0 3px rgba(24, 95, 165, 0.15);
+        }
+
+        .mahsulot-qatori {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .mahsulot-qatori .maydon {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        .qator-qoshish-tugma {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            width: 100%;
+            height: 40px;
+            border: none;
+            border-radius: 10px;
+            background: #F0F8FF;
+            color: #185FA5;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 4px;
+            transition: background-color 0.2s ease;
+        }
+
+        .qator-qoshish-tugma:hover {
+            background: #E0EEFA;
+        }
+
+        .saqlash-tugma {
+            width: 100%;
+            height: 52px;
+            border: none;
+            border-radius: 12px;
+            background: #185FA5;
+            color: #FFFFFF;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: box-shadow 0.2s ease, background-color 0.2s ease;
+        }
+
+        .saqlash-tugma:hover {
+            background: #1B6BBA;
+            box-shadow: 0 0 0 4px rgba(24, 95, 165, 0.2);
+        }
+    </style>
 </head>
 <body>
-    <h1>Fura qo'shish</h1>
-    {% if form.errors %}
-        <p>Formada xatolik bor, quyidagi maydonlarni tekshiring.</p>
-    {% endif %}
-
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-
-        <h2>Mahsulotlar</h2>
-        <div id="mahsulot_qatorlari">
-            <div>
-                <label>Hajm: <input type="text" name="hajm[]" value="5L"></label>
-                <label>Miqdor: <input type="number" name="miqdor[]" value="0"></label>
-            </div>
-            <div>
-                <label>Hajm: <input type="text" name="hajm[]" value="10L"></label>
-                <label>Miqdor: <input type="number" name="miqdor[]" value="0"></label>
-            </div>
+    <div class="sahifa">
+        <div class="sarlavha-panel">
+            <a href="{% url 'ombor_royxati' %}" class="orqaga" aria-label="Orqaga">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15 19L8 12L15 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </a>
+            <h1>Yangi fura</h1>
         </div>
-        <button type="button" onclick="qatorQoshish()">+ Boshqa hajm qo'shish</button>
-        <br><br>
 
-        <button type="submit">Saqlash</button>
-    </form>
+        {% if form.errors %}
+            <div class="xato">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 9V13M12 17H12.01M10.29 3.86L1.82 18A2 2 0 0 0 3.55 21H20.45A2 2 0 0 0 22.18 18L13.71 3.86A2 2 0 0 0 10.29 3.86Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span>Formada xatolik bor, quyidagi maydonlarni tekshiring.</span>
+            </div>
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="bolim">
+                <div class="maydon">
+                    <label for="{{ form.sana.id_for_label }}">Sana</label>
+                    {{ form.sana }}
+                    {% if form.sana.errors %}<p class="maydon-xatosi">{{ form.sana.errors.0 }}</p>{% endif %}
+                </div>
+                <div class="maydon">
+                    <label for="{{ form.suv_narxi.id_for_label }}">Suv narxi</label>
+                    {{ form.suv_narxi }}
+                    {% if form.suv_narxi.errors %}<p class="maydon-xatosi">{{ form.suv_narxi.errors.0 }}</p>{% endif %}
+                </div>
+                <div class="maydon">
+                    <label for="{{ form.dastavka_narxi.id_for_label }}">Dastavka narxi</label>
+                    {{ form.dastavka_narxi }}
+                    {% if form.dastavka_narxi.errors %}<p class="maydon-xatosi">{{ form.dastavka_narxi.errors.0 }}</p>{% endif %}
+                </div>
+            </div>
+
+            <div class="bolim">
+                <p class="bolim-sarlavha">Mahsulotlar</p>
+                <div id="mahsulot_qatorlari">
+                    <div class="mahsulot-qatori">
+                        <div class="maydon">
+                            <label>Hajm</label>
+                            <input type="text" name="hajm[]" value="5L" class="stil-input">
+                        </div>
+                        <div class="maydon">
+                            <label>Miqdor</label>
+                            <input type="number" name="miqdor[]" value="0" class="stil-input">
+                        </div>
+                    </div>
+                    <div class="mahsulot-qatori">
+                        <div class="maydon">
+                            <label>Hajm</label>
+                            <input type="text" name="hajm[]" value="10L" class="stil-input">
+                        </div>
+                        <div class="maydon">
+                            <label>Miqdor</label>
+                            <input type="number" name="miqdor[]" value="0" class="stil-input">
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="qator-qoshish-tugma" onclick="qatorQoshish()">+ Boshqa hajm qo'shish</button>
+            </div>
+
+            <button type="submit" class="saqlash-tugma">Saqlash</button>
+        </form>
+    </div>
 
     <script>
         function qatorQoshish() {
             var konteyner = document.getElementById('mahsulot_qatorlari');
             var qator = document.createElement('div');
+            qator.className = 'mahsulot-qatori';
             qator.innerHTML =
-                '<label>Hajm: <input type="text" name="hajm[]" value=""></label>' +
-                '<label>Miqdor: <input type="number" name="miqdor[]" value="0"></label>';
+                '<div class="maydon"><label>Hajm</label><input type="text" name="hajm[]" value="" class="stil-input"></div>' +
+                '<div class="maydon"><label>Miqdor</label><input type="number" name="miqdor[]" value="0" class="stil-input"></div>';
             konteyner.appendChild(qator);
         }
     </script>
