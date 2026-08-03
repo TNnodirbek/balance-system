@@ -2,74 +2,496 @@
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Hisobot</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #FFFFFF;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            color: #0C2340;
+        }
+
+        .sahifa {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 20px 16px 96px;
+        }
+
+        .sarlavha-panel {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .orqaga {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: #F0F8FF;
+            color: #185FA5;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+
+        .orqaga svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        h1 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0C2340;
+            margin: 0;
+        }
+
+        .bolim-sarlavha {
+            font-size: 15px;
+            font-weight: 700;
+            color: #0C2340;
+            margin: 0 0 12px;
+        }
+
+        /* Filtr pillari */
+        .filtr-qatori {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+            margin-bottom: 12px;
+        }
+
+        .filtr-pill {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 36px;
+            padding: 0 16px;
+            border-radius: 20px;
+            border: 1px solid #DCE9F5;
+            background: #F0F8FF;
+            color: #185FA5;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .filtr-pill.faol {
+            background: #185FA5;
+            color: #FFFFFF;
+            border-color: #185FA5;
+        }
+
+        .oraliq-detail {
+            margin-bottom: 8px;
+        }
+
+        .oraliq-detail summary {
+            font-size: 12px;
+            font-weight: 600;
+            color: #185FA5;
+            cursor: pointer;
+            list-style: none;
+        }
+
+        .oraliq-detail summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .oraliq-forma {
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .oraliq-maydon {
+            flex: 1;
+        }
+
+        .oraliq-maydon label {
+            display: block;
+            font-size: 11px;
+            font-weight: 600;
+            color: #7C8B9E;
+            margin-bottom: 4px;
+        }
+
+        .oraliq-maydon input {
+            width: 100%;
+            height: 40px;
+            border: 1px solid #E4EDF6;
+            border-radius: 10px;
+            padding: 0 10px;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            font-size: 13px;
+            color: #0C2340;
+        }
+
+        .oraliq-tugma {
+            height: 40px;
+            padding: 0 16px;
+            border: none;
+            border-radius: 10px;
+            background: #185FA5;
+            color: #FFFFFF;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* Asosiy ko'rsatkich kartalari */
+        .korsatkich-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 20px 0 24px;
+        }
+
+        .korsatkich-karta {
+            background: #FFFFFF;
+            border: 1px solid #E4EDF6;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            padding: 16px;
+        }
+
+        .korsatkich-sarlavha {
+            font-size: 12px;
+            color: #7C8B9E;
+            margin: 0 0 6px;
+        }
+
+        .korsatkich-son {
+            font-size: 20px;
+            font-weight: 700;
+            color: #185FA5;
+            margin: 0;
+        }
+
+        .korsatkich-son.musbat {
+            color: #2E7D32;
+        }
+
+        .korsatkich-son.manfiy {
+            color: #A32D2D;
+        }
+
+        /* Kartalar - umumiy */
+        .karta {
+            background: #FFFFFF;
+            border: 1px solid #E4EDF6;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+
+        .qator {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 13px;
+            color: #0C2340;
+            padding: 6px 0;
+        }
+
+        .qator-label {
+            color: #7C8B9E;
+        }
+
+        .xarajat-link {
+            display: inline-block;
+            margin-top: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #185FA5;
+            text-decoration: none;
+        }
+
+        .kesim-qatori {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 13px;
+            padding: 8px 0;
+            border-bottom: 1px solid #F0F3F7;
+        }
+
+        .kesim-qatori:last-child {
+            border-bottom: none;
+        }
+
+        .kesim-hajm {
+            font-weight: 700;
+            color: #0C2340;
+        }
+
+        .kesim-son {
+            color: #7C8B9E;
+        }
+
+        .kesim-summa {
+            font-weight: 600;
+            color: #185FA5;
+        }
+
+        .dastavchik-qatori {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 13px;
+            padding: 8px 0;
+            border-bottom: 1px solid #F0F3F7;
+        }
+
+        .dastavchik-qatori:last-child {
+            border-bottom: none;
+        }
+
+        .dastavchik-ism {
+            font-weight: 600;
+            color: #0C2340;
+        }
+
+        .dastavchik-detal {
+            color: #7C8B9E;
+            font-size: 12px;
+        }
+
+        .qarz-qatori {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 10px 0;
+            border-bottom: 1px solid #F0F3F7;
+        }
+
+        .qarz-qatori:last-child {
+            border-bottom: none;
+        }
+
+        .qarz-dokon {
+            font-weight: 600;
+            color: #0C2340;
+            font-size: 13px;
+        }
+
+        .qarz-summa {
+            color: #A32D2D;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .qarz-tolash-link {
+            flex-shrink: 0;
+            font-size: 12px;
+            font-weight: 600;
+            color: #A32D2D;
+            border: 1px solid #F0C4C4;
+            border-radius: 8px;
+            padding: 5px 10px;
+            text-decoration: none;
+        }
+
+        .bosh-matn {
+            text-align: center;
+            color: #94A7BD;
+            font-size: 13px;
+            padding: 10px 0;
+        }
+
+        /* Pastki fiksirlangan navigatsiya */
+        .pastki-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #F0F8FF;
+            display: flex;
+            justify-content: space-around;
+            padding: 6px 8px calc(6px + env(safe-area-inset-bottom));
+            border-top: 1px solid #DCE9F5;
+        }
+
+        .nav-band {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            min-height: 44px;
+            min-width: 64px;
+            padding: 4px 6px;
+            text-decoration: none;
+            color: #7C8B9E;
+            font-size: 11px;
+            font-weight: 600;
+            border-radius: 10px;
+        }
+
+        .nav-band svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .nav-band.faol {
+            color: #185FA5;
+        }
+    </style>
 </head>
 <body>
-    <h1>Hisobot</h1>
-    <p><a href="{% url 'xarajat_qoshish' %}">Xarajat qo'shish</a></p>
-
-    <p>
-        Davr:
-        <a href="?filter=bugun">Bugun</a> |
-        <a href="?filter=hafta">Hafta</a> |
-        <a href="?filter=oy">Oy</a>
-        (joriy: {{ filtr }}, {{ boshlanish }} - {{ tugash }})
-    </p>
-
-    <form method="get">
-        <label>Boshlanish: <input type="date" name="boshlanish" value="{{ boshlanish|date:'Y-m-d' }}"></label>
-        <label>Tugash: <input type="date" name="tugash" value="{{ tugash|date:'Y-m-d' }}"></label>
-        <button type="submit">Oraliqni ko'rsatish</button>
-    </form>
-
-    <h2>Asosiy ko'rsatkichlar</h2>
-    <div>
-        <div>
-            <strong>Umumiy savdo</strong>
-            <p>{{ umumiy_savdo }}</p>
+    <div class="sahifa">
+        <div class="sarlavha-panel">
+            <a href="{% url 'menejer_bosh_sahifa' %}" class="orqaga" aria-label="Orqaga">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15 19L8 12L15 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </a>
+            <h1>Hisobot</h1>
         </div>
-        <div>
-            <strong>Jami xarajat</strong>
-            <p>{{ jami_xarajat }}</p>
-            <p>(kunlik xarajat: {{ umumiy_kunlik_xarajat }}, fura xarajati: {{ umumiy_fura_xarajat }})</p>
+
+        <div class="filtr-qatori">
+            <a href="?filter=bugun" class="filtr-pill{% if filtr == 'bugun' %} faol{% endif %}">Bugun</a>
+            <a href="?filter=hafta" class="filtr-pill{% if filtr == 'hafta' %} faol{% endif %}">Hafta</a>
+            <a href="?filter=oy" class="filtr-pill{% if filtr == 'oy' %} faol{% endif %}">Oy</a>
+            {% if filtr == 'oraliq' %}
+                <span class="filtr-pill faol">{{ boshlanish|date:"d.m" }} &ndash; {{ tugash|date:"d.m" }}</span>
+            {% endif %}
         </div>
-        <div>
-            <strong>Sof foyda</strong>
-            <p>{{ sof_foyda }}</p>
+
+        <details class="oraliq-detail">
+            <summary>Boshqa oraliq</summary>
+            <form method="get" class="oraliq-forma">
+                <div class="oraliq-maydon">
+                    <label for="boshlanish">Boshlanish</label>
+                    <input type="date" name="boshlanish" id="boshlanish" value="{{ boshlanish|date:'Y-m-d' }}">
+                </div>
+                <div class="oraliq-maydon">
+                    <label for="tugash">Tugash</label>
+                    <input type="date" name="tugash" id="tugash" value="{{ tugash|date:'Y-m-d' }}">
+                </div>
+                <button type="submit" class="oraliq-tugma">Ko'rsatish</button>
+            </form>
+        </details>
+
+        <div class="korsatkich-grid">
+            <div class="korsatkich-karta">
+                <p class="korsatkich-sarlavha">Umumiy savdo</p>
+                <p class="korsatkich-son">{{ umumiy_savdo }} so'm</p>
+            </div>
+            <div class="korsatkich-karta">
+                <p class="korsatkich-sarlavha">Sof foyda</p>
+                <p class="korsatkich-son{% if sof_foyda < 0 %} manfiy{% else %} musbat{% endif %}">{{ sof_foyda }} so'm</p>
+            </div>
+            <div class="korsatkich-karta">
+                <p class="korsatkich-sarlavha">Jami xarajat</p>
+                <p class="korsatkich-son">{{ jami_xarajat }} so'm</p>
+            </div>
+            <div class="korsatkich-karta">
+                <p class="korsatkich-sarlavha">Yig'ilgan qarz</p>
+                <p class="korsatkich-son">{{ yig_ilgan_qarz }} so'm</p>
+            </div>
         </div>
-        <div>
-            <strong>Yig'ilgan qarz</strong>
-            <p>{{ yig_ilgan_qarz }}</p>
+
+        <p class="bolim-sarlavha">Xarajatlar tafsiloti</p>
+        <div class="karta">
+            <div class="qator">
+                <span class="qator-label">Kunlik xarajatlar</span>
+                <span>{{ umumiy_kunlik_xarajat }} so'm</span>
+            </div>
+            <div class="qator">
+                <span class="qator-label">Fura xarajatlari</span>
+                <span>{{ umumiy_fura_xarajat }} so'm</span>
+            </div>
+            <a href="{% url 'xarajat_qoshish' %}" class="xarajat-link">+ Xarajat qo'shish</a>
+        </div>
+
+        <p class="bolim-sarlavha">Mahsulot kesimida</p>
+        <div class="karta">
+            {% for hajm, malumot in mahsulot_kesimida.items %}
+                <div class="kesim-qatori">
+                    <span class="kesim-hajm">{{ hajm }}</span>
+                    <span class="kesim-son">{{ malumot.soni }} dona</span>
+                    <span class="kesim-summa">{{ malumot.summa }} so'm</span>
+                </div>
+            {% empty %}
+                <p class="bosh-matn">Ma'lumot yo'q</p>
+            {% endfor %}
+        </div>
+
+        <p class="bolim-sarlavha">Dastavchiklar statistikasi</p>
+        <div class="karta">
+            {% for ism, malumot in dastavchiklar_statistikasi.items %}
+                <div class="dastavchik-qatori">
+                    <span class="dastavchik-ism">{{ ism }}</span>
+                    <span class="dastavchik-detal">{{ malumot.soni }} ta buyurtma &middot; {{ malumot.summa }} so'm</span>
+                </div>
+            {% empty %}
+                <p class="bosh-matn">Ma'lumot yo'q</p>
+            {% endfor %}
+        </div>
+
+        <p class="bolim-sarlavha">Qarzlar ro'yxati</p>
+        <div class="karta">
+            {% for buyurtma in qarzlar_royxati %}
+                <div class="qarz-qatori">
+                    <div>
+                        <div class="qarz-dokon">{{ buyurtma.dokon.nomi }}</div>
+                        <div class="qarz-summa">{{ buyurtma.qarz_summasi }} so'm</div>
+                    </div>
+                    <a href="{% url 'qarz_tolash' buyurtma.pk %}" class="qarz-tolash-link">Qarzni to'lash</a>
+                </div>
+            {% empty %}
+                <p class="bosh-matn">Qarzdorlik yo'q</p>
+            {% endfor %}
         </div>
     </div>
 
-    <h2>Mahsulot kesimida</h2>
-    <ul>
-        {% for hajm, ma in mahsulot_kesimida.items %}
-            <li>{{ hajm }}: {{ ma.soni }} dona - {{ ma.summa }}</li>
-        {% empty %}
-            <li>Ma'lumot yo'q.</li>
-        {% endfor %}
-    </ul>
-
-    <h2>Dastavchiklar statistikasi</h2>
-    <table border="1">
-        <tr><th>Dastavchik</th><th>Yetkazgan buyurtmalar soni</th><th>Yig'gan summa</th></tr>
-        {% for nomi, stat in dastavchiklar_statistikasi.items %}
-            <tr><td>{{ nomi }}</td><td>{{ stat.soni }}</td><td>{{ stat.summa }}</td></tr>
-        {% empty %}
-            <tr><td colspan="3">Ma'lumot yo'q.</td></tr>
-        {% endfor %}
-    </table>
-
-    <h2>Qarzlar ro'yxati (joriy holat)</h2>
-    <table border="1">
-        <tr><th>Do'kon</th><th>Qarz summasi</th></tr>
-        {% for buyurtma in qarzlar_royxati %}
-            <tr><td>{{ buyurtma.dokon.nomi }}</td><td>{{ buyurtma.qarz_summasi }}</td></tr>
-        {% empty %}
-            <tr><td colspan="2">Qarz yo'q.</td></tr>
-        {% endfor %}
-    </table>
+    <nav class="pastki-nav">
+        <a href="{% url 'menejer_bosh_sahifa' %}" class="nav-band">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3 11L12 4L21 11V20A1 1 0 0 1 20 21H4A1 1 0 0 1 3 20V11Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+            </svg>
+            Bosh sahifa
+        </a>
+        <a href="{% url 'buyurtmalar_royxati' %}" class="nav-band">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3 7L12 3L21 7V17L12 21L3 17V7Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+                <path d="M3 7L12 11L21 7M12 11V21" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+            </svg>
+            Buyurtmalar
+        </a>
+        <a href="{% url 'ombor_royxati' %}" class="nav-band">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3 9L12 3L21 9V20A1 1 0 0 1 20 21H4A1 1 0 0 1 3 20V9Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+                <path d="M8 21V13H16V21" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+            </svg>
+            Ombor
+        </a>
+        <a href="{% url 'sozlamalar_bosh' %}" class="nav-band">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="3.2" stroke="currentColor" stroke-width="1.7"/>
+                <circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.7" stroke-dasharray="1.6 2.7" stroke-linecap="round"/>
+            </svg>
+            Sozlamalar
+        </a>
+    </nav>
 </body>
 </html>
