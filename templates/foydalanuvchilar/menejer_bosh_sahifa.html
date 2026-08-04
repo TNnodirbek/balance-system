@@ -74,33 +74,64 @@
             border: 1.5px solid #FFFFFF;
         }
 
-        /* Ombor qoldig'i kartochkalari */
-        .ombor-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 16px;
-        }
-
-        .karta {
+        /* Jami qoldiq kartasi (accordion) */
+        .qoldiq-karta {
             background: #FFFFFF;
             border: 1px solid #E4EDF6;
             border-radius: 16px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
             padding: 16px;
+            margin-bottom: 16px;
+            cursor: pointer;
         }
 
-        .karta-sarlavha {
+        .qoldiq-sarlavha {
+            display: flex;
+            align-items: center;
+            gap: 4px;
             font-size: 12px;
             color: #7C8B9E;
             margin: 0 0 6px;
         }
 
-        .karta-son {
+        .qoldiq-strelka {
+            font-size: 9px;
+            transition: transform 0.2s ease;
+        }
+
+        .qoldiq-strelka.ochiq {
+            transform: rotate(180deg);
+        }
+
+        .qoldiq-son {
             font-size: 28px;
             font-weight: 700;
             color: #185FA5;
             margin: 0;
+        }
+
+        .qoldiq-detal {
+            display: none;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #F0F3F7;
+        }
+
+        .qoldiq-detal.ochiq {
+            display: block;
+        }
+
+        .qoldiq-detal-qatori {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            padding: 4px 0;
+            color: #0C2340;
+        }
+
+        .qoldiq-detal-qatori span:last-child {
+            font-weight: 600;
+            color: #185FA5;
         }
 
         /* Tezkor harakat tugmasi */
@@ -377,14 +408,15 @@
             </div>
         </div>
 
-        <div class="ombor-grid">
-            <div class="karta">
-                <p class="karta-sarlavha">5L suv</p>
-                <p class="karta-son">{{ qoldiq_5l }} dona</p>
-            </div>
-            <div class="karta">
-                <p class="karta-sarlavha">10L suv</p>
-                <p class="karta-son">{{ qoldiq_10l }} dona</p>
+        <div class="qoldiq-karta" id="qoldiq-karta" onclick="qoldiqToggle()">
+            <p class="qoldiq-sarlavha">Jami qoldiq <span class="qoldiq-strelka" id="qoldiq-strelka">&#9660;</span></p>
+            <p class="qoldiq-son">{{ jami_qoldiq }}</p>
+            <div class="qoldiq-detal" id="qoldiq-detal">
+                {% for hajm, son in qoldiq.items %}
+                    <div class="qoldiq-detal-qatori"><span>{{ hajm }}</span><span>{{ son }}</span></div>
+                {% empty %}
+                    <div class="qoldiq-detal-qatori"><span>Ma'lumot yo'q</span></div>
+                {% endfor %}
             </div>
         </div>
 
@@ -461,6 +493,13 @@
             Hisobot
         </a>
         </nav>
+
+    <script>
+        function qoldiqToggle() {
+            document.getElementById('qoldiq-detal').classList.toggle('ochiq');
+            document.getElementById('qoldiq-strelka').classList.toggle('ochiq');
+        }
+    </script>
 </body>
 </html>
 

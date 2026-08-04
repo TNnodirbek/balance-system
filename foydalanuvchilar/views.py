@@ -78,8 +78,8 @@ def menejer_bosh_sahifa(request):
     return render(request, 'foydalanuvchilar/menejer_bosh_sahifa.html', {
         'bildirishnoma_bor': bildirishnoma_bor,
         'yolda_royxat': yolda_royxat,
-        'qoldiq_5l': qoldiq.get('5L', 0),
-        'qoldiq_10l': qoldiq.get('10L', 0),
+        'qoldiq': qoldiq,
+        'jami_qoldiq': sum(qoldiq.values()),
         'bugungi_buyurtmalar_soni': bugungi_buyurtmalar_soni,
         'bugun_yetkazilgan_soni': bugun_yetkazilgan_soni,
         'qarzdorlik': qarzdorlik,
@@ -118,8 +118,8 @@ def dastavchik_bosh_sahifa(request):
     return render(request, 'foydalanuvchilar/dastavchik_bosh_sahifa.html', {
         'bildirishnoma_bor': bildirishnoma_bor,
         'faol_royxat': faol_royxat,
-        'qoldiq_5l': qoldiq.get('5L', 0),
-        'qoldiq_10l': qoldiq.get('10L', 0),
+        'qoldiq': qoldiq,
+        'jami_qoldiq': sum(qoldiq.values()),
         'bugungi_yetkazilgan': bugungi_yetkazilgan,
         'faol_buyurtmalar': faol_buyurtmalar,
         'yangi_buyurtmalar_soni': yangi_buyurtmalar_soni,
