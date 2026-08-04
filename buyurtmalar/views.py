@@ -113,11 +113,13 @@ def yangi_buyurtma(request):
         if dokon_id:
             dokon = Dokon.objects.get(pk=dokon_id)
         else:
-            dokon = Dokon.objects.create(
-                nomi=request.POST.get('dokon_nomi', ''),
-                manzili=request.POST.get('dokon_manzil', ''),
-                telefon=request.POST.get('dokon_telefon', ''),
+            dokon, _ = Dokon.objects.get_or_create(
                 menejer=menejer,
+                nomi=request.POST.get('dokon_nomi', ''),
+                defaults={
+                    'manzili': request.POST.get('dokon_manzil', ''),
+                    'telefon': request.POST.get('dokon_telefon', ''),
+                },
             )
 
         joylashuv_lat = request.POST.get('joylashuv_lat')
