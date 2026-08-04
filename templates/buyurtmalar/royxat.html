@@ -350,28 +350,101 @@
             margin: 0 0 12px;
         }
 
-        .harakat-tugma {
-            display: block;
+        /* Ko'p tanlash belgilagichi */
+        .tanlov-doira-qobiq {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            flex-shrink: 0;
+            margin-right: 10px;
+        }
+
+        .tanlov-doira-qobiq input[type="checkbox"] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .tanlov-doira {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid #DCE9F5;
+            background: #FFFFFF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+        }
+
+        .tanlov-doira::after {
+            content: '';
+            width: 10px;
+            height: 6px;
+            border-left: 2.5px solid #FFFFFF;
+            border-bottom: 2.5px solid #FFFFFF;
+            transform: rotate(-45deg) scale(0);
+            transition: transform 0.15s ease;
+            margin-top: -2px;
+        }
+
+        .tanlov-doira-qobiq input[type="checkbox"]:checked + .tanlov-doira {
+            background: #2E7D32;
+            border-color: #2E7D32;
+            transform: scale(1.08);
+        }
+
+        .tanlov-doira-qobiq input[type="checkbox"]:checked + .tanlov-doira::after {
+            transform: rotate(-45deg) scale(1);
+        }
+
+        /* Ko'p tanlash paneli */
+        .tanlov-paneli {
+            display: none;
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 100;
+            max-width: 480px;
+            margin: 0 auto;
+            background: #FFFFFF;
+            border-top: 1px solid #E4EDF6;
+            box-shadow: 0 -4px 16px rgba(12, 35, 64, 0.10);
+            padding: 14px 16px calc(14px + env(safe-area-inset-bottom));
+        }
+
+        .tanlov-matn {
+            font-size: 14px;
+            font-weight: 700;
+            color: #0C2340;
+            margin: 0 0 4px;
+        }
+
+        .tanlov-hisob {
+            font-size: 12px;
+            color: #7C8B9E;
+            margin: 0 0 12px;
+        }
+
+        .tanlov-saqlash-tugma {
             width: 100%;
-            height: 44px;
+            height: 48px;
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
+            background: #185FA5;
+            color: #FFFFFF;
             font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
             font-size: 14px;
             font-weight: 600;
-            color: #FFFFFF;
-            text-align: center;
-            line-height: 44px;
             cursor: pointer;
-            text-decoration: none;
+            transition: background-color 0.2s ease;
         }
 
-        .tugma-olish {
-            background: #185FA5;
-        }
-
-        .tugma-yetkazdim {
-            background: #2E7D32;
+        .tanlov-saqlash-tugma:hover {
+            background: #1B6BBA;
         }
 
         /* Bo'sh holat */
@@ -467,8 +540,21 @@
         </div>
 
         {% for buyurtma in buyurtmalar %}
-            <div class="buyurtma-karta{% if buyurtma.holat == 'yetkazildi' %} karta-kichik{% endif %}">
+            <div class="buyurtma-karta{% if buyurtma.holat == 'yetkazildi' %} karta-kichik{% endif %}" style="position:relative;">
+                <a href="{% url 'buyurtma_batafsil' buyurtma.pk %}" style="position:absolute;right:10px;top:10px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;color:#B9C6D6;font-size:20px;text-decoration:none;z-index:5;" aria-label="Batafsil">&#8250;</a>
                 <div class="karta-tepa">
+                    {% if buyurtma.holat == 'yangi' %}
+                        <label class="tanlov-doira-qobiq">
+                            <input
+                                type="checkbox"
+                                class="tanlov-checkbox"
+                                data-buyurtma-id="{{ buyurtma.pk }}"
+                                data-5l="{{ buyurtma.miqdor_5l }}"
+                                data-10l="{{ buyurtma.miqdor_10l }}"
+                            >
+                            <span class="tanlov-doira"></span>
+                        </label>
+                    {% endif %}
                     <div>
                         <p class="buyurtma-raqam">Buyurtma #{{ buyurtma.pk }}</p>
                         <p class="dokon-nomi">{{ buyurtma.dokon.nomi }}</p>
@@ -542,14 +628,6 @@
                     Zakaz: {{ buyurtma.zakaz_olgan.username }}{% if buyurtma.yetkazishga_olgan %} &middot; Yetkazmoqda: {{ buyurtma.yetkazishga_olgan.username }}{% endif %}
                 </p>
 
-                {% if buyurtma.holat == 'yangi' %}
-                    <form method="post" action="{% url 'buyurtma_olish' buyurtma.pk %}">
-                        {% csrf_token %}
-                        <button type="submit" class="harakat-tugma tugma-olish">Men olaman</button>
-                    </form>
-                {% elif buyurtma.holat == 'yetkazilmoqda' and buyurtma.yetkazishga_olgan_id == request.user.id %}
-                    <a href="{% url 'buyurtma_yetkazish' buyurtma.pk %}" class="harakat-tugma tugma-yetkazdim">Yetkazdim</a>
-                {% endif %}
             </div>
         {% empty %}
             <div class="bosh-holat">
@@ -560,6 +638,16 @@
                 <p>Buyurtmalar topilmadi</p>
             </div>
         {% endfor %}
+    </div>
+
+    <div class="tanlov-paneli" id="tanlov-paneli">
+        <p class="tanlov-matn">Tanlangan: <span id="tanlov-soni">0</span> ta buyurtma</p>
+        <p class="tanlov-hisob">5L: <span id="tanlov-5l">0</span> dona | 10L: <span id="tanlov-10l">0</span> dona | Jami: <span id="tanlov-jami">0</span> dona</p>
+        <form method="post" action="{% url 'buyurtmalar_koplab_olish' %}" id="tanlov-forma">
+            {% csrf_token %}
+            <div id="tanlov-inputlar"></div>
+            <button type="submit" class="tanlov-saqlash-tugma">Saqlash</button>
+        </form>
     </div>
 
     <nav class="pastki-nav">
@@ -592,8 +680,45 @@
             Hisobot
         </a>
         </nav>
+
+    <script>
+        function tanlovYangilash() {
+            var checkboxlar = document.querySelectorAll('.tanlov-checkbox:checked');
+            var jami5l = 0;
+            var jami10l = 0;
+            checkboxlar.forEach(function (cb) {
+                jami5l += parseInt(cb.dataset['5l'], 10) || 0;
+                jami10l += parseInt(cb.dataset['10l'], 10) || 0;
+            });
+
+            document.getElementById('tanlov-soni').textContent = checkboxlar.length;
+            document.getElementById('tanlov-5l').textContent = jami5l;
+            document.getElementById('tanlov-10l').textContent = jami10l;
+            document.getElementById('tanlov-jami').textContent = jami5l + jami10l;
+
+            document.getElementById('tanlov-paneli').style.display = checkboxlar.length > 0 ? 'block' : 'none';
+        }
+
+        document.querySelectorAll('.tanlov-checkbox').forEach(function (cb) {
+            cb.addEventListener('change', tanlovYangilash);
+        });
+
+        document.getElementById('tanlov-forma').addEventListener('submit', function () {
+            var inputlarQobiq = document.getElementById('tanlov-inputlar');
+            inputlarQobiq.innerHTML = '';
+            document.querySelectorAll('.tanlov-checkbox:checked').forEach(function (cb) {
+                var input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'buyurtma_idlar';
+                input.value = cb.dataset.buyurtmaId;
+                inputlarQobiq.appendChild(input);
+            });
+        });
+    </script>
 </body>
 </html>
+
+
 
 
 

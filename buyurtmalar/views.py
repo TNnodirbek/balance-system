@@ -220,6 +220,12 @@ def buyurtmalar_royxati(request):
     elif filtr == 'hafta':
         buyurtmalar = buyurtmalar.filter(yaratilgan_vaqt__gte=timezone.now() - timezone.timedelta(days=7))
 
+    buyurtmalar = list(buyurtmalar)
+    for b in buyurtmalar:
+        miqdor = {m.hajm: m.soni_buyurtma_qilingan for m in b.mahsulotlar.all()}
+        b.miqdor_5l = miqdor.get('5L', 0)
+        b.miqdor_10l = miqdor.get('10L', 0)
+
     return render(request, 'buyurtmalar/royxat.html', {
         'buyurtmalar': buyurtmalar,
         'filtr': filtr or 'barchasi',
@@ -246,6 +252,37 @@ def buyurtma_olish(request, pk):
             havola='/buyurtmalar/',
         )
     return redirect('buyurtmalar_royxati')
+
+
+@login_required
+def buyurtmalar_koplab_olish(request):
+    if request.method != 'POST':
+        return redirect('buyurtmalar_royxati')
+
+    id_lar = request.POST.getlist('buyurtma_idlar')
+    muvaffaqiyatli = 0
+    band_bolgan = 0
+
+    for pk in id_lar:
+        yangilandi = Buyurtma.objects.filter(
+            pk=pk, holat=Buyurtma.Holat.YANGI
+        ).update(
+            holat=Buyurtma.Holat.YETKAZILMOQDA,
+            yetkazishga_olgan=request.user,
+        )
+        if yangilandi:
+            muvaffaqiyatli += 1
+        else:
+            band_bolgan += 1
+
+    if muvaffaqiyatli:
+        messages.success(request, f"{muvaffaqiyatli} ta buyurtma sizga biriktirildi.")
+    if band_bolgan:
+        messages.warning(request, f"{band_bolgan} ta buyurtma allaqachon boshqa birov tomonidan olingan edi.")
+
+    if request.user.rol == 'menejer':
+        return redirect('menejer_bosh_sahifa')
+    return redirect('dastavchik_bosh_sahifa')
 
 
 @login_required
