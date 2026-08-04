@@ -8,8 +8,8 @@ from django.utils import timezone
 
 from buyurtmalar.models import Buyurtma
 from dokonlar.models import Dokon
-from ombor.models import NarxSozlamasi
-from ombor.utils import ombor_qoldigi
+from ombor.models import HajmNarxi
+from ombor.utils import menejer_hajmlari, ombor_qoldigi
 
 from .models import Foydalanuvchi
 from .utils import tegishli_menejer
@@ -258,17 +258,27 @@ def narxlar_sozlamasi(request):
     if request.user.rol != Foydalanuvchi.Rol.MENEJER:
         return HttpResponseForbidden("Bu sahifa faqat menejer uchun.")
 
-    sozlama, _ = NarxSozlamasi.objects.get_or_create(menejer=request.user)
     xabar = None
 
     if request.method == 'POST':
-        sozlama.narx_5l = request.POST.get('narx_5l') or 0
-        sozlama.narx_10l = request.POST.get('narx_10l') or 0
-        sozlama.save()
+        hajmlar = request.POST.getlist('hajm[]')
+        narxlar = request.POST.getlist('narx[]')
+        for hajm, narx in zip(hajmlar, narxlar):
+            hajm = hajm.strip()
+            if hajm and narx not in (None, ''):
+                HajmNarxi.objects.update_or_create(
+                    menejer=request.user, hajm=hajm, defaults={'narx': narx},
+                )
         xabar = 'Narxlar muvaffaqiyatli saqlandi.'
 
+    narx_dict = {h.hajm: h.narx for h in HajmNarxi.objects.filter(menejer=request.user)}
+    hajm_narxlari = [
+        {'hajm': hajm, 'narx': narx_dict.get(hajm, 0)}
+        for hajm in menejer_hajmlari(request.user)
+    ]
+
     return render(request, 'ombor/narxlar_sozlamasi.html', {
-        'sozlama': sozlama,
+        'hajm_narxlari': hajm_narxlari,
         'xabar': xabar,
     })
 

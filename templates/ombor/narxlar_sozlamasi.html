@@ -1,4 +1,4 @@
-﻿{% load l10n %}
+{% load l10n %}
 <!DOCTYPE html>
 <html lang="uz">
 <head>
@@ -44,15 +44,21 @@
             background: #E8F5E9;
             color: #2E7D32;
         }
-        .maydon { margin-bottom: 16px; }
-        .maydon label {
-            display: block;
-            font-size: 12px;
-            font-weight: 600;
-            color: #0C2340;
-            margin-bottom: 6px;
+        .hajm-qatori {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
         }
-        .maydon input {
+        .hajm-nomi-belgi {
+            width: 76px;
+            flex-shrink: 0;
+            font-size: 14px;
+            font-weight: 700;
+            color: #0C2340;
+        }
+        .hajm-qatori input[type="number"],
+        .hajm-qatori input[type="text"] {
             width: 100%;
             height: 44px;
             border: 1px solid #E4EDF6;
@@ -63,9 +69,30 @@
             color: #0C2340;
             outline: none;
         }
-        .maydon input:focus {
+        .hajm-qatori input:focus {
             border-color: #185FA5;
             background: #F7FAFD;
+        }
+        .hajm-yangi-input {
+            width: 90px !important;
+            flex-shrink: 0;
+        }
+        .qator-qoshish-tugma {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            width: 100%;
+            height: 40px;
+            border: none;
+            border-radius: 10px;
+            background: #F0F8FF;
+            color: #185FA5;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 4px 0 20px;
         }
         .saqlash-tugma {
             width: 100%;
@@ -100,16 +127,30 @@
 
         <form method="post">
             {% csrf_token %}
-            <div class="maydon">
-                <label>5L narxi (so'm)</label>
-                <input type="number" step="0.01" name="narx_5l" value="{{ sozlama.narx_5l|unlocalize }}">
+            <div id="hajm_qatorlari">
+                {% for item in hajm_narxlari %}
+                <div class="hajm-qatori">
+                    <span class="hajm-nomi-belgi">{{ item.hajm }}</span>
+                    <input type="hidden" name="hajm[]" value="{{ item.hajm }}">
+                    <input type="number" step="0.01" name="narx[]" value="{{ item.narx|unlocalize }}">
+                </div>
+                {% endfor %}
             </div>
-            <div class="maydon">
-                <label>10L narxi (so'm)</label>
-                <input type="number" step="0.01" name="narx_10l" value="{{ sozlama.narx_10l|unlocalize }}">
-            </div>
+            <button type="button" class="qator-qoshish-tugma" onclick="hajmQoshish()">+ Yangi hajm qo'shish</button>
             <button type="submit" class="saqlash-tugma">Saqlash</button>
         </form>
     </div>
+
+    <script>
+        function hajmQoshish() {
+            var konteyner = document.getElementById('hajm_qatorlari');
+            var qator = document.createElement('div');
+            qator.className = 'hajm-qatori';
+            qator.innerHTML =
+                '<input type="text" name="hajm[]" placeholder="Masalan: 1.5L" class="hajm-yangi-input">' +
+                '<input type="number" step="0.01" name="narx[]" value="0">';
+            konteyner.appendChild(qator);
+        }
+    </script>
 </body>
 </html>

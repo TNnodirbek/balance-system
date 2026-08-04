@@ -13,7 +13,8 @@ from foydalanuvchilar.utils import tegishli_menejer
 from foydalanuvchilar.models import Foydalanuvchi
 from bildirishnomalar.models import Bildirishnoma
 from bildirishnomalar.utils import bildirishnoma_yarat
-from ombor.models import NarxSozlamasi
+from ombor.models import HajmNarxi
+from ombor.utils import menejer_hajmlari
 from statistika.models import QarzTolovi
 
 from .models import Buyurtma, BuyurtmaMahsulot
@@ -133,15 +134,17 @@ def yangi_buyurtma(request):
             joylashuv_lng=joylashuv_lng,
         )
 
-        for hajm in HAJMLAR:
-            soni = request.POST.get(f'soni_{hajm}')
-            narx = request.POST.get(f'narx_{hajm}')
-            if soni and int(soni) > 0:
+        hajmlar = request.POST.getlist('hajm[]')
+        sonlar = request.POST.getlist('soni[]')
+        narxlar = request.POST.getlist('narx[]')
+        for hajm, soni, narx in zip(hajmlar, sonlar, narxlar):
+            hajm = hajm.strip()
+            if hajm and soni and int(soni) > 0:
                 BuyurtmaMahsulot.objects.create(
                     buyurtma=buyurtma,
                     hajm=hajm,
                     soni_buyurtma_qilingan=int(soni),
-                    narx=narx,
+                    narx=narx or 0,
                 )
 
         dastavchiklar = Foydalanuvchi.objects.filter(menejer=menejer, rol=Foydalanuvchi.Rol.DASTAVCHIK)
@@ -162,10 +165,16 @@ def yangi_buyurtma(request):
         return redirect('buyurtma_muvaffaqiyatli', pk=buyurtma.pk)
 
     menejer = tegishli_menejer(request.user)
-    sozlama = NarxSozlamasi.objects.filter(menejer=menejer).first() if menejer else None
+    mahsulot_qatorlari = []
+    if menejer:
+        narx_dict = {h.hajm: h.narx for h in HajmNarxi.objects.filter(menejer=menejer)}
+        mahsulot_qatorlari = [
+            {'hajm': hajm, 'narx_standart': narx_dict.get(hajm, 0)}
+            for hajm in menejer_hajmlari(menejer)
+        ]
+
     return render(request, 'buyurtmalar/yangi_buyurtma.html', {
-        'narx_5l_standart': sozlama.narx_5l if sozlama else 0,
-        'narx_10l_standart': sozlama.narx_10l if sozlama else 0,
+        'mahsulot_qatorlari': mahsulot_qatorlari,
     })
 
 

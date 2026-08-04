@@ -58,3 +58,22 @@ class NarxSozlamasi(models.Model):
 
     def __str__(self):
         return f'{self.menejer.username} - narxlar'
+
+
+class HajmNarxi(models.Model):
+    menejer = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='hajm_narxlari',
+        limit_choices_to={'rol': Foydalanuvchi.Rol.MENEJER},
+    )
+    hajm = models.CharField(max_length=20)
+    narx = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+
+    class Meta:
+        verbose_name = 'Hajm narxi'
+        verbose_name_plural = 'Hajm narxlari'
+        unique_together = ('menejer', 'hajm')
+
+    def __str__(self):
+        return f'{self.menejer.username} - {self.hajm}: {self.narx}'

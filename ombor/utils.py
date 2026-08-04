@@ -1,8 +1,12 @@
+import re
+
 from django.db.models import Sum
 from django.db.models.functions import Coalesce
 
 from buyurtmalar.models import BuyurtmaMahsulot
-from ombor.models import FuraMahsulot
+from ombor.models import FuraMahsulot, HajmNarxi
+
+BAZAVIY_HAJMLAR = ['5L', '10L']
 
 
 def ombor_qoldigi(menejer):
@@ -20,3 +24,17 @@ def ombor_qoldigi(menejer):
         hajm: kelgan_dict.get(hajm, 0) - sotilgan_dict.get(hajm, 0)
         for hajm in hajmlar
     }
+
+
+def _hajm_saralash_kaliti(hajm):
+    moslik = re.match(r'^(\d+(\.\d+)?)', hajm)
+    if moslik:
+        return (0, float(moslik.group(1)))
+    return (1, hajm)
+
+
+def menejer_hajmlari(menejer):
+    fura_hajmlar = set(FuraMahsulot.objects.filter(fura__menejer=menejer).values_list('hajm', flat=True))
+    narx_hajmlar = set(HajmNarxi.objects.filter(menejer=menejer).values_list('hajm', flat=True))
+    barcha = set(BAZAVIY_HAJMLAR) | fura_hajmlar | narx_hajmlar
+    return sorted(barcha, key=_hajm_saralash_kaliti)

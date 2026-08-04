@@ -407,35 +407,23 @@
             <div class="bolim">
                 <p class="bolim-sarlavha">Mahsulotlar</p>
 
+                {% for item in mahsulot_qatorlari %}
                 <div class="mahsulot-karta">
                     <div class="mahsulot-qatori-tepa">
-                        <span class="mahsulot-nomi">5L suv</span>
+                        <span class="mahsulot-nomi">{{ item.hajm }} suv</span>
                         <div class="narx-maydoni">
-                            <label for="narx_5L">Narx</label>
-                            <input type="number" step="0.01" min="0" name="narx_5L" id="narx_5L" value="{{ narx_5l_standart|unlocalize }}">
+                            <label for="narx_{{ forloop.counter0 }}">Narx</label>
+                            <input type="number" step="0.01" min="0" name="narx[]" id="narx_{{ forloop.counter0 }}" value="{{ item.narx_standart|unlocalize }}" class="mahsulot-narx-input">
                         </div>
                     </div>
+                    <input type="hidden" name="hajm[]" value="{{ item.hajm }}">
                     <div class="stepper">
-                        <button type="button" class="stepper-tugma" data-target="soni_5L" data-delta="-1">&minus;</button>
-                        <input type="number" min="0" name="soni_5L" id="soni_5L" value="0" class="stepper-input">
-                        <button type="button" class="stepper-tugma" data-target="soni_5L" data-delta="1">+</button>
+                        <button type="button" class="stepper-tugma" data-target="soni_{{ forloop.counter0 }}" data-delta="-1">&minus;</button>
+                        <input type="number" min="0" name="soni[]" id="soni_{{ forloop.counter0 }}" value="0" class="stepper-input mahsulot-soni-input">
+                        <button type="button" class="stepper-tugma" data-target="soni_{{ forloop.counter0 }}" data-delta="1">+</button>
                     </div>
                 </div>
-
-                <div class="mahsulot-karta">
-                    <div class="mahsulot-qatori-tepa">
-                        <span class="mahsulot-nomi">10L suv</span>
-                        <div class="narx-maydoni">
-                            <label for="narx_10L">Narx</label>
-                            <input type="number" step="0.01" min="0" name="narx_10L" id="narx_10L" value="{{ narx_10l_standart|unlocalize }}">
-                        </div>
-                    </div>
-                    <div class="stepper">
-                        <button type="button" class="stepper-tugma" data-target="soni_10L" data-delta="-1">&minus;</button>
-                        <input type="number" min="0" name="soni_10L" id="soni_10L" value="0" class="stepper-input">
-                        <button type="button" class="stepper-tugma" data-target="soni_10L" data-delta="1">+</button>
-                    </div>
-                </div>
+                {% endfor %}
 
                 <div class="jami-panel">
                     <span class="jami-label">Jami</span>
@@ -467,15 +455,18 @@
 
     <script>
         function hisoblaSumma() {
-            var narx5 = parseFloat(document.getElementById('narx_5L').value) || 0;
-            var soni5 = parseFloat(document.getElementById('soni_5L').value) || 0;
-            var narx10 = parseFloat(document.getElementById('narx_10L').value) || 0;
-            var soni10 = parseFloat(document.getElementById('soni_10L').value) || 0;
-            var summa = narx5 * soni5 + narx10 * soni10;
+            var narxInputlar = document.querySelectorAll('.mahsulot-narx-input');
+            var soniInputlar = document.querySelectorAll('.mahsulot-soni-input');
+            var summa = 0;
+            for (var i = 0; i < narxInputlar.length; i++) {
+                var narx = parseFloat(narxInputlar[i].value) || 0;
+                var soni = parseFloat(soniInputlar[i].value) || 0;
+                summa += narx * soni;
+            }
             document.getElementById('umumiy_summa').textContent = summa;
         }
-        ['narx_5L', 'soni_5L', 'narx_10L', 'soni_10L'].forEach(function (id) {
-            document.getElementById(id).addEventListener('input', hisoblaSumma);
+        document.querySelectorAll('.mahsulot-narx-input, .mahsulot-soni-input').forEach(function (input) {
+            input.addEventListener('input', hisoblaSumma);
         });
         hisoblaSumma();
 
