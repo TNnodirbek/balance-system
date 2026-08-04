@@ -216,8 +216,7 @@
             vertical-align: middle;
         }
 
-        .holat-pill,
-        .tolov-pill {
+        .holat-pill {
             flex-shrink: 0;
             font-size: 11px;
             font-weight: 600;
@@ -297,51 +296,6 @@
             font-size: 16px;
             font-weight: 700;
             color: #185FA5;
-        }
-
-        .tolov-qatori {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-
-        .tolov-tolandi {
-            background: #E8F5E9;
-            color: #2E7D32;
-        }
-
-        .tolov-qarz {
-            background: #FCEBEB;
-            color: #A32D2D;
-        }
-
-        .tolov-kutilmoqda {
-            background: #F0F3F7;
-            color: #7C8B9E;
-        }
-
-        .qarz-tolash-link {
-            display: inline-block;
-            font-size: 12px;
-            font-weight: 600;
-            color: #A32D2D;
-            border: 1px solid #F0C4C4;
-            border-radius: 8px;
-            padding: 5px 10px;
-            text-decoration: none;
-        }
-
-        .xarita-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            color: #185FA5;
-            font-size: 12px;
-            font-weight: 600;
-            text-decoration: none;
-            margin-bottom: 10px;
         }
 
         .info-qatori {
@@ -607,22 +561,6 @@
                     <span class="jami-label">Jami</span>
                     <span class="jami-son">{{ buyurtma.umumiy_summa }} so'm</span>
                 </div>
-
-                {% if buyurtma.tolov_holati %}
-                    <div class="tolov-qatori">
-                        <span class="tolov-pill tolov-{{ buyurtma.tolov_holati }}">
-                            {{ buyurtma.get_tolov_holati_display }}
-                            {% if buyurtma.tolov_holati == 'qarz' and buyurtma.qarz_summasi %} &middot; {{ buyurtma.qarz_summasi }} so'm{% endif %}
-                        </span>
-                        {% if buyurtma.tolov_holati == 'qarz' and buyurtma.qarz_summasi > 0 %}
-                            <a href="{% url 'qarz_tolash' buyurtma.pk %}" class="qarz-tolash-link">Qarzni to'lash</a>
-                        {% endif %}
-                    </div>
-                {% endif %}
-
-                {% if buyurtma.joylashuv_lat and buyurtma.joylashuv_lng %}
-                    <a class="xarita-link" href="https://www.google.com/maps?q={{ buyurtma.joylashuv_lat|unlocalize }},{{ buyurtma.joylashuv_lng|unlocalize }}" target="_blank" rel="noopener">📍 Xaritada ko'rish</a>
-                {% endif %}
 
                 <p class="info-qatori">
                     Zakaz: {{ buyurtma.zakaz_olgan.username }}{% if buyurtma.yetkazishga_olgan %} &middot; Yetkazmoqda: {{ buyurtma.yetkazishga_olgan.username }}{% endif %}

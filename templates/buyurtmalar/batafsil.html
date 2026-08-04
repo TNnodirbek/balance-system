@@ -29,6 +29,14 @@
         .harakat-qatori a, .harakat-qatori button { flex: 1; height: 46px; border-radius: 10px; font-size: 13px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center; border: none; cursor: pointer; }
         .tahrirlash-b { background: #F0F8FF; color: #185FA5; }
         .ochirish-b { background: #FCEBEB; color: #A32D2D; }
+        .qarz-tolash-link { display: inline-block; margin-top: 8px; font-size: 12px; font-weight: 600; color: #A32D2D; border: 1px solid #F0C4C4; border-radius: 8px; padding: 5px 10px; text-decoration: none; }
+        .xarita-qatlam { position: fixed; inset: 0; background: #FFFFFF; z-index: 1000; display: none; flex-direction: column; }
+        .xarita-qatlam.ochiq { display: flex; }
+        .xarita-panel { display: flex; align-items: center; gap: 12px; padding: 16px; border-bottom: 1px solid #E4EDF6; flex-shrink: 0; }
+        .xarita-orqaga { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 10px; background: #F0F8FF; color: #185FA5; border: none; cursor: pointer; flex-shrink: 0; }
+        .xarita-panel h2 { font-size: 15px; font-weight: 700; color: #0C2340; margin: 0; }
+        .xarita-korpus { flex: 1; }
+        .xarita-korpus iframe { width: 100%; height: 100%; }
     </style>
 </head>
 <body>
@@ -65,12 +73,15 @@
             {% if buyurtma.qarz_summasi %}
             <div class="qator"><span>Qarz</span><span>{{ buyurtma.qarz_summasi|unlocalize }} so'm</span></div>
             {% endif %}
+            {% if buyurtma.tolov_holati == 'qarz' and buyurtma.qarz_summasi > 0 %}
+            <a href="{% url 'qarz_tolash' buyurtma.pk %}" class="qarz-tolash-link">Qarzni to'lash</a>
+            {% endif %}
         </div>
 
         <div class="karta">
             <h3>Joylashuv</h3>
             {% if buyurtma.joylashuv_lat %}
-            <a href="https://www.google.com/maps/dir/?api=1&destination={{ buyurtma.joylashuv_lat|unlocalize }},{{ buyurtma.joylashuv_lng|unlocalize }}" target="_blank" class="xarita-tugma">🧭 Yo'nalish (navigatsiya)</a>
+            <button type="button" onclick="xaritaOch()" class="xarita-tugma" style="border:none;width:100%;font-family:'Manrope','Segoe UI',Arial,sans-serif;">🗺️ Xaritani ko'rish</button>
             {% else %}
             <div class="joylashuv-yoq">Joylashuv aniqlanmagan</div>
             {% endif %}
@@ -128,6 +139,28 @@
         </div>
         {% endif %}
     </div>
+
+    {% if buyurtma.joylashuv_lat %}
+    <div class="xarita-qatlam" id="xarita-qatlam">
+        <div class="xarita-panel">
+            <button type="button" class="xarita-orqaga" onclick="xaritaYop()" aria-label="Orqaga">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <h2>Joylashuv</h2>
+        </div>
+        <div class="xarita-korpus">
+            <iframe src="https://maps.google.com/maps?q={{ buyurtma.joylashuv_lat|unlocalize }},{{ buyurtma.joylashuv_lng|unlocalize }}&z=15&output=embed" width="100%" height="100%" style="border:0;"></iframe>
+        </div>
+    </div>
+    <script>
+        function xaritaOch() {
+            document.getElementById('xarita-qatlam').classList.add('ochiq');
+        }
+        function xaritaYop() {
+            document.getElementById('xarita-qatlam').classList.remove('ochiq');
+        }
+    </script>
+    {% endif %}
 </body>
 </html>
 
