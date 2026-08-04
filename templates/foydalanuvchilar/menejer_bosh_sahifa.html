@@ -245,6 +245,73 @@
         }
 
         /* Pastki fiksirlangan navigatsiya */
+        .vaqt-chizigi {
+            position: relative;
+            padding-left: 20px;
+        }
+        .vaqt-band {
+            position: relative;
+            padding-bottom: 16px;
+        }
+        .vaqt-band:not(:last-child)::before {
+            content: '';
+            position: absolute;
+            left: -15px; top: 14px; bottom: -2px;
+            width: 2px;
+            background: #DCE9F5;
+        }
+        .vaqt-nuqta {
+            position: absolute;
+            left: -19px; top: 4px;
+            width: 10px; height: 10px;
+            border-radius: 50%;
+            background: #185FA5;
+            border: 2px solid #FFFFFF;
+            box-shadow: 0 0 0 2px #DCE9F5;
+        }
+        .vaqt-karta {
+            display: block;
+            position: relative;
+            background: #FFFFFF;
+            border: 1px solid #E4EDF6;
+            border-radius: 14px;
+            padding: 12px 34px 12px 14px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            text-decoration: none;
+            color: inherit;
+            transition: box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+        .vaqt-karta:hover {
+            box-shadow: 0 4px 14px rgba(24, 95, 165, 0.18);
+            border-color: #B5D4F4;
+        }
+        .vk-strelka {
+            position: absolute;
+            right: 12px; top: 50%;
+            transform: translateY(-50%);
+            color: #B9C6D6;
+            font-size: 20px;
+        }
+        .vk-sarlavha {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            font-weight: 600;
+            color: #0C2340;
+        }
+        .vk-son { color: #185FA5; }
+        .vk-summa {
+            font-size: 12px;
+            color: #185FA5;
+            font-weight: 700;
+            margin-top: 4px;
+        }
+        .vk-manzil {
+            font-size: 12px;
+            color: #7C8B9E;
+            margin-top: 4px;
+        }
+
         .pastki-nav {
             position: fixed;
             bottom: 0;
@@ -345,6 +412,25 @@
         </div>
 
         
+        {% if yolda_royxat %}
+        <p class="bolim-sarlavha" style="margin-top:20px;">Yo'lda ({{ yolda_royxat|length }} ta)</p>
+        <div class="vaqt-chizigi">
+            {% for b in yolda_royxat %}
+            <div class="vaqt-band">
+                <div class="vaqt-nuqta"></div>
+                <a href="{% url 'buyurtma_batafsil' b.pk %}" class="vaqt-karta">
+                    <div class="vk-sarlavha">
+                        <span>#{{ b.pk }} - {{ b.dokon.nomi }}</span>
+                        <span class="vk-son">{{ b.jami_miqdor }} dona</span>
+                    </div>
+                    <div class="vk-summa">{{ b.umumiy_summa }} so'm</div>
+                    <div class="vk-manzil">📍 {{ b.dokon.manzili }} &middot; {{ b.yetkazishga_olgan.first_name|default:b.yetkazishga_olgan.username }}</div>
+                    <span class="vk-strelka">&#8250;</span>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
     </div>
 
     <nav class="pastki-nav">
@@ -377,6 +463,8 @@
         </nav>
 </body>
 </html>
+
+
 
 
 

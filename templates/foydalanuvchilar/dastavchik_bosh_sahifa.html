@@ -146,11 +146,27 @@
             box-shadow: 0 0 0 2px #DCE9F5;
         }
         .vaqt-karta {
+            display: block;
+            position: relative;
             background: #FFFFFF;
             border: 1px solid #E4EDF6;
             border-radius: 14px;
-            padding: 12px 14px;
+            padding: 12px 34px 12px 14px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            text-decoration: none;
+            color: inherit;
+            transition: box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+        .vaqt-karta:hover {
+            box-shadow: 0 4px 14px rgba(24, 95, 165, 0.18);
+            border-color: #B5D4F4;
+        }
+        .vk-strelka {
+            position: absolute;
+            right: 12px; top: 50%;
+            transform: translateY(-50%);
+            color: #B9C6D6;
+            font-size: 20px;
         }
         .vk-sarlavha {
             display: flex;
@@ -160,17 +176,16 @@
             color: #0C2340;
         }
         .vk-son { color: #185FA5; }
+        .vk-summa {
+            font-size: 12px;
+            color: #185FA5;
+            font-weight: 700;
+            margin-top: 4px;
+        }
         .vk-manzil {
             font-size: 12px;
             color: #7C8B9E;
             margin-top: 4px;
-        }
-        .vk-xarita {
-            display: inline-block;
-            font-size: 11px;
-            color: #185FA5;
-            margin-top: 6px;
-            text-decoration: none;
         }
 
         .pastki-nav {
@@ -237,16 +252,15 @@
             {% for b in faol_royxat %}
             <div class="vaqt-band">
                 <div class="vaqt-nuqta"></div>
-                <div class="vaqt-karta">
+                <a href="{% url 'buyurtma_batafsil' b.pk %}" class="vaqt-karta">
                     <div class="vk-sarlavha">
                         <span>#{{ b.pk }} - {{ b.dokon.nomi }}</span>
                         <span class="vk-son">{{ b.jami_miqdor }} dona</span>
                     </div>
+                    <div class="vk-summa">{{ b.umumiy_summa }} so'm</div>
                     <div class="vk-manzil">📍 {{ b.dokon.manzili }}</div>
-                    {% if b.joylashuv_lat %}
-                    <a href="https://www.google.com/maps?q={{ b.joylashuv_lat }},{{ b.joylashuv_lng }}" target="_blank" class="vk-xarita">Xaritada ko'rish</a>
-                    {% endif %}
-                </div>
+                    <span class="vk-strelka">&#8250;</span>
+                </a>
             </div>
             {% endfor %}
         </div>
@@ -276,6 +290,12 @@
     </nav>
 </body>
 </html>
+
+
+
+
+
+
 
 
 

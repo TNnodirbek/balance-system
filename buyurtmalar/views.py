@@ -20,6 +20,16 @@ from .models import Buyurtma, BuyurtmaMahsulot
 
 
 @login_required
+def buyurtma_batafsil(request, pk):
+    menejer = tegishli_menejer(request.user)
+    buyurtma = get_object_or_404(
+        Buyurtma.objects.select_related('dokon', 'zakaz_olgan', 'yetkazishga_olgan').prefetch_related('mahsulotlar'),
+        pk=pk, menejer=menejer,
+    )
+    return render(request, 'buyurtmalar/batafsil.html', {'buyurtma': buyurtma})
+
+
+@login_required
 def buyurtma_ochirish(request, pk):
     menejer = tegishli_menejer(request.user)
     buyurtma = get_object_or_404(Buyurtma, pk=pk, menejer=menejer)
@@ -296,7 +306,9 @@ def buyurtma_yetkazish(request, pk):
                 havola='/statistika/',
             )
 
-        return redirect('buyurtmalar_royxati')
+        if request.user.rol == Foydalanuvchi.Rol.DASTAVCHIK:
+            return redirect('dastavchik_bosh_sahifa')
+        return redirect('menejer_bosh_sahifa')
 
     return render(request, 'buyurtmalar/yetkazish_formasi.html', {'buyurtma': buyurtma})
 
@@ -341,6 +353,7 @@ def qarz_tolash(request, pk):
         return redirect('buyurtmalar_royxati')
 
     return render(request, 'buyurtmalar/qarz_tolash.html', {'buyurtma': buyurtma})
+
 
 
 

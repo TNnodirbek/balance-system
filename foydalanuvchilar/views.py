@@ -66,8 +66,18 @@ def menejer_bosh_sahifa(request):
     for buyurtma in songgi_buyurtmalar:
         buyurtma.jami_miqdor = sum(m.soni_buyurtma_qilingan for m in buyurtma.mahsulotlar.all())
 
+    yolda_royxat = list(
+        buyurtmalar_qs.filter(holat='yetkazilmoqda')
+        .select_related('dokon', 'yetkazishga_olgan')
+        .prefetch_related('mahsulotlar')
+        .order_by('yaratilgan_vaqt')
+    ) if menejer else []
+    for b in yolda_royxat:
+        b.jami_miqdor = sum(m.soni_buyurtma_qilingan for m in b.mahsulotlar.all())
+
     return render(request, 'foydalanuvchilar/menejer_bosh_sahifa.html', {
         'bildirishnoma_bor': bildirishnoma_bor,
+        'yolda_royxat': yolda_royxat,
         'qoldiq_5l': qoldiq.get('5L', 0),
         'qoldiq_10l': qoldiq.get('10L', 0),
         'bugungi_buyurtmalar_soni': bugungi_buyurtmalar_soni,
@@ -298,6 +308,7 @@ def dokon_tahrirlash(request, pk):
         'dokon': dokon,
         'xabar': xabar,
     })
+
 
 
 
