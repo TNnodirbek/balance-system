@@ -1,4 +1,5 @@
 ﻿{% load l10n %}
+{% load summa_filtr %}
 <!DOCTYPE html>
 <html lang="uz">
 <head>
@@ -62,7 +63,7 @@
             {% for m in buyurtma.mahsulotlar.all %}
             <div class="qator"><span>{{ m.hajm }} x {{ m.soni_buyurtma_qilingan }}</span><span>{{ m.narx|unlocalize }} so'm</span></div>
             {% endfor %}
-            <div class="qator jami-qator"><span>Jami</span><span>{{ buyurtma.umumiy_summa }} so'm</span></div>
+            <div class="qator jami-qator"><span>Jami</span><span>{{ buyurtma.umumiy_summa|som_format }}</span></div>
         </div>
 
         <div class="karta">
@@ -71,7 +72,7 @@
             <div class="qator"><span>Yetkazuvchi</span><span>{{ buyurtma.yetkazishga_olgan.first_name|default:buyurtma.yetkazishga_olgan.username|default:"-" }}</span></div>
             <div class="qator"><span>To'lov</span><span>{{ buyurtma.get_tolov_holati_display|default:"-" }}</span></div>
             {% if buyurtma.qarz_summasi %}
-            <div class="qator"><span>Qarz</span><span>{{ buyurtma.qarz_summasi|unlocalize }} so'm</span></div>
+            <div class="qator"><span>Qarz</span><span>{{ buyurtma.qarz_summasi|som_format }}</span></div>
             {% endif %}
             {% if buyurtma.tolov_holati == 'qarz' and buyurtma.qarz_summasi > 0 %}
             <a href="{% url 'qarz_tolash' buyurtma.pk %}" class="qarz-tolash-link">Qarzni to'lash</a>

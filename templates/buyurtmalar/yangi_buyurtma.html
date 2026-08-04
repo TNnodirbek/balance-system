@@ -427,7 +427,7 @@
 
                 <div class="jami-panel">
                     <span class="jami-label">Jami</span>
-                    <span class="jami-son"><span id="umumiy_summa">0</span> so'm</span>
+                    <span class="jami-son"><span id="umumiy_summa">0 so'm</span></span>
                 </div>
             </div>
 
@@ -454,6 +454,37 @@
     </div>
 
     <script>
+        function guruhlaSon(son) {
+            var matn = String(son);
+            var natija = '';
+            var sanoq = 0;
+            for (var i = matn.length - 1; i >= 0; i--) {
+                natija = matn[i] + natija;
+                sanoq++;
+                if (sanoq % 3 === 0 && i !== 0) {
+                    natija = '.' + natija;
+                }
+            }
+            return natija;
+        }
+
+        function formatSom(son) {
+            son = Math.round(son);
+            var manfiy = son < 0;
+            son = Math.abs(son);
+            var natija;
+            if (son >= 1000000) {
+                var mln = Math.floor(son / 1000000);
+                var ming = Math.floor((son % 1000000) / 1000);
+                natija = ming ? (mln + " mln " + ming + " ming so'm") : (mln + " mln so'm");
+            } else if (son >= 1000) {
+                natija = guruhlaSon(son) + " so'm";
+            } else {
+                natija = son + " so'm";
+            }
+            return manfiy ? ('-' + natija) : natija;
+        }
+
         function hisoblaSumma() {
             var narxInputlar = document.querySelectorAll('.mahsulot-narx-input');
             var soniInputlar = document.querySelectorAll('.mahsulot-soni-input');
@@ -463,7 +494,7 @@
                 var soni = parseFloat(soniInputlar[i].value) || 0;
                 summa += narx * soni;
             }
-            document.getElementById('umumiy_summa').textContent = summa;
+            document.getElementById('umumiy_summa').textContent = formatSom(summa);
         }
         document.querySelectorAll('.mahsulot-narx-input, .mahsulot-soni-input').forEach(function (input) {
             input.addEventListener('input', hisoblaSumma);

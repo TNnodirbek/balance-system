@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿{% load summa_filtr %}
+<!DOCTYPE html>
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
@@ -318,7 +319,7 @@
                         <span>#{{ b.pk }} - {{ b.dokon.nomi }}</span>
                         <span class="vk-son">{{ b.jami_miqdor }} dona</span>
                     </div>
-                    <div class="vk-summa">{{ b.umumiy_summa }} so'm</div>
+                    <div class="vk-summa">{{ b.umumiy_summa|som_format }}</div>
                     <div class="vk-manzil">📍 {{ b.dokon.manzili }}</div>
                     <span class="vk-strelka">&#8250;</span>
                 </a>

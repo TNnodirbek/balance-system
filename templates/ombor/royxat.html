@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿{% load summa_filtr %}
+<!DOCTYPE html>
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
@@ -312,7 +313,7 @@
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 6H21M8 6V4A2 2 0 0 1 10 2H14A2 2 0 0 1 16 4V6M19 6V20A2 2 0 0 1 17 22H7A2 2 0 0 1 5 20V6H19Z" stroke-linecap="round" stroke-linejoin="round"/></svg>
                         </button>
                     </form>
-                    <span class="fura-xarajat">{{ fura.jami_xarajat }} so'm</span>
+                    <span class="fura-xarajat">{{ fura.jami_xarajat|som_format }}</span>
                 </div>
 
                 <div class="fura-mahsulotlar">

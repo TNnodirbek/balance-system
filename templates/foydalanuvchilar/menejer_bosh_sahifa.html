@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿{% load summa_filtr %}
+<!DOCTYPE html>
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
@@ -439,7 +440,7 @@
             </div>
             <div class="stat-karta">
                 <p class="stat-sarlavha">Qarzdorlik</p>
-                <p class="stat-son{% if qarzdorlik %} qarz{% endif %}">{{ qarzdorlik }}</p>
+                <p class="stat-son{% if qarzdorlik %} qarz{% endif %}">{{ qarzdorlik|som_format }}</p>
             </div>
         </div>
 
@@ -455,7 +456,7 @@
                         <span>#{{ b.pk }} - {{ b.dokon.nomi }}</span>
                         <span class="vk-son">{{ b.jami_miqdor }} dona</span>
                     </div>
-                    <div class="vk-summa">{{ b.umumiy_summa }} so'm</div>
+                    <div class="vk-summa">{{ b.umumiy_summa|som_format }}</div>
                     <div class="vk-manzil">📍 {{ b.dokon.manzili }} &middot; {{ b.yetkazishga_olgan.first_name|default:b.yetkazishga_olgan.username }}</div>
                     <span class="vk-strelka">&#8250;</span>
                 </a>

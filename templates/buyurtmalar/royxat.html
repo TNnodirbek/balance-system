@@ -1,4 +1,5 @@
 ﻿{% load l10n %}
+{% load summa_filtr %}
 <!DOCTYPE html>
 <html lang="uz">
 <head>
@@ -559,7 +560,7 @@
 
                 <div class="jami-qatori">
                     <span class="jami-label">Jami</span>
-                    <span class="jami-son">{{ buyurtma.umumiy_summa }} so'm</span>
+                    <span class="jami-son">{{ buyurtma.umumiy_summa|som_format }}</span>
                 </div>
 
                 <p class="info-qatori">

@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿{% load summa_filtr %}
+<!DOCTYPE html>
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
@@ -394,19 +395,19 @@
         <div class="korsatkich-grid">
             <div class="korsatkich-karta">
                 <p class="korsatkich-sarlavha">Umumiy savdo</p>
-                <p class="korsatkich-son">{{ umumiy_savdo }} so'm</p>
+                <p class="korsatkich-son">{{ umumiy_savdo|som_format }}</p>
             </div>
             <div class="korsatkich-karta">
                 <p class="korsatkich-sarlavha">Sof foyda</p>
-                <p class="korsatkich-son{% if sof_foyda < 0 %} manfiy{% else %} musbat{% endif %}">{{ sof_foyda }} so'm</p>
+                <p class="korsatkich-son{% if sof_foyda < 0 %} manfiy{% else %} musbat{% endif %}">{{ sof_foyda|som_format }}</p>
             </div>
             <div class="korsatkich-karta">
                 <p class="korsatkich-sarlavha">Jami xarajat</p>
-                <p class="korsatkich-son">{{ jami_xarajat }} so'm</p>
+                <p class="korsatkich-son">{{ jami_xarajat|som_format }}</p>
             </div>
             <div class="korsatkich-karta">
                 <p class="korsatkich-sarlavha">Yig'ilgan qarz</p>
-                <p class="korsatkich-son">{{ yig_ilgan_qarz }} so'm</p>
+                <p class="korsatkich-son">{{ yig_ilgan_qarz|som_format }}</p>
             </div>
         </div>
 
@@ -414,11 +415,11 @@
         <div class="karta">
             <div class="qator">
                 <span class="qator-label">Kunlik xarajatlar</span>
-                <span>{{ umumiy_kunlik_xarajat }} so'm</span>
+                <span>{{ umumiy_kunlik_xarajat|som_format }}</span>
             </div>
             <div class="qator">
                 <span class="qator-label">Fura xarajatlari</span>
-                <span>{{ umumiy_fura_xarajat }} so'm</span>
+                <span>{{ umumiy_fura_xarajat|som_format }}</span>
             </div>
             <a href="{% url 'xarajat_qoshish' %}" class="xarajat-link">+ Xarajat qo'shish</a>
         </div>
@@ -429,7 +430,7 @@
                 <div class="kesim-qatori">
                     <span class="kesim-hajm">{{ hajm }}</span>
                     <span class="kesim-son">{{ malumot.soni }} dona</span>
-                    <span class="kesim-summa">{{ malumot.summa }} so'm</span>
+                    <span class="kesim-summa">{{ malumot.summa|som_format }}</span>
                 </div>
             {% empty %}
                 <p class="bosh-matn">Ma'lumot yo'q</p>
@@ -441,7 +442,7 @@
             {% for ism, malumot in dastavchiklar_statistikasi.items %}
                 <div class="dastavchik-qatori">
                     <span class="dastavchik-ism">{{ ism }}</span>
-                    <span class="dastavchik-detal">{{ malumot.soni }} ta buyurtma &middot; {{ malumot.summa }} so'm</span>
+                    <span class="dastavchik-detal">{{ malumot.soni }} ta buyurtma &middot; {{ malumot.summa|som_format }}</span>
                 </div>
             {% empty %}
                 <p class="bosh-matn">Ma'lumot yo'q</p>
@@ -454,7 +455,7 @@
                 <div class="qarz-qatori">
                     <div>
                         <div class="qarz-dokon">{{ buyurtma.dokon.nomi }}</div>
-                        <div class="qarz-summa">{{ buyurtma.qarz_summasi }} so'm</div>
+                        <div class="qarz-summa">{{ buyurtma.qarz_summasi|som_format }}</div>
                     </div>
                     <a href="{% url 'qarz_tolash' buyurtma.pk %}" class="qarz-tolash-link">Qarzni to'lash</a>
                 </div>
