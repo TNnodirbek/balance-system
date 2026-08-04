@@ -121,6 +121,58 @@
             font-size: 14px;
             text-decoration: none;
         }
+        .vaqt-chizigi {
+            position: relative;
+            padding-left: 20px;
+        }
+        .vaqt-band {
+            position: relative;
+            padding-bottom: 16px;
+        }
+        .vaqt-band:not(:last-child)::before {
+            content: '';
+            position: absolute;
+            left: -15px; top: 14px; bottom: -2px;
+            width: 2px;
+            background: #DCE9F5;
+        }
+        .vaqt-nuqta {
+            position: absolute;
+            left: -19px; top: 4px;
+            width: 10px; height: 10px;
+            border-radius: 50%;
+            background: #185FA5;
+            border: 2px solid #FFFFFF;
+            box-shadow: 0 0 0 2px #DCE9F5;
+        }
+        .vaqt-karta {
+            background: #FFFFFF;
+            border: 1px solid #E4EDF6;
+            border-radius: 14px;
+            padding: 12px 14px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .vk-sarlavha {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            font-weight: 600;
+            color: #0C2340;
+        }
+        .vk-son { color: #185FA5; }
+        .vk-manzil {
+            font-size: 12px;
+            color: #7C8B9E;
+            margin-top: 4px;
+        }
+        .vk-xarita {
+            display: inline-block;
+            font-size: 11px;
+            color: #185FA5;
+            margin-top: 6px;
+            text-decoration: none;
+        }
+
         .pastki-nav {
             position: fixed;
             bottom: 0; left: 0; right: 0;
@@ -178,6 +230,27 @@
         </div>
 
         <a href="{% url 'yangi_buyurtma' %}" class="tezkor-tugma">+ Yangi buyurtma</a>
+
+        {% if faol_royxat %}
+        <p class="bolim-sarlavha" style="margin-top:20px;">Yo'lda ({{ faol_royxat|length }} ta)</p>
+        <div class="vaqt-chizigi">
+            {% for b in faol_royxat %}
+            <div class="vaqt-band">
+                <div class="vaqt-nuqta"></div>
+                <div class="vaqt-karta">
+                    <div class="vk-sarlavha">
+                        <span>#{{ b.pk }} - {{ b.dokon.nomi }}</span>
+                        <span class="vk-son">{{ b.jami_miqdor }} dona</span>
+                    </div>
+                    <div class="vk-manzil">📍 {{ b.dokon.manzili }}</div>
+                    {% if b.joylashuv_lat %}
+                    <a href="https://www.google.com/maps?q={{ b.joylashuv_lat }},{{ b.joylashuv_lng }}" target="_blank" class="vk-xarita">Xaritada ko'rish</a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
     </div>
 
     <nav class="pastki-nav">
@@ -203,6 +276,8 @@
     </nav>
 </body>
 </html>
+
+
 
 
 

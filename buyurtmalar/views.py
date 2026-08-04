@@ -26,16 +26,6 @@ def buyurtma_ochirish(request, pk):
     if request.user.rol != 'menejer' and buyurtma.zakaz_olgan_id != request.user.id:
         return HttpResponseForbidden("Siz faqat o'zingiz yaratgan buyurtmani o'chira olasiz.")
     buyurtma.delete()
-    return redirect('buyurtmalar_royxati')
-
-
-@login_required
-def buyurtma_ochirish(request, pk):
-    menejer = tegishli_menejer(request.user)
-    buyurtma = get_object_or_404(Buyurtma, pk=pk, menejer=menejer)
-    if request.user.rol != 'menejer' and buyurtma.zakaz_olgan_id != request.user.id:
-        return HttpResponseForbidden("Siz faqat o'zingiz yaratgan buyurtmani o'chira olasiz.")
-    buyurtma.delete()
     messages.success(request, "Buyurtma o'chirildi.")
     return redirect('buyurtmalar_royxati')
 
@@ -351,6 +341,7 @@ def qarz_tolash(request, pk):
         return redirect('buyurtmalar_royxati')
 
     return render(request, 'buyurtmalar/qarz_tolash.html', {'buyurtma': buyurtma})
+
 
 
 

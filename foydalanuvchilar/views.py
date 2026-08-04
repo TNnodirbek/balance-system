@@ -96,9 +96,18 @@ def dastavchik_bosh_sahifa(request):
         holat='yangi',
     ).count()
     bildirishnoma_bor = request.user.bildirishnomalar.filter(oqilgan=False).exists()
+    faol_royxat = list(
+        Buyurtma.objects.filter(yetkazishga_olgan=request.user, holat='yetkazilmoqda')
+        .select_related('dokon')
+        .prefetch_related('mahsulotlar')
+        .order_by('yaratilgan_vaqt')
+    )
+    for b in faol_royxat:
+        b.jami_miqdor = sum(m.soni_buyurtma_qilingan for m in b.mahsulotlar.all())
 
     return render(request, 'foydalanuvchilar/dastavchik_bosh_sahifa.html', {
         'bildirishnoma_bor': bildirishnoma_bor,
+        'faol_royxat': faol_royxat,
         'qoldiq_5l': qoldiq.get('5L', 0),
         'qoldiq_10l': qoldiq.get('10L', 0),
         'bugungi_yetkazilgan': bugungi_yetkazilgan,
@@ -289,6 +298,8 @@ def dokon_tahrirlash(request, pk):
         'dokon': dokon,
         'xabar': xabar,
     })
+
+
 
 
 
