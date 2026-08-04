@@ -177,15 +177,7 @@
             </div>
         </div>
 
-        {% if yangi_buyurtmalar_soni > 0 %}
-        <a href="{% url 'buyurtmalar_royxati' %}" class="yangi-buyurtma-bandi">
-            <span class="matn">Yangi buyurtmalar bor</span>
-            <span class="son-pill">{{ yangi_buyurtmalar_soni }}</span>
-        </a>
-        {% endif %}
-
         <a href="{% url 'yangi_buyurtma' %}" class="tezkor-tugma">+ Yangi buyurtma</a>
-        <a href="{% url 'buyurtmalar_royxati' %}" class="ikkinchi-tugma">Barcha buyurtmalar</a>
     </div>
 
     <nav class="pastki-nav">
@@ -211,6 +203,8 @@
     </nav>
 </body>
 </html>
+
+
 
 
 

@@ -164,6 +164,45 @@
             margin: 0;
         }
 
+        .ochirish-tugma-buyurtma {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 26px;
+            height: 26px;
+            border: none;
+            border-radius: 8px;
+            background: #FCEBEB;
+            color: #A32D2D;
+            margin-left: 6px;
+            cursor: pointer;
+            vertical-align: middle;
+        }
+
+        .karta-kichik {
+            padding: 10px 16px !important;
+            opacity: 0.85;
+        }
+
+        .karta-kichik .mahsulot-qator { display: none; }
+        .karta-kichik .tahrirlash-tugma-buyurtma,
+        .karta-kichik .ochirish-tugma-buyurtma { opacity: 1 !important; }
+
+        .ochirish-tugma-buyurtma {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 26px;
+            height: 26px;
+            border: none;
+            border-radius: 8px;
+            background: #FCEBEB;
+            color: #A32D2D;
+            margin-left: 6px;
+            cursor: pointer;
+            vertical-align: middle;
+        }
+
         .tahrirlash-tugma-buyurtma {
             display: inline-flex;
             align-items: center;
@@ -428,7 +467,7 @@
         </div>
 
         {% for buyurtma in buyurtmalar %}
-            <div class="buyurtma-karta">
+            <div class="buyurtma-karta{% if buyurtma.holat == 'yetkazildi' %} karta-kichik{% endif %}">
                 <div class="karta-tepa">
                     <div>
                         <p class="buyurtma-raqam">Buyurtma #{{ buyurtma.pk }}</p>
@@ -439,6 +478,12 @@
                     <a href="{% url 'buyurtma_tahrirlash' buyurtma.pk %}" class="tahrirlash-tugma-buyurtma" aria-label="Tahrirlash">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 4H4A2 2 0 0 0 2 6V20A2 2 0 0 0 4 22H18A2 2 0 0 0 20 20V13" stroke-linecap="round" stroke-linejoin="round"/><path d="M18.5 2.5A2.121 2.121 0 0 1 21.5 5.5L12 15L8 16L9 12L18.5 2.5Z" stroke-linecap="round" stroke-linejoin="round"/></svg>
                     </a>
+                    <form method="post" action="{% url 'buyurtma_ochirish' buyurtma.pk %}" onsubmit="return confirm('Bu buyurtmani ochirishni tasdiqlaysizmi?');" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="ochirish-tugma-buyurtma" aria-label="Ochirish">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 6H21M8 6V4A2 2 0 0 1 10 2H14A2 2 0 0 1 16 4V6M19 6V20A2 2 0 0 1 17 22H7A2 2 0 0 1 5 20V6H19Z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </button>
+                    </form>
                     {% endif %}
                 </div>
 
@@ -549,6 +594,15 @@
         </nav>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
 
 
 

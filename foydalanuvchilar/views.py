@@ -262,6 +262,15 @@ def dokonlar_royxati(request):
 
 
 @login_required
+def dokon_ochirish(request, pk):
+    if request.user.rol != Foydalanuvchi.Rol.MENEJER:
+        return HttpResponseForbidden("Bu sahifa faqat menejer uchun.")
+    dokon = get_object_or_404(Dokon, pk=pk, menejer=request.user)
+    dokon.delete()
+    return redirect('dokonlar_royxati')
+
+
+@login_required
 def dokon_tahrirlash(request, pk):
     if request.user.rol != Foydalanuvchi.Rol.MENEJER:
         return HttpResponseForbidden("Bu sahifa faqat menejer uchun.")
@@ -280,6 +289,7 @@ def dokon_tahrirlash(request, pk):
         'dokon': dokon,
         'xabar': xabar,
     })
+
 
 
 

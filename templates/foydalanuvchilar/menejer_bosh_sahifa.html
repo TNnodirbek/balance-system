@@ -344,23 +344,7 @@
             </div>
         </div>
 
-        {% if songgi_buyurtmalar %}
-            <div class="royxat-sarlavha-qatori">
-                <p class="bolim-sarlavha" style="margin: 0;">So'nggi buyurtmalar</p>
-                <a href="{% url 'buyurtmalar_royxati' %}" class="barchasi-link">Barchasi &rarr;</a>
-            </div>
-            <div>
-                {% for buyurtma in songgi_buyurtmalar %}
-                    <div class="buyurtma-qator">
-                        <div class="buyurtma-info">
-                            <div class="dokon-nomi">{{ buyurtma.dokon.nomi }}</div>
-                            <div class="buyurtma-miqdor">{{ buyurtma.jami_miqdor }} dona</div>
-                        </div>
-                        <span class="holat-pill holat-{{ buyurtma.holat }}">{{ buyurtma.get_holat_display }}</span>
-                    </div>
-                {% endfor %}
-            </div>
-        {% endif %}
+        
     </div>
 
     <nav class="pastki-nav">
@@ -393,6 +377,7 @@
         </nav>
 </body>
 </html>
+
 
 
 

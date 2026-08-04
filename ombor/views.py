@@ -51,6 +51,15 @@ def fura_qoshish(request):
 
 
 @login_required
+def fura_ochirish(request, pk):
+    if request.user.rol != Foydalanuvchi.Rol.MENEJER:
+        return HttpResponseForbidden("Bu sahifa faqat menejer uchun.")
+    fura = get_object_or_404(Fura, pk=pk, menejer=request.user)
+    fura.delete()
+    return redirect('ombor_royxati')
+
+
+@login_required
 def fura_tahrirlash(request, pk):
     if request.user.rol != Foydalanuvchi.Rol.MENEJER:
         return HttpResponseForbidden("Bu sahifa faqat menejer uchun.")
@@ -72,5 +81,6 @@ def fura_tahrirlash(request, pk):
         return render(request, 'ombor/fura_tahrirlash.html', {'form': form, 'fura': fura})
 
     return render(request, 'ombor/fura_tahrirlash.html', {'form': FuraForm(instance=fura), 'fura': fura})
+
 
 

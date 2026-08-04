@@ -20,6 +20,27 @@ from .models import Buyurtma, BuyurtmaMahsulot
 
 
 @login_required
+def buyurtma_ochirish(request, pk):
+    menejer = tegishli_menejer(request.user)
+    buyurtma = get_object_or_404(Buyurtma, pk=pk, menejer=menejer)
+    if request.user.rol != 'menejer' and buyurtma.zakaz_olgan_id != request.user.id:
+        return HttpResponseForbidden("Siz faqat o'zingiz yaratgan buyurtmani o'chira olasiz.")
+    buyurtma.delete()
+    return redirect('buyurtmalar_royxati')
+
+
+@login_required
+def buyurtma_ochirish(request, pk):
+    menejer = tegishli_menejer(request.user)
+    buyurtma = get_object_or_404(Buyurtma, pk=pk, menejer=menejer)
+    if request.user.rol != 'menejer' and buyurtma.zakaz_olgan_id != request.user.id:
+        return HttpResponseForbidden("Siz faqat o'zingiz yaratgan buyurtmani o'chira olasiz.")
+    buyurtma.delete()
+    messages.success(request, "Buyurtma o'chirildi.")
+    return redirect('buyurtmalar_royxati')
+
+
+@login_required
 def buyurtma_tahrirlash(request, pk):
     menejer = tegishli_menejer(request.user)
     buyurtma = get_object_or_404(Buyurtma, pk=pk, menejer=menejer)
@@ -131,6 +152,12 @@ def yangi_buyurtma(request):
                     f"{dokon.nomi} uchun yangi buyurtma tushdi",
                     havola='/buyurtmalar/',
                 )
+        if request.user.id != menejer.id:
+            bildirishnoma_yarat(
+                menejer, Bildirishnoma.Turi.YANGI_BUYURTMA,
+                f"{request.user.first_name or request.user.username} {dokon.nomi} uchun buyurtma yaratdi",
+                havola='/buyurtmalar/',
+            )
 
         return redirect('buyurtma_muvaffaqiyatli', pk=buyurtma.pk)
 
@@ -168,12 +195,20 @@ def dokon_qidirish(request):
 @login_required
 def buyurtmalar_royxati(request):
     menejer = tegishli_menejer(request.user)
+    from django.db.models import Case, When, Value, IntegerField
+    holat_tartibi = Case(
+        When(holat='yangi', then=Value(0)),
+        When(holat='yetkazilmoqda', then=Value(1)),
+        When(holat='yetkazildi', then=Value(2)),
+        output_field=IntegerField(),
+    )
     buyurtmalar = (
         Buyurtma.objects
         .filter(menejer=menejer)
         .select_related('dokon', 'zakaz_olgan', 'yetkazishga_olgan')
         .prefetch_related('mahsulotlar')
-        .order_by('-yaratilgan_vaqt')
+        .annotate(holat_tartibi=holat_tartibi)
+        .order_by('holat_tartibi', '-yaratilgan_vaqt')
     )
 
     filtr = request.GET.get('filter')
@@ -194,7 +229,10 @@ def buyurtmalar_royxati(request):
 @login_required
 @require_POST
 def buyurtma_olish(request, pk):
-    buyurtma = get_object_or_404(Buyurtma, pk=pk)
+    buyurtma = Buyurtma.objects.filter(pk=pk).first()
+    if not buyurtma:
+        messages.error(request, 'Bu buyurtma allaqachon ochirilgan.')
+        return redirect('buyurtmalar_royxati')
     yangilandi = Buyurtma.objects.filter(pk=pk, holat=Buyurtma.Holat.YANGI).update(
         holat=Buyurtma.Holat.YETKAZILMOQDA,
         yetkazishga_olgan=request.user,
@@ -313,6 +351,11 @@ def qarz_tolash(request, pk):
         return redirect('buyurtmalar_royxati')
 
     return render(request, 'buyurtmalar/qarz_tolash.html', {'buyurtma': buyurtma})
+
+
+
+
+
 
 
 
