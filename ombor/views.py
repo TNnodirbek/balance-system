@@ -2,8 +2,7 @@
 from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
 
-from foydalanuvchilar.models import Foydalanuvchi
-from foydalanuvchilar.utils import tegishli_menejer
+from foydalanuvchilar.utils import ruxsat_bor, tegishli_menejer
 
 from .forms import FuraForm
 from .models import Fura, FuraMahsulot
@@ -12,6 +11,9 @@ from .utils import ombor_qoldigi
 
 @login_required
 def ombor_royxati(request):
+    if not ruxsat_bor(request.user, 'ombor_korish'):
+        return HttpResponseForbidden("Bu sahifani ko'rish uchun ruxsatingiz yo'q.")
+
     menejer = tegishli_menejer(request.user)
     furalar = (
         Fura.objects
@@ -27,14 +29,14 @@ def ombor_royxati(request):
 
 @login_required
 def fura_qoshish(request):
-    if request.user.rol != Foydalanuvchi.Rol.MENEJER:
-        return HttpResponseForbidden("Fura qo'shish faqat menejer uchun ruxsat etilgan.")
+    if not ruxsat_bor(request.user, 'fura_boshqarish'):
+        return HttpResponseForbidden("Bu amal uchun ruxsatingiz yo'q.")
 
     if request.method == 'POST':
         form = FuraForm(request.POST)
         if form.is_valid():
             fura = form.save(commit=False)
-            fura.menejer = request.user
+            fura.menejer = tegishli_menejer(request.user)
             fura.save()
 
             hajmlar = request.POST.getlist('hajm[]')
@@ -52,19 +54,19 @@ def fura_qoshish(request):
 
 @login_required
 def fura_ochirish(request, pk):
-    if request.user.rol != Foydalanuvchi.Rol.MENEJER:
-        return HttpResponseForbidden("Bu sahifa faqat menejer uchun.")
-    fura = get_object_or_404(Fura, pk=pk, menejer=request.user)
+    if not ruxsat_bor(request.user, 'fura_boshqarish'):
+        return HttpResponseForbidden("Bu amal uchun ruxsatingiz yo'q.")
+    fura = get_object_or_404(Fura, pk=pk, menejer=tegishli_menejer(request.user))
     fura.delete()
     return redirect('ombor_royxati')
 
 
 @login_required
 def fura_tahrirlash(request, pk):
-    if request.user.rol != Foydalanuvchi.Rol.MENEJER:
-        return HttpResponseForbidden("Bu sahifa faqat menejer uchun.")
+    if not ruxsat_bor(request.user, 'fura_boshqarish'):
+        return HttpResponseForbidden("Bu amal uchun ruxsatingiz yo'q.")
 
-    fura = get_object_or_404(Fura, pk=pk, menejer=request.user)
+    fura = get_object_or_404(Fura, pk=pk, menejer=tegishli_menejer(request.user))
 
     if request.method == 'POST':
         form = FuraForm(request.POST, instance=fura)

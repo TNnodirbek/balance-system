@@ -16,6 +16,7 @@ urlpatterns = [
     path('sozlamalar/dokonlar/', views.dokonlar_royxati, name='dokonlar_royxati'),
     path('sozlamalar/dokonlar/<int:pk>/tahrirlash/', views.dokon_tahrirlash, name='dokon_tahrirlash'),
     path('sozlamalar/dokonlar/<int:pk>/ochirish/', views.dokon_ochirish, name='dokon_ochirish'),
+    path('sozlamalar/ruxsatlar/', views.ruxsatlar_sozlamasi, name='ruxsatlar_sozlamasi'),
 ]
 
 

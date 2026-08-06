@@ -11,7 +11,7 @@ from django.utils import timezone
 from django.views.decorators.http import require_POST
 
 from dokonlar.models import Dokon
-from foydalanuvchilar.utils import tegishli_menejer
+from foydalanuvchilar.utils import ruxsat_bor, tegishli_menejer
 from foydalanuvchilar.models import Foydalanuvchi
 from bildirishnomalar.models import Bildirishnoma
 from bildirishnomalar.utils import bildirishnoma_yarat
@@ -36,8 +36,9 @@ def buyurtma_batafsil(request, pk):
 def buyurtma_ochirish(request, pk):
     menejer = tegishli_menejer(request.user)
     buyurtma = get_object_or_404(Buyurtma, pk=pk, menejer=menejer)
-    if request.user.rol != 'menejer' and buyurtma.zakaz_olgan_id != request.user.id:
-        return HttpResponseForbidden("Siz faqat o'zingiz yaratgan buyurtmani o'chira olasiz.")
+    if request.user.rol != 'menejer':
+        if buyurtma.zakaz_olgan_id != request.user.id or not ruxsat_bor(request.user, 'buyurtma_ochirish'):
+            return HttpResponseForbidden("Siz faqat o'zingiz yaratgan buyurtmani o'chira olasiz.")
     buyurtma.delete()
     messages.success(request, "Buyurtma o'chirildi.")
     return redirect('buyurtmalar_royxati')

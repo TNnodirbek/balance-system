@@ -11,8 +11,8 @@ from dokonlar.models import Dokon
 from ombor.models import HajmNarxi
 from ombor.utils import menejer_hajmlari, ombor_qoldigi
 
-from .models import Foydalanuvchi
-from .utils import tegishli_menejer
+from .models import DastavchikRuxsatlari, Foydalanuvchi
+from .utils import ruxsat_bor, tegishli_menejer
 
 
 def login_view(request):
@@ -84,6 +84,7 @@ def menejer_bosh_sahifa(request):
         'bugun_yetkazilgan_soni': bugun_yetkazilgan_soni,
         'qarzdorlik': qarzdorlik,
         'songgi_buyurtmalar': songgi_buyurtmalar,
+        'ombor_korish': ruxsat_bor(request.user, 'ombor_korish'),
     })
 
 
@@ -123,6 +124,7 @@ def dastavchik_bosh_sahifa(request):
         'bugungi_yetkazilgan': bugungi_yetkazilgan,
         'faol_buyurtmalar': faol_buyurtmalar,
         'yangi_buyurtmalar_soni': yangi_buyurtmalar_soni,
+        'ombor_korish': ruxsat_bor(request.user, 'ombor_korish'),
     })
 
 
@@ -163,10 +165,11 @@ def dastavchik_qoshish(request):
 
 @login_required
 def dastavchiklar_royxati(request):
-    if request.user.rol != Foydalanuvchi.Rol.MENEJER:
-        return HttpResponseForbidden("Bu sahifa faqat menejer uchun.")
+    if not ruxsat_bor(request.user, 'dastavchiklarni_korish'):
+        return HttpResponseForbidden("Bu sahifani ko'rish uchun ruxsatingiz yo'q.")
 
-    dastavchiklar = list(request.user.dastavchiklar.all())
+    menejer = tegishli_menejer(request.user)
+    dastavchiklar = list(menejer.dastavchiklar.all()) if menejer else []
     for dastavchik in dastavchiklar:
         dastavchik.faol_buyurtmalar_soni = Buyurtma.objects.filter(
             yetkazishga_olgan=dastavchik, holat=Buyurtma.Holat.YETKAZILMOQDA,
@@ -214,7 +217,11 @@ def dastavchik_tahrirlash(request, pk):
 
 @login_required
 def sozlamalar_bosh(request):
-    return render(request, 'foydalanuvchilar/sozlamalar_bosh.html')
+    return render(request, 'foydalanuvchilar/sozlamalar_bosh.html', {
+        'ombor_korish': ruxsat_bor(request.user, 'ombor_korish'),
+        'narxlarni_korish': ruxsat_bor(request.user, 'narxlarni_korish'),
+        'dastavchiklarni_korish': ruxsat_bor(request.user, 'dastavchiklarni_korish'),
+    })
 
 
 @login_required
@@ -255,9 +262,10 @@ def profil_tahrirlash(request):
 
 @login_required
 def narxlar_sozlamasi(request):
-    if request.user.rol != Foydalanuvchi.Rol.MENEJER:
-        return HttpResponseForbidden("Bu sahifa faqat menejer uchun.")
+    if not ruxsat_bor(request.user, 'narxlarni_korish'):
+        return HttpResponseForbidden("Bu sahifani ko'rish uchun ruxsatingiz yo'q.")
 
+    menejer = tegishli_menejer(request.user)
     xabar = None
 
     if request.method == 'POST':
@@ -267,14 +275,14 @@ def narxlar_sozlamasi(request):
             hajm = hajm.strip()
             if hajm and narx not in (None, ''):
                 HajmNarxi.objects.update_or_create(
-                    menejer=request.user, hajm=hajm, defaults={'narx': narx},
+                    menejer=menejer, hajm=hajm, defaults={'narx': narx},
                 )
         xabar = 'Narxlar muvaffaqiyatli saqlandi.'
 
-    narx_dict = {h.hajm: h.narx for h in HajmNarxi.objects.filter(menejer=request.user)}
+    narx_dict = {h.hajm: h.narx for h in HajmNarxi.objects.filter(menejer=menejer)}
     hajm_narxlari = [
         {'hajm': hajm, 'narx': narx_dict.get(hajm, 0)}
-        for hajm in menejer_hajmlari(request.user)
+        for hajm in menejer_hajmlari(menejer)
     ]
 
     return render(request, 'ombor/narxlar_sozlamasi.html', {
@@ -287,24 +295,28 @@ def narxlar_sozlamasi(request):
 def dokonlar_royxati(request):
     menejer = tegishli_menejer(request.user)
     dokonlar = Dokon.objects.filter(menejer=menejer).order_by('nomi') if menejer else Dokon.objects.none()
-    return render(request, 'dokonlar/royxat.html', {'dokonlar': dokonlar})
+    return render(request, 'dokonlar/royxat.html', {
+        'dokonlar': dokonlar,
+        'dokon_tahrirlash_ruxsati': ruxsat_bor(request.user, 'dokon_tahrirlash'),
+        'dokon_ochirish_ruxsati': ruxsat_bor(request.user, 'dokon_ochirish'),
+    })
 
 
 @login_required
 def dokon_ochirish(request, pk):
-    if request.user.rol != Foydalanuvchi.Rol.MENEJER:
-        return HttpResponseForbidden("Bu sahifa faqat menejer uchun.")
-    dokon = get_object_or_404(Dokon, pk=pk, menejer=request.user)
+    if not ruxsat_bor(request.user, 'dokon_ochirish'):
+        return HttpResponseForbidden("Bu amal uchun ruxsatingiz yo'q.")
+    dokon = get_object_or_404(Dokon, pk=pk, menejer=tegishli_menejer(request.user))
     dokon.delete()
     return redirect('dokonlar_royxati')
 
 
 @login_required
 def dokon_tahrirlash(request, pk):
-    if request.user.rol != Foydalanuvchi.Rol.MENEJER:
-        return HttpResponseForbidden("Bu sahifa faqat menejer uchun.")
+    if not ruxsat_bor(request.user, 'dokon_tahrirlash'):
+        return HttpResponseForbidden("Bu amal uchun ruxsatingiz yo'q.")
 
-    dokon = get_object_or_404(Dokon, pk=pk, menejer=request.user)
+    dokon = get_object_or_404(Dokon, pk=pk, menejer=tegishli_menejer(request.user))
     xabar = None
 
     if request.method == 'POST':
@@ -316,6 +328,53 @@ def dokon_tahrirlash(request, pk):
 
     return render(request, 'dokonlar/tahrirlash.html', {
         'dokon': dokon,
+        'xabar': xabar,
+    })
+
+
+RUXSAT_MAYDONLARI = [
+    'dokon_tahrirlash', 'dokon_ochirish', 'buyurtma_ochirish', 'ombor_korish',
+    'fura_boshqarish', 'narxlarni_korish', 'dastavchiklarni_korish', 'xarajat_qoshish',
+]
+
+RUXSAT_IZOHLARI = {
+    'dokon_tahrirlash': "Dastavchik do'kon ma'lumotlarini (nomi, manzili, telefoni) o'zgartira oladi.",
+    'dokon_ochirish': "Dastavchik do'konni butunlay o'chira oladi.",
+    'buyurtma_ochirish': "Dastavchik o'zi yaratgan buyurtmani o'chira oladi.",
+    'ombor_korish': "Dastavchik ombordagi suv qoldig'ini va fura tarixini ko'ra oladi.",
+    'fura_boshqarish': "Dastavchik yangi fura qo'sha oladi, mavjudini tahrirlashi yoki o'chirishi mumkin bo'ladi.",
+    'narxlarni_korish': "Dastavchik standart suv narxlarini ko'rishi va o'zgartirishi mumkin bo'ladi.",
+    'dastavchiklarni_korish': "Dastavchik boshqa dastavchiklar ro'yxatini ko'ra oladi.",
+    'xarajat_qoshish': "Dastavchik kunlik xarajat yozishi mumkin bo'ladi.",
+}
+
+
+@login_required
+def ruxsatlar_sozlamasi(request):
+    if request.user.rol != Foydalanuvchi.Rol.MENEJER:
+        return HttpResponseForbidden("Bu sahifa faqat menejer uchun.")
+
+    ruxsatlar, _ = DastavchikRuxsatlari.objects.get_or_create(menejer=request.user)
+    xabar = None
+
+    if request.method == 'POST':
+        for maydon in RUXSAT_MAYDONLARI:
+            setattr(ruxsatlar, maydon, bool(request.POST.get(maydon)))
+        ruxsatlar.save()
+        xabar = 'Ruxsatlar muvaffaqiyatli saqlandi.'
+
+    ruxsat_royxati = [
+        {
+            'nomi': maydon,
+            'label': DastavchikRuxsatlari._meta.get_field(maydon).verbose_name,
+            'izoh': RUXSAT_IZOHLARI.get(maydon, ''),
+            'yoqilgan': getattr(ruxsatlar, maydon),
+        }
+        for maydon in RUXSAT_MAYDONLARI
+    ]
+
+    return render(request, 'foydalanuvchilar/ruxsatlar_sozlamasi.html', {
+        'ruxsat_royxati': ruxsat_royxati,
         'xabar': xabar,
     })
 
