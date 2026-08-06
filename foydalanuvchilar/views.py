@@ -323,6 +323,11 @@ def dokon_tahrirlash(request, pk):
         dokon.nomi = request.POST.get('nomi', '').strip()
         dokon.manzili = request.POST.get('manzili', '').strip()
         dokon.telefon = request.POST.get('telefon', '').strip()
+        joylashuv_lat = request.POST.get('joylashuv_lat')
+        joylashuv_lng = request.POST.get('joylashuv_lng')
+        if joylashuv_lat and joylashuv_lng:
+            dokon.joylashuv_lat = joylashuv_lat
+            dokon.joylashuv_lng = joylashuv_lng
         dokon.save()
         xabar = "Do'kon ma'lumotlari saqlandi."
 

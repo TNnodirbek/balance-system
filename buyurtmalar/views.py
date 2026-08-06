@@ -112,6 +112,11 @@ def yangi_buyurtma(request):
                 'xato': "Sizga menejer biriktirilmagan. Administratorga murojaat qiling.",
             })
 
+        joylashuv_lat = request.POST.get('joylashuv_lat')
+        joylashuv_lng = request.POST.get('joylashuv_lng')
+        if not joylashuv_lat or not joylashuv_lng:
+            joylashuv_lat = joylashuv_lng = None
+
         dokon_id = request.POST.get('dokon_id')
         if dokon_id:
             dokon = Dokon.objects.get(pk=dokon_id)
@@ -122,13 +127,10 @@ def yangi_buyurtma(request):
                 defaults={
                     'manzili': request.POST.get('dokon_manzil', ''),
                     'telefon': request.POST.get('dokon_telefon', ''),
+                    'joylashuv_lat': joylashuv_lat,
+                    'joylashuv_lng': joylashuv_lng,
                 },
             )
-
-        joylashuv_lat = request.POST.get('joylashuv_lat')
-        joylashuv_lng = request.POST.get('joylashuv_lng')
-        if not joylashuv_lat or not joylashuv_lng:
-            joylashuv_lat = joylashuv_lng = None
 
         buyurtma = Buyurtma.objects.create(
             dokon=dokon,
