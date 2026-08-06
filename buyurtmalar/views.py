@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.http import HttpResponseForbidden, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.template.loader import render_to_string
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 
@@ -204,9 +205,7 @@ def dokon_qidirish(request):
     return JsonResponse({'natijalar': natijalar})
 
 
-@login_required
-def buyurtmalar_royxati(request):
-    menejer = tegishli_menejer(request.user)
+def _buyurtmalar_bazaviy_queryset(menejer):
     from django.db.models import Case, When, Value, IntegerField
     holat_tartibi = Case(
         When(holat='yangi', then=Value(0)),
@@ -214,7 +213,7 @@ def buyurtmalar_royxati(request):
         When(holat='yetkazildi', then=Value(2)),
         output_field=IntegerField(),
     )
-    buyurtmalar = (
+    return (
         Buyurtma.objects
         .filter(menejer=menejer)
         .select_related('dokon', 'zakaz_olgan', 'yetkazishga_olgan')
@@ -222,6 +221,10 @@ def buyurtmalar_royxati(request):
         .annotate(holat_tartibi=holat_tartibi)
         .order_by('holat_tartibi', '-yaratilgan_vaqt')
     )
+
+
+def _buyurtmalar_filtrlangan(request, menejer):
+    buyurtmalar = _buyurtmalar_bazaviy_queryset(menejer)
 
     filtr = request.GET.get('filter')
     bugun = timezone.localdate()
@@ -232,15 +235,73 @@ def buyurtmalar_royxati(request):
     elif filtr == 'hafta':
         buyurtmalar = buyurtmalar.filter(yaratilgan_vaqt__gte=timezone.now() - timezone.timedelta(days=7))
 
+    qidiruv = request.GET.get('q', '').strip()
+    if qidiruv:
+        buyurtmalar = buyurtmalar.filter(
+            Q(dokon__nomi__icontains=qidiruv) | Q(dokon__manzili__icontains=qidiruv) | Q(dokon__telefon__icontains=qidiruv)
+        )
+
+    return buyurtmalar, filtr, qidiruv
+
+
+def _miqdor_biriktirish(buyurtmalar):
     buyurtmalar = list(buyurtmalar)
     for b in buyurtmalar:
         miqdor = {m.hajm: m.soni_buyurtma_qilingan for m in b.mahsulotlar.all()}
         b.miqdor_json = json.dumps(miqdor)
+    return buyurtmalar
 
-    return render(request, 'buyurtmalar/royxat.html', {
+
+def _qidiruv_jamlari(buyurtmalar):
+    yangi_hajm = {}
+    barchasi_hajm = {}
+    for b in buyurtmalar:
+        for m in b.mahsulotlar.all():
+            barchasi_hajm[m.hajm] = barchasi_hajm.get(m.hajm, 0) + m.soni_buyurtma_qilingan
+            if b.holat == Buyurtma.Holat.YANGI:
+                yangi_hajm[m.hajm] = yangi_hajm.get(m.hajm, 0) + m.soni_buyurtma_qilingan
+    return {
+        'yangi_hajm_jami': yangi_hajm,
+        'yangi_jami_son': sum(yangi_hajm.values()),
+        'barchasi_hajm_jami': barchasi_hajm,
+        'barchasi_jami_son': sum(barchasi_hajm.values()),
+    }
+
+
+@login_required
+def buyurtmalar_royxati(request):
+    menejer = tegishli_menejer(request.user)
+    buyurtmalar, filtr, qidiruv = _buyurtmalar_filtrlangan(request, menejer)
+    buyurtmalar = _miqdor_biriktirish(buyurtmalar)
+
+    kontekst = {
         'buyurtmalar': buyurtmalar,
         'filtr': filtr or 'barchasi',
-    })
+        'qidiruv': qidiruv,
+    }
+    if qidiruv:
+        kontekst.update(_qidiruv_jamlari(buyurtmalar))
+
+    return render(request, 'buyurtmalar/royxat.html', kontekst)
+
+
+@login_required
+def buyurtmalar_qidiruv_ajax(request):
+    menejer = tegishli_menejer(request.user)
+    buyurtmalar, filtr, qidiruv = _buyurtmalar_filtrlangan(request, menejer)
+    buyurtmalar = _miqdor_biriktirish(buyurtmalar)
+
+    html = render_to_string(
+        'buyurtmalar/_kartalar.html',
+        {'buyurtmalar': buyurtmalar, 'user': request.user},
+        request=request,
+    )
+    jamlar = _qidiruv_jamlari(buyurtmalar) if qidiruv else {
+        'yangi_hajm_jami': {}, 'yangi_jami_son': 0,
+        'barchasi_hajm_jami': {}, 'barchasi_jami_son': 0,
+    }
+
+    return JsonResponse({'html': html, 'qidiruv': qidiruv, **jamlar})
 
 
 @login_required

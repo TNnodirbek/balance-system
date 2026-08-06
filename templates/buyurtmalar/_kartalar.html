@@ -1,0 +1,86 @@
+{% load l10n %}
+{% load summa_filtr %}
+{% for buyurtma in buyurtmalar %}
+    <div class="buyurtma-karta{% if buyurtma.holat == 'yetkazildi' %} karta-kichik{% endif %}" style="position:relative;">
+        {% if buyurtma.holat != 'yangi' %}
+        <a href="{% url 'buyurtma_batafsil' buyurtma.pk %}" style="position:absolute;right:10px;top:10px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;color:#B9C6D6;font-size:20px;text-decoration:none;z-index:5;" aria-label="Batafsil">&#8250;</a>
+        {% endif %}
+        <div class="karta-tepa">
+            {% if buyurtma.holat == 'yangi' %}
+                <label class="tanlov-doira-qobiq">
+                    <input
+                        type="checkbox"
+                        class="tanlov-checkbox"
+                        data-buyurtma-id="{{ buyurtma.pk }}"
+                        data-miqdor='{{ buyurtma.miqdor_json }}'
+                    >
+                    <span class="tanlov-doira"></span>
+                </label>
+            {% endif %}
+            <div>
+                <p class="buyurtma-raqam">Buyurtma #{{ buyurtma.pk }}</p>
+                <p class="dokon-nomi">{{ buyurtma.dokon.nomi }}</p>
+            </div>
+            <span class="holat-pill holat-{{ buyurtma.holat }}">{{ buyurtma.get_holat_display }}</span>
+            {% if user.rol == 'menejer' or buyurtma.zakaz_olgan_id == user.id or buyurtma.yetkazishga_olgan_id == user.id %}
+            <a href="{% url 'buyurtma_tahrirlash' buyurtma.pk %}" class="tahrirlash-tugma-buyurtma" aria-label="Tahrirlash">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 4H4A2 2 0 0 0 2 6V20A2 2 0 0 0 4 22H18A2 2 0 0 0 20 20V13" stroke-linecap="round" stroke-linejoin="round"/><path d="M18.5 2.5A2.121 2.121 0 0 1 21.5 5.5L12 15L8 16L9 12L18.5 2.5Z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+            <form method="post" action="{% url 'buyurtma_ochirish' buyurtma.pk %}" onsubmit="return confirm('Bu buyurtmani ochirishni tasdiqlaysizmi?');" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" class="ochirish-tugma-buyurtma" aria-label="Ochirish">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 6H21M8 6V4A2 2 0 0 1 10 2H14A2 2 0 0 1 16 4V6M19 6V20A2 2 0 0 1 17 22H7A2 2 0 0 1 5 20V6H19Z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+            </form>
+            {% endif %}
+        </div>
+
+        <div class="dokon-detal">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 21C12 21 19 15 19 10A7 7 0 0 0 5 10C5 15 12 21 12 21Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+                <circle cx="12" cy="10" r="2.3" stroke="currentColor" stroke-width="1.6"/>
+            </svg>
+            <span>{{ buyurtma.dokon.manzili }}</span>
+        </div>
+        <div class="dokon-detal">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M6.6 10.8C7.9 13.4 10 15.5 12.6 16.8L14.6 14.8C14.9 14.5 15.3 14.4 15.6 14.6C16.7 15 17.9 15.2 19 15.2C19.6 15.2 20 15.6 20 16.2V19.4C20 20 19.6 20.4 19 20.4C10.7 20.4 4 13.7 4 5.4C4 4.8 4.4 4.4 5 4.4H8.2C8.8 4.4 9.2 4.8 9.2 5.4C9.2 6.5 9.4 7.7 9.8 8.8C9.9 9.1 9.9 9.5 9.6 9.8L6.6 10.8Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
+            </svg>
+            <span>{{ buyurtma.dokon.telefon }}</span>
+        </div>
+
+        <ul class="mahsulotlar-royxati">
+            {% for mahsulot in buyurtma.mahsulotlar.all %}
+                <li>
+                    <span>
+                        {{ mahsulot.hajm }} x {{ mahsulot.soni_buyurtma_qilingan }}
+                        {% if mahsulot.soni_yetkazilgan is not None %}
+                            <span class="yetkazildi-belgi">(yetkazildi: {{ mahsulot.soni_yetkazilgan }})</span>
+                        {% endif %}
+                    </span>
+                    <span>{% widthratio mahsulot.narx 1 mahsulot.soni_buyurtma_qilingan %} so'm</span>
+                </li>
+            {% endfor %}
+        </ul>
+
+        <hr class="ajratuvchi">
+
+        <div class="jami-qatori">
+            <span class="jami-label">Jami</span>
+            <span class="jami-son">{{ buyurtma.umumiy_summa|som_format }}</span>
+        </div>
+
+        <p class="info-qatori">
+            Zakaz: {{ buyurtma.zakaz_olgan.username }}{% if buyurtma.yetkazishga_olgan %} &middot; Yetkazmoqda: {{ buyurtma.yetkazishga_olgan.username }}{% endif %}
+        </p>
+
+    </div>
+{% empty %}
+    <div class="bosh-holat">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 7L12 3L21 7V17L12 21L3 17V7Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+            <path d="M3 7L12 11L21 7M12 11V21" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+        </svg>
+        <p>Buyurtmalar topilmadi</p>
+    </div>
+{% endfor %}

@@ -1,0 +1,18 @@
+{% if qidiruv %}
+<div class="qidiruv-natija-blok">
+    <p class="qidiruv-natija-sarlavha">Yangi buyurtmalar</p>
+    <div class="tanlov-chiplar">
+        {% for hajm, son in yangi_hajm_jami.items %}
+        <div class="tanlov-chip"><span class="tanlov-chip-hajm">{{ hajm }}</span><span class="tanlov-chip-son">{{ son }}</span></div>
+        {% endfor %}
+        <div class="tanlov-chip tanlov-chip-jami"><span class="tanlov-chip-hajm">Jami</span><span class="tanlov-chip-son">{{ yangi_jami_son }}</span></div>
+    </div>
+    <p class="qidiruv-natija-sarlavha">Barcha buyurtmalar</p>
+    <div class="tanlov-chiplar">
+        {% for hajm, son in barchasi_hajm_jami.items %}
+        <div class="tanlov-chip"><span class="tanlov-chip-hajm">{{ hajm }}</span><span class="tanlov-chip-son">{{ son }}</span></div>
+        {% endfor %}
+        <div class="tanlov-chip tanlov-chip-jami"><span class="tanlov-chip-hajm">Jami</span><span class="tanlov-chip-son">{{ barchasi_jami_son }}</span></div>
+    </div>
+</div>
+{% endif %}
