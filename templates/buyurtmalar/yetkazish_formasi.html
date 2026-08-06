@@ -167,7 +167,7 @@
             {% for mahsulot in buyurtma.mahsulotlar.all %}
             <div class="mahsulot-karta">
                 <div class="sarlavha">{{ mahsulot.hajm }}</div>
-                <div class="izoh">Buyurtma qilingan: {{ mahsulot.soni_buyurtma_qilingan }} dona</div>
+                <div class="izoh">Buyurtma qilingan: {{ mahsulot.soni_buyurtma_qilingan }}</div>
                 <input type="number" min="0" max="{{ mahsulot.soni_buyurtma_qilingan }}"
                        name="soni_yetkazilgan_{{ mahsulot.pk }}"
                        value="{{ mahsulot.soni_buyurtma_qilingan }}">

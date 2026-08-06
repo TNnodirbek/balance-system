@@ -429,7 +429,7 @@
             {% for hajm, malumot in mahsulot_kesimida.items %}
                 <div class="kesim-qatori">
                     <span class="kesim-hajm">{{ hajm }}</span>
-                    <span class="kesim-son">{{ malumot.soni }} dona</span>
+                    <span class="kesim-son">{{ malumot.soni }}</span>
                     <span class="kesim-summa">{{ malumot.summa|som_format }}</span>
                 </div>
             {% empty %}
@@ -442,7 +442,7 @@
             {% for ism, malumot in dastavchiklar_statistikasi.items %}
                 <div class="dastavchik-qatori">
                     <span class="dastavchik-ism">{{ ism }}</span>
-                    <span class="dastavchik-detal">{{ malumot.soni }} ta buyurtma &middot; {{ malumot.summa|som_format }}</span>
+                    <span class="dastavchik-detal">{{ malumot.soni }} buyurtma &middot; {{ malumot.summa|som_format }}</span>
                 </div>
             {% empty %}
                 <p class="bosh-matn">Ma'lumot yo'q</p>

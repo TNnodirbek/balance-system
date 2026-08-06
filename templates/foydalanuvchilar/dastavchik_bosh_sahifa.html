@@ -309,7 +309,7 @@
         <a href="{% url 'yangi_buyurtma' %}" class="tezkor-tugma">+ Yangi buyurtma</a>
 
         {% if faol_royxat %}
-        <p class="bolim-sarlavha" style="margin-top:20px;">Yo'lda ({{ faol_royxat|length }} ta)</p>
+        <p class="bolim-sarlavha" style="margin-top:20px;">Yo'lda ({{ faol_royxat|length }})</p>
         <div class="vaqt-chizigi">
             {% for b in faol_royxat %}
             <div class="vaqt-band">
@@ -317,7 +317,7 @@
                 <a href="{% url 'buyurtma_batafsil' b.pk %}" class="vaqt-karta">
                     <div class="vk-sarlavha">
                         <span>#{{ b.pk }} - {{ b.dokon.nomi }}</span>
-                        <span class="vk-son">{{ b.jami_miqdor }} dona</span>
+                        <span class="vk-son">{{ b.jami_miqdor }}</span>
                     </div>
                     <div class="vk-summa">{{ b.umumiy_summa|som_format }}</div>
                     <div class="vk-manzil">📍 {{ b.dokon.manzili }}</div>

@@ -126,12 +126,6 @@
             margin: 0;
         }
 
-        .qoldiq-dona {
-            font-size: 14px;
-            font-weight: 600;
-            color: #185FA5;
-        }
-
         .bosh-qoldiq {
             grid-column: 1 / -1;
             text-align: center;
@@ -292,7 +286,7 @@
             {% for hajm, son in qoldiq.items %}
                 <div class="qoldiq-karta">
                     <p class="qoldiq-hajm">{{ hajm }}</p>
-                    <p class="qoldiq-son">{{ son }} <span class="qoldiq-dona">dona</span></p>
+                    <p class="qoldiq-son">{{ son }}</p>
                 </div>
             {% empty %}
                 <p class="bosh-qoldiq">Ma'lumot yo'q</p>
@@ -318,7 +312,7 @@
 
                 <div class="fura-mahsulotlar">
                     {% for mahsulot in fura.mahsulotlar.all %}
-                        <span class="mahsulot-pill">{{ mahsulot.hajm }}: {{ mahsulot.miqdor }} dona</span>
+                        <span class="mahsulot-pill">{{ mahsulot.hajm }}: {{ mahsulot.miqdor }}</span>
                     {% endfor %}
                 </div>
 
