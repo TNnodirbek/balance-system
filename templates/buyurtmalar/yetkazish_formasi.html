@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿{% load l10n %}
+{% load summa_filtr %}
+<!DOCTYPE html>
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
@@ -130,6 +132,35 @@
             font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
             font-size: 14px;
         }
+        .tolandi-blok {
+            background: #E8F5E9;
+            color: #2E7D32;
+            border-radius: 10px;
+            padding: 12px 14px;
+            font-size: 14px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+        .jami-panel {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #F0F8FF;
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin-bottom: 16px;
+        }
+        .jami-panel span:first-child {
+            font-size: 13px;
+            font-weight: 600;
+            color: #0C2340;
+        }
+        .jami-panel span:last-child {
+            font-size: 18px;
+            font-weight: 700;
+            color: #185FA5;
+        }
         .saqlash-tugma {
             width: 100%;
             height: 52px;
@@ -168,8 +199,10 @@
             <div class="mahsulot-karta">
                 <div class="sarlavha">{{ mahsulot.hajm }}</div>
                 <div class="izoh">Buyurtma qilingan: {{ mahsulot.soni_buyurtma_qilingan }}</div>
-                <input type="number" min="0" max="{{ mahsulot.soni_buyurtma_qilingan }}"
+                <input type="number" min="0"
                        name="soni_yetkazilgan_{{ mahsulot.pk }}"
+                       class="yetkazilgan-miqdor-input"
+                       data-narx="{{ mahsulot.narx|unlocalize }}"
                        value="{{ mahsulot.soni_buyurtma_qilingan }}">
             </div>
             {% endfor %}
@@ -186,9 +219,18 @@
                 </label>
             </div>
 
+            <div id="tolandi_blok" class="tolandi-blok" style="display:none;">
+                To'landi: <span id="tolandi_son">{{ buyurtma.umumiy_summa|som_format }}</span>
+            </div>
+
             <div id="qarz_blok" style="display:none;">
                 <label>Qarz summasi</label>
                 <input type="number" step="0.01" name="qarz_summasi" id="qarz_summasi">
+            </div>
+
+            <div class="jami-panel">
+                <span>Jami</span>
+                <span id="yetkazish-jami-son">{{ buyurtma.umumiy_summa|som_format }}</span>
             </div>
 
             <button type="submit" class="saqlash-tugma">Yetkazildi deb belgilash</button>
@@ -196,13 +238,73 @@
     </div>
 
     <script>
+        function guruhlaSon(son) {
+            var matn = String(son);
+            var natija = '';
+            var sanoq = 0;
+            for (var i = matn.length - 1; i >= 0; i--) {
+                natija = matn[i] + natija;
+                sanoq++;
+                if (sanoq % 3 === 0 && i !== 0) {
+                    natija = '.' + natija;
+                }
+            }
+            return natija;
+        }
+
+        function formatSom(son) {
+            son = Math.round(son);
+            var manfiy = son < 0;
+            son = Math.abs(son);
+            var natija;
+            if (son >= 1000000) {
+                var mln = Math.floor(son / 1000000);
+                var ming = Math.floor((son % 1000000) / 1000);
+                natija = ming ? (mln + " mln " + ming + " ming so'm") : (mln + " mln so'm");
+            } else if (son >= 1000) {
+                natija = guruhlaSon(son) + " so'm";
+            } else {
+                natija = son + " so'm";
+            }
+            return manfiy ? ('-' + natija) : natija;
+        }
+
+        var miqdorInputlar = document.querySelectorAll('.yetkazilgan-miqdor-input');
+
+        function hisoblaJami() {
+            var jami = 0;
+            miqdorInputlar.forEach(function (input) {
+                var narx = parseFloat(input.dataset.narx) || 0;
+                var soni = parseFloat(input.value) || 0;
+                jami += narx * soni;
+            });
+            return jami;
+        }
+
+        function jamiYangilash() {
+            var jami = hisoblaJami();
+            document.getElementById('yetkazish-jami-son').textContent = formatSom(jami);
+            var tolovTuri = document.querySelector('input[name="tolov_holati"]:checked');
+            if (tolovTuri && tolovTuri.value === 'tolandi') {
+                document.getElementById('tolandi_son').textContent = formatSom(jami);
+            }
+        }
+
+        miqdorInputlar.forEach(function (input) {
+            input.addEventListener('input', jamiYangilash);
+        });
+        jamiYangilash();
+
         function tolovTanlandi(tur) {
             document.getElementById('band_tolandi').classList.remove('tanlangan-tolandi');
             document.getElementById('band_qarz').classList.remove('tanlangan-qarz');
+            document.getElementById('tolandi_blok').style.display = 'none';
+            document.getElementById('qarz_blok').style.display = 'none';
             if (tur === 'tolandi') {
                 document.getElementById('band_tolandi').classList.add('tanlangan-tolandi');
-                document.getElementById('qarz_blok').style.display = 'none';
                 document.getElementById('qarz_summasi').value = '';
+                document.getElementById('tolandi_blok').style.display = 'block';
+                jamiYangilash();
             } else {
                 document.getElementById('band_qarz').classList.add('tanlangan-qarz');
                 document.getElementById('qarz_blok').style.display = 'block';

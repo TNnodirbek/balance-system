@@ -368,11 +368,8 @@ def buyurtma_yetkazish(request, pk):
             except (TypeError, ValueError):
                 xato = 'Barcha mahsulotlar uchun yetkazilgan sonni kiriting.'
                 break
-            if soni < 0 or soni > mahsulot.soni_buyurtma_qilingan:
-                xato = (
-                    f"{mahsulot.hajm} uchun yetkazilgan son buyurtma qilingan sondan "
-                    f"({mahsulot.soni_buyurtma_qilingan}) katta yoki manfiy bo'lishi mumkin emas."
-                )
+            if soni < 0:
+                xato = f"{mahsulot.hajm} uchun yetkazilgan son manfiy bo'lishi mumkin emas."
                 break
             yangilanishlar.append((mahsulot, soni))
 

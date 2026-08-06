@@ -61,10 +61,13 @@
         <div class="karta">
             <h3>Mahsulotlar</h3>
             {% for m in buyurtma.mahsulotlar.all %}
-            <div class="qator"><span>{{ m.hajm }} x {{ m.soni_buyurtma_qilingan }}</span><span>{{ m.narx|unlocalize }} so'm</span></div>
+            {% widthratio m.narx 1 m.soni_buyurtma_qilingan as m_jami %}
+            <div class="qator"><span>{{ m.hajm }} x {{ m.soni_buyurtma_qilingan }}</span><span id="mahsulot-summa-{{ m.pk }}">{{ m_jami|som_format }}</span></div>
             {% endfor %}
             <div class="qator"><span>Jami bakalashka</span><span>{{ buyurtma.umumiy_soni }}</span></div>
+            {% if buyurtma.holat != 'yetkazilmoqda' or buyurtma.yetkazishga_olgan_id != user.id %}
             <div class="qator jami-qator"><span>Jami</span><span>{{ buyurtma.umumiy_summa|som_format }}</span></div>
+            {% endif %}
         </div>
 
         <div class="karta">
@@ -97,7 +100,7 @@
                 {% for m in buyurtma.mahsulotlar.all %}
                 <div class="qator" style="display:block;padding:8px 0;">
                     <label style="font-size:12px;font-weight:600;display:block;margin-bottom:4px;">{{ m.hajm }} - yetkazilgan miqdor</label>
-                    <input type="number" name="soni_yetkazilgan_{{ m.pk }}" min="0" max="{{ m.soni_buyurtma_qilingan }}" value="{{ m.soni_buyurtma_qilingan }}" style="width:100%;height:40px;border:1px solid #E4EDF6;border-radius:8px;padding:0 10px;font-family:'Manrope',sans-serif;">
+                    <input type="number" name="soni_yetkazilgan_{{ m.pk }}" min="0" value="{{ m.soni_buyurtma_qilingan }}" class="yetkazilgan-miqdor-input" data-narx="{{ m.narx|unlocalize }}" data-mahsulot-pk="{{ m.pk }}" style="width:100%;height:40px;border:1px solid #E4EDF6;border-radius:8px;padding:0 10px;font-family:'Manrope',sans-serif;">
                 </div>
                 {% endfor %}
                 <div style="display:flex;gap:8px;margin:10px 0;">
@@ -108,19 +111,91 @@
                         <input type="radio" name="tolov_holati" value="qarz" onclick="bdTolov('qarz')" style="display:none;"> Qarz
                     </label>
                 </div>
+                <div id="bd-tolandi-blok" style="display:none;margin-bottom:10px;font-size:14px;font-weight:700;color:#2E7D32;text-align:center;background:#E8F5E9;border-radius:10px;padding:10px;">
+                    To'landi: <span id="bd-tolandi-son">{{ buyurtma.umumiy_summa|som_format }}</span>
+                </div>
                 <div id="bd-qarz-blok" style="display:none;margin-bottom:10px;">
                     <input type="number" step="0.01" name="qarz_summasi" placeholder="Qarz summasi" style="width:100%;height:40px;border:1px solid #E4EDF6;border-radius:8px;padding:0 10px;">
+                </div>
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+                    <span style="font-size:13px;font-weight:600;color:#7C8B9E;">Jami</span>
+                    <span id="bd-jami-son" style="font-size:16px;font-weight:700;color:#185FA5;">{{ buyurtma.umumiy_summa|som_format }}</span>
                 </div>
                 <button type="submit" style="width:100%;height:48px;background:#2E7D32;color:#fff;border:none;border-radius:12px;font-weight:600;font-size:14px;cursor:pointer;">Yetkazildi</button>
             </form>
         </div>
         <script>
+            function bdGuruhlaSon(son) {
+                var matn = String(son);
+                var natija = '';
+                var sanoq = 0;
+                for (var i = matn.length - 1; i >= 0; i--) {
+                    natija = matn[i] + natija;
+                    sanoq++;
+                    if (sanoq % 3 === 0 && i !== 0) {
+                        natija = '.' + natija;
+                    }
+                }
+                return natija;
+            }
+
+            function bdFormatSom(son) {
+                son = Math.round(son);
+                var manfiy = son < 0;
+                son = Math.abs(son);
+                var natija;
+                if (son >= 1000000) {
+                    var mln = Math.floor(son / 1000000);
+                    var ming = Math.floor((son % 1000000) / 1000);
+                    natija = ming ? (mln + " mln " + ming + " ming so'm") : (mln + " mln so'm");
+                } else if (son >= 1000) {
+                    natija = bdGuruhlaSon(son) + " so'm";
+                } else {
+                    natija = son + " so'm";
+                }
+                return manfiy ? ('-' + natija) : natija;
+            }
+
+            var bdMiqdorInputlar = document.querySelectorAll('.yetkazilgan-miqdor-input');
+
+            function bdHisoblaJami() {
+                var jami = 0;
+                bdMiqdorInputlar.forEach(function (input) {
+                    var narx = parseFloat(input.dataset.narx) || 0;
+                    var soni = parseFloat(input.value) || 0;
+                    var qatorJami = narx * soni;
+                    jami += qatorJami;
+                    var summaEl = document.getElementById('mahsulot-summa-' + input.dataset.mahsulotPk);
+                    if (summaEl) {
+                        summaEl.textContent = bdFormatSom(qatorJami);
+                    }
+                });
+                return jami;
+            }
+
+            function bdJamiYangilash() {
+                var jami = bdHisoblaJami();
+                document.getElementById('bd-jami-son').textContent = bdFormatSom(jami);
+                var tolovTuri = document.querySelector('input[name="tolov_holati"]:checked');
+                if (tolovTuri && tolovTuri.value === 'tolandi') {
+                    document.getElementById('bd-tolandi-son').textContent = bdFormatSom(jami);
+                }
+            }
+
+            bdMiqdorInputlar.forEach(function (input) {
+                input.addEventListener('input', bdJamiYangilash);
+            });
+            bdJamiYangilash();
+
             function bdTolov(tur) {
                 document.getElementById('bd-tolandi').style.background = '';
                 document.getElementById('bd-qarz').style.background = '';
+                document.getElementById('bd-tolandi-blok').style.display = 'none';
                 document.getElementById('bd-qarz-blok').style.display = 'none';
                 if (tur === 'tolandi') {
                     document.getElementById('bd-tolandi').style.background = '#E8F5E9';
+                    document.getElementById('bd-tolandi-blok').style.display = 'block';
+                    bdJamiYangilash();
                 } else {
                     document.getElementById('bd-qarz').style.background = '#FCEBEB';
                     document.getElementById('bd-qarz-blok').style.display = 'block';
