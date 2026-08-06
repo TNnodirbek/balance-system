@@ -254,18 +254,13 @@ def _miqdor_biriktirish(buyurtmalar):
 
 
 def _qidiruv_jamlari(buyurtmalar):
-    yangi_hajm = {}
-    barchasi_hajm = {}
+    hajm_jami = {}
     for b in buyurtmalar:
         for m in b.mahsulotlar.all():
-            barchasi_hajm[m.hajm] = barchasi_hajm.get(m.hajm, 0) + m.soni_buyurtma_qilingan
-            if b.holat == Buyurtma.Holat.YANGI:
-                yangi_hajm[m.hajm] = yangi_hajm.get(m.hajm, 0) + m.soni_buyurtma_qilingan
+            hajm_jami[m.hajm] = hajm_jami.get(m.hajm, 0) + m.soni_buyurtma_qilingan
     return {
-        'yangi_hajm_jami': yangi_hajm,
-        'yangi_jami_son': sum(yangi_hajm.values()),
-        'barchasi_hajm_jami': barchasi_hajm,
-        'barchasi_jami_son': sum(barchasi_hajm.values()),
+        'hajm_jami': hajm_jami,
+        'jami_son': sum(hajm_jami.values()),
     }
 
 
@@ -297,10 +292,7 @@ def buyurtmalar_qidiruv_ajax(request):
         {'buyurtmalar': buyurtmalar, 'user': request.user},
         request=request,
     )
-    jamlar = _qidiruv_jamlari(buyurtmalar) if qidiruv else {
-        'yangi_hajm_jami': {}, 'yangi_jami_son': 0,
-        'barchasi_hajm_jami': {}, 'barchasi_jami_son': 0,
-    }
+    jamlar = _qidiruv_jamlari(buyurtmalar) if qidiruv else {'hajm_jami': {}, 'jami_son': 0}
 
     return JsonResponse({'html': html, 'qidiruv': qidiruv, **jamlar})
 

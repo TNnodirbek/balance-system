@@ -745,31 +745,18 @@
             var blok = document.createElement('div');
             blok.className = 'qidiruv-natija-blok';
 
-            var sarlavha1 = document.createElement('p');
-            sarlavha1.className = 'qidiruv-natija-sarlavha';
-            sarlavha1.textContent = 'Yangi buyurtmalar';
-            blok.appendChild(sarlavha1);
+            var sarlavha = document.createElement('p');
+            sarlavha.className = 'qidiruv-natija-sarlavha';
+            sarlavha.textContent = 'Qidiruv natijasi:';
+            blok.appendChild(sarlavha);
 
-            var chiplar1 = document.createElement('div');
-            chiplar1.className = 'tanlov-chiplar';
-            Object.keys(data.yangi_hajm_jami).sort(tanlovHajmSaralash).forEach(function (hajm) {
-                chiplar1.appendChild(tanlovChipYarat(hajm, data.yangi_hajm_jami[hajm], false));
+            var chiplar = document.createElement('div');
+            chiplar.className = 'tanlov-chiplar';
+            Object.keys(data.hajm_jami).sort(tanlovHajmSaralash).forEach(function (hajm) {
+                chiplar.appendChild(tanlovChipYarat(hajm, data.hajm_jami[hajm], false));
             });
-            chiplar1.appendChild(tanlovChipYarat('Jami', data.yangi_jami_son, true));
-            blok.appendChild(chiplar1);
-
-            var sarlavha2 = document.createElement('p');
-            sarlavha2.className = 'qidiruv-natija-sarlavha';
-            sarlavha2.textContent = 'Barcha buyurtmalar';
-            blok.appendChild(sarlavha2);
-
-            var chiplar2 = document.createElement('div');
-            chiplar2.className = 'tanlov-chiplar';
-            Object.keys(data.barchasi_hajm_jami).sort(tanlovHajmSaralash).forEach(function (hajm) {
-                chiplar2.appendChild(tanlovChipYarat(hajm, data.barchasi_hajm_jami[hajm], false));
-            });
-            chiplar2.appendChild(tanlovChipYarat('Jami', data.barchasi_jami_son, true));
-            blok.appendChild(chiplar2);
+            chiplar.appendChild(tanlovChipYarat('Jami', data.jami_son, true));
+            blok.appendChild(chiplar);
 
             qobiq.appendChild(blok);
         }
