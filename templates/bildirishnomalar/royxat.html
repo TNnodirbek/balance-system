@@ -47,17 +47,46 @@
             color: #185FA5;
             text-decoration: none;
         }
+        .bildirishnoma-qatori {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        .bildirishnoma-checkbox {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+            accent-color: #A32D2D;
+        }
         .bildirishnoma-karta {
             display: flex;
             gap: 12px;
+            flex: 1;
             background: #FFFFFF;
             border: 1px solid #E4EDF6;
             border-radius: 14px;
             padding: 14px 16px;
-            margin-bottom: 10px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.04);
             text-decoration: none;
             color: #0C2340;
+        }
+        .amallar-panel {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .amal-tugma {
+            flex: 1;
+            height: 40px;
+            border: 1px solid #F0C4C4;
+            border-radius: 10px;
+            background: #FCEBEB;
+            color: #A32D2D;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
         }
         .turi-ikonka {
             width: 36px; height: 36px;
@@ -94,19 +123,65 @@
             </a>
         </div>
 
+        {% if bildirishnomalar %}
+        <div class="amallar-panel">
+            <form method="post" action="{% url 'bildirishnomalar_tozalash' %}" onsubmit="return confirm('Barcha bildirishnomalarni ochirishni tasdiqlaysizmi?');" style="flex:1;">
+                {% csrf_token %}
+                <button type="submit" class="amal-tugma" style="width:100%;">Barchasini tozalash</button>
+            </form>
+        </div>
+
+        <form method="post" action="{% url 'bildirishnoma_ochirish' %}" id="tanlanganlar-forma" style="display:none;margin-bottom:16px;">
+            {% csrf_token %}
+            <div id="tanlanganlar-inputlar"></div>
+            <button type="submit" class="amal-tugma" style="width:100%;">Tanlanganlarni o'chirish (<span id="tanlangan-soni">0</span>)</button>
+        </form>
+        {% endif %}
+
         {% for b in bildirishnomalar %}
-        <a href="{{ b.havola|default:'#' }}" class="bildirishnoma-karta">
-            <div class="turi-ikonka turi-{{ b.turi }}">
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M18 8A6 6 0 0 0 6 8C6 15 3 17 3 17H21S18 15 18 8Z" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </div>
-            <div>
-                <div class="matn">{{ b.matn }}</div>
-                <div class="vaqt">{{ b.yaratilgan_vaqt|date:"d.m.Y H:i" }}</div>
-            </div>
-        </a>
+        <div class="bildirishnoma-qatori">
+            <input type="checkbox" class="bildirishnoma-checkbox" value="{{ b.pk }}" aria-label="Tanlash">
+            <a href="{{ b.havola|default:'#' }}" class="bildirishnoma-karta">
+                <div class="turi-ikonka turi-{{ b.turi }}">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M18 8A6 6 0 0 0 6 8C6 15 3 17 3 17H21S18 15 18 8Z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+                <div>
+                    <div class="matn">{{ b.matn }}</div>
+                    <div class="vaqt">{{ b.yaratilgan_vaqt|date:"d.m.Y H:i" }}</div>
+                </div>
+            </a>
+        </div>
         {% empty %}
         <div class="bosh-holat">Bildirishnomalar yo'q</div>
         {% endfor %}
     </div>
+
+    <script>
+        var tanlanganlarForma = document.getElementById('tanlanganlar-forma');
+
+        if (tanlanganlarForma) {
+            function bildirishnomaTanlovYangilash() {
+                var tanlanganlar = document.querySelectorAll('.bildirishnoma-checkbox:checked');
+                document.getElementById('tanlangan-soni').textContent = tanlanganlar.length;
+                tanlanganlarForma.style.display = tanlanganlar.length > 0 ? 'block' : 'none';
+            }
+
+            document.querySelectorAll('.bildirishnoma-checkbox').forEach(function (cb) {
+                cb.addEventListener('change', bildirishnomaTanlovYangilash);
+            });
+
+            tanlanganlarForma.addEventListener('submit', function () {
+                var inputlarQobiq = document.getElementById('tanlanganlar-inputlar');
+                inputlarQobiq.innerHTML = '';
+                document.querySelectorAll('.bildirishnoma-checkbox:checked').forEach(function (cb) {
+                    var input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'bildirishnoma_idlar';
+                    input.value = cb.value;
+                    inputlarQobiq.appendChild(input);
+                });
+            });
+        }
+    </script>
 </body>
 </html>

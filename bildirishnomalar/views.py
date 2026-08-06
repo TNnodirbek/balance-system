@@ -1,5 +1,6 @@
 ﻿from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
+from django.views.decorators.http import require_POST
 
 from .models import Bildirishnoma, BildirishnomaSozlamasi
 
@@ -31,3 +32,18 @@ def bildirishnoma_sozlamasi(request):
         'sozlama': sozlama,
         'xabar': xabar,
     })
+
+
+@login_required
+@require_POST
+def bildirishnoma_ochirish(request):
+    id_lar = request.POST.getlist('bildirishnoma_idlar')
+    Bildirishnoma.objects.filter(pk__in=id_lar, foydalanuvchi=request.user).delete()
+    return redirect('bildirishnomalar_royxati')
+
+
+@login_required
+@require_POST
+def bildirishnomalar_tozalash(request):
+    Bildirishnoma.objects.filter(foydalanuvchi=request.user).delete()
+    return redirect('bildirishnomalar_royxati')
