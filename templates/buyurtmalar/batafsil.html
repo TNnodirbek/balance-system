@@ -63,6 +63,7 @@
             {% for m in buyurtma.mahsulotlar.all %}
             <div class="qator"><span>{{ m.hajm }} x {{ m.soni_buyurtma_qilingan }}</span><span>{{ m.narx|unlocalize }} so'm</span></div>
             {% endfor %}
+            <div class="qator"><span>Jami bakalashka</span><span>{{ buyurtma.umumiy_soni }}</span></div>
             <div class="qator jami-qator"><span>Jami</span><span>{{ buyurtma.umumiy_summa|som_format }}</span></div>
         </div>
 

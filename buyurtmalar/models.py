@@ -53,6 +53,10 @@ class Buyurtma(models.Model):
     def umumiy_summa(self):
         return sum(m.narx * m.soni_buyurtma_qilingan for m in self.mahsulotlar.all())
 
+    @property
+    def umumiy_soni(self):
+        return sum(m.soni_buyurtma_qilingan for m in self.mahsulotlar.all())
+
     def __str__(self):
         return f'Buyurtma #{self.pk} - {self.dokon}'
 
