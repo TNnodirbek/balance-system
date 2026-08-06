@@ -186,6 +186,8 @@
             border-radius: 14px;
             padding: 12px 10px;
             text-align: center;
+            display: block;
+            text-decoration: none;
         }
 
         .stat-sarlavha {
@@ -438,10 +440,10 @@
                 <p class="stat-sarlavha">Yetkazilgan</p>
                 <p class="stat-son">{{ bugun_yetkazilgan_soni }}</p>
             </div>
-            <div class="stat-karta">
+            <a href="{% url 'qarzdorlar_royxati' %}" class="stat-karta">
                 <p class="stat-sarlavha">Qarzdorlik</p>
                 <p class="stat-son{% if qarzdorlik %} qarz{% endif %}">{{ qarzdorlik|som_format }}</p>
-            </div>
+            </a>
         </div>
 
         

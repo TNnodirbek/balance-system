@@ -143,3 +143,24 @@ def hisobot(request):
         'dastavchiklar_statistikasi': dastavchiklar_statistikasi,
     })
     return render(request, 'statistika/hisobot.html', kontekst)
+
+
+@login_required
+def qarzdorlar_royxati(request):
+    menejer = tegishli_menejer(request.user)
+    qarzdorlar = Buyurtma.objects.none()
+    umumiy_qarz = Decimal('0')
+
+    if menejer:
+        qarzdorlar = (
+            Buyurtma.objects
+            .filter(menejer=menejer, tolov_holati=Buyurtma.TolovHolati.QARZ, qarz_summasi__gt=0)
+            .select_related('dokon')
+            .order_by('-yaratilgan_vaqt')
+        )
+        umumiy_qarz = qarzdorlar.aggregate(jami=Sum('qarz_summasi'))['jami'] or Decimal('0')
+
+    return render(request, 'statistika/qarzdorlar.html', {
+        'qarzdorlar': qarzdorlar,
+        'umumiy_qarz': umumiy_qarz,
+    })

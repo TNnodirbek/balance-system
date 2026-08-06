@@ -65,6 +65,11 @@
             margin: 0 0 12px;
         }
 
+        .bolim-sarlavha-havola {
+            display: block;
+            text-decoration: none;
+        }
+
         /* Filtr pillari */
         .filtr-qatori {
             display: flex;
@@ -449,7 +454,7 @@
             {% endfor %}
         </div>
 
-        <p class="bolim-sarlavha">Qarzlar ro'yxati</p>
+        <a href="{% url 'qarzdorlar_royxati' %}" class="bolim-sarlavha bolim-sarlavha-havola">Qarzlar ro'yxati &rsaquo;</a>
         <div class="karta">
             {% for buyurtma in qarzlar_royxati %}
                 <div class="qarz-qatori">
