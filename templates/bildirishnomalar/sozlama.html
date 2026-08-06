@@ -154,6 +154,17 @@
                 </label>
             </div>
 
+            <div class="band">
+                <div>
+                    <div class="matn">Xarajat eslatmasi</div>
+                    <div class="izoh">Kunlik xarajat kiritish vaqti kelganda xabar beriladi</div>
+                </div>
+                <label class="toggle">
+                    <input type="checkbox" name="xarajat_eslatmasi" {% if sozlama.xarajat_eslatmasi %}checked{% endif %}>
+                    <span class="suriluvchi"></span>
+                </label>
+            </div>
+
             <p class="bolim-sarlavha">Kunlik eslatma vaqti</p>
             <div class="maydon">
                 <input type="time" name="eslatma_vaqti" value="{{ sozlama.eslatma_vaqti|time:'H:i' }}">

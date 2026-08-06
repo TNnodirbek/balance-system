@@ -7,8 +7,10 @@ from .models import Bildirishnoma, BildirishnomaSozlamasi
 
 @login_required
 def bildirishnomalar_royxati(request):
-    bildirishnomalar = Bildirishnoma.objects.filter(foydalanuvchi=request.user)
-    Bildirishnoma.objects.filter(foydalanuvchi=request.user, oqilgan=False).update(oqilgan=True)
+    bildirishnomalar = list(Bildirishnoma.objects.filter(foydalanuvchi=request.user))
+    oqilmagan_idlar = [b.pk for b in bildirishnomalar if not b.oqilgan]
+    if oqilmagan_idlar:
+        Bildirishnoma.objects.filter(pk__in=oqilmagan_idlar).update(oqilgan=True)
     return render(request, 'bildirishnomalar/royxat.html', {
         'bildirishnomalar': bildirishnomalar,
     })
@@ -22,6 +24,7 @@ def bildirishnoma_sozlamasi(request):
     if request.method == 'POST':
         sozlama.yangi_buyurtma_eslatmasi = bool(request.POST.get('yangi_buyurtma_eslatmasi'))
         sozlama.qarz_eslatmasi = bool(request.POST.get('qarz_eslatmasi'))
+        sozlama.xarajat_eslatmasi = bool(request.POST.get('xarajat_eslatmasi'))
         eslatma_vaqti = request.POST.get('eslatma_vaqti')
         if eslatma_vaqti:
             sozlama.eslatma_vaqti = eslatma_vaqti

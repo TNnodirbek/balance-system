@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
@@ -39,6 +39,11 @@
             color: #0C2340;
             margin: 0;
         }
+        .tepa-tugmalar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
         .sozlama-havola {
             width: 36px; height: 36px;
             display: flex; align-items: center; justify-content: center;
@@ -46,6 +51,57 @@
             background: #F0F8FF;
             color: #185FA5;
             text-decoration: none;
+            flex-shrink: 0;
+        }
+        .menyu-qobiq {
+            position: relative;
+        }
+        .menyu-tugma {
+            width: 36px; height: 36px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 10px;
+            background: #F0F8FF;
+            color: #185FA5;
+            border: none;
+            cursor: pointer;
+        }
+        .menyu-dropdown {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 44px;
+            min-width: 210px;
+            background: #FFFFFF;
+            border: 1px solid #E4EDF6;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(12, 35, 64, 0.10);
+            overflow: hidden;
+            z-index: 50;
+        }
+        .menyu-dropdown.ochiq {
+            display: block;
+        }
+        .menyu-dropdown form {
+            margin: 0;
+        }
+        .menyu-band {
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 13px 16px;
+            border: none;
+            background: none;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            color: #0C2340;
+            cursor: pointer;
+        }
+        .menyu-band:hover {
+            background: #F7F9FB;
+        }
+        .menyu-band-xavfli {
+            color: #A32D2D;
         }
         .bildirishnoma-qatori {
             display: flex;
@@ -58,6 +114,10 @@
             height: 18px;
             flex-shrink: 0;
             accent-color: #A32D2D;
+            display: none;
+        }
+        .qobiq.belgilash-faol .bildirishnoma-checkbox {
+            display: block;
         }
         .bildirishnoma-karta {
             display: flex;
@@ -71,22 +131,15 @@
             text-decoration: none;
             color: #0C2340;
         }
-        .amallar-panel {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 16px;
+        .bildirishnoma-karta.oqilmagan {
+            background: #2E7D32;
+            border-color: #2E7D32;
         }
-        .amal-tugma {
-            flex: 1;
-            height: 40px;
-            border: 1px solid #F0C4C4;
-            border-radius: 10px;
-            background: #FCEBEB;
-            color: #A32D2D;
-            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
+        .bildirishnoma-karta.oqilmagan .matn {
+            color: #FFFFFF;
+        }
+        .bildirishnoma-karta.oqilmagan .vaqt {
+            color: rgba(255, 255, 255, 0.8);
         }
         .turi-ikonka {
             width: 36px; height: 36px;
@@ -107,10 +160,36 @@
             font-size: 13px;
             padding: 60px 0;
         }
+        .tanlanganlar-panel {
+            display: none;
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 100;
+            max-width: 480px;
+            margin: 0 auto;
+            background: #FFFFFF;
+            border-top: 1px solid #E4EDF6;
+            box-shadow: 0 -4px 16px rgba(12, 35, 64, 0.10);
+            padding: 14px 16px calc(14px + env(safe-area-inset-bottom));
+        }
+        .tanlanganlar-tugma {
+            width: 100%;
+            height: 44px;
+            border: 1px solid #F0C4C4;
+            border-radius: 10px;
+            background: #FCEBEB;
+            color: #A32D2D;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
-    <div class="qobiq">
+    <div class="qobiq" id="qobiq">
         <div class="sarlavha-panel">
             <div class="chap">
                 <a href="javascript:history.back()" class="orqaga" aria-label="Orqaga">
@@ -118,30 +197,31 @@
                 </a>
                 <h1>Bildirishnomalar</h1>
             </div>
-            <a href="{% url 'bildirishnoma_sozlamasi' %}" class="sozlama-havola" aria-label="Sozlama">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3.2" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.7" stroke-dasharray="1.6 2.7" stroke-linecap="round"/></svg>
-            </a>
+            <div class="tepa-tugmalar">
+                <a href="{% url 'bildirishnoma_sozlamasi' %}" class="sozlama-havola" aria-label="Sozlama">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3.2" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.7" stroke-dasharray="1.6 2.7" stroke-linecap="round"/></svg>
+                </a>
+                {% if bildirishnomalar %}
+                <div class="menyu-qobiq">
+                    <button type="button" class="menyu-tugma" id="menyu-tugma" aria-label="Menyu">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/></svg>
+                    </button>
+                    <div class="menyu-dropdown" id="menyu-dropdown">
+                        <button type="button" class="menyu-band" id="belgilash-tugma">Belgilash</button>
+                        <form method="post" action="{% url 'bildirishnomalar_tozalash' %}" onsubmit="return confirm('Barcha bildirishnomalarni ochirishni tasdiqlaysizmi?');">
+                            {% csrf_token %}
+                            <button type="submit" class="menyu-band menyu-band-xavfli">Barchasini tozalash</button>
+                        </form>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
         </div>
-
-        {% if bildirishnomalar %}
-        <div class="amallar-panel">
-            <form method="post" action="{% url 'bildirishnomalar_tozalash' %}" onsubmit="return confirm('Barcha bildirishnomalarni ochirishni tasdiqlaysizmi?');" style="flex:1;">
-                {% csrf_token %}
-                <button type="submit" class="amal-tugma" style="width:100%;">Barchasini tozalash</button>
-            </form>
-        </div>
-
-        <form method="post" action="{% url 'bildirishnoma_ochirish' %}" id="tanlanganlar-forma" style="display:none;margin-bottom:16px;">
-            {% csrf_token %}
-            <div id="tanlanganlar-inputlar"></div>
-            <button type="submit" class="amal-tugma" style="width:100%;">Tanlanganlarni o'chirish (<span id="tanlangan-soni">0</span>)</button>
-        </form>
-        {% endif %}
 
         {% for b in bildirishnomalar %}
         <div class="bildirishnoma-qatori">
             <input type="checkbox" class="bildirishnoma-checkbox" value="{{ b.pk }}" aria-label="Tanlash">
-            <a href="{{ b.havola|default:'#' }}" class="bildirishnoma-karta">
+            <a href="{{ b.havola|default:'#' }}" class="bildirishnoma-karta{% if not b.oqilgan %} oqilmagan{% endif %}">
                 <div class="turi-ikonka turi-{{ b.turi }}">
                     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M18 8A6 6 0 0 0 6 8C6 15 3 17 3 17H21S18 15 18 8Z" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 </div>
@@ -156,20 +236,56 @@
         {% endfor %}
     </div>
 
+    <div class="tanlanganlar-panel" id="tanlanganlar-panel">
+        <form method="post" action="{% url 'bildirishnoma_ochirish' %}" id="tanlanganlar-forma">
+            {% csrf_token %}
+            <div id="tanlanganlar-inputlar"></div>
+            <button type="submit" class="tanlanganlar-tugma">Tanlanganlarni o'chirish (<span id="tanlangan-soni">0</span>)</button>
+        </form>
+    </div>
+
     <script>
+        var qobiq = document.getElementById('qobiq');
+        var menyuTugma = document.getElementById('menyu-tugma');
+        var menyuDropdown = document.getElementById('menyu-dropdown');
+        var belgilashTugma = document.getElementById('belgilash-tugma');
+        var tanlanganlarPanel = document.getElementById('tanlanganlar-panel');
         var tanlanganlarForma = document.getElementById('tanlanganlar-forma');
 
-        if (tanlanganlarForma) {
-            function bildirishnomaTanlovYangilash() {
-                var tanlanganlar = document.querySelectorAll('.bildirishnoma-checkbox:checked');
-                document.getElementById('tanlangan-soni').textContent = tanlanganlar.length;
-                tanlanganlarForma.style.display = tanlanganlar.length > 0 ? 'block' : 'none';
-            }
-
-            document.querySelectorAll('.bildirishnoma-checkbox').forEach(function (cb) {
-                cb.addEventListener('change', bildirishnomaTanlovYangilash);
+        if (menyuTugma) {
+            menyuTugma.addEventListener('click', function (e) {
+                e.stopPropagation();
+                menyuDropdown.classList.toggle('ochiq');
             });
+            document.addEventListener('click', function () {
+                menyuDropdown.classList.remove('ochiq');
+            });
+        }
 
+        function bildirishnomaTanlovYangilash() {
+            var tanlanganlar = document.querySelectorAll('.bildirishnoma-checkbox:checked');
+            document.getElementById('tanlangan-soni').textContent = tanlanganlar.length;
+            tanlanganlarPanel.style.display = tanlanganlar.length > 0 ? 'block' : 'none';
+        }
+
+        document.querySelectorAll('.bildirishnoma-checkbox').forEach(function (cb) {
+            cb.addEventListener('change', bildirishnomaTanlovYangilash);
+        });
+
+        if (belgilashTugma) {
+            belgilashTugma.addEventListener('click', function () {
+                menyuDropdown.classList.remove('ochiq');
+                qobiq.classList.toggle('belgilash-faol');
+                if (!qobiq.classList.contains('belgilash-faol')) {
+                    document.querySelectorAll('.bildirishnoma-checkbox').forEach(function (cb) {
+                        cb.checked = false;
+                    });
+                    bildirishnomaTanlovYangilash();
+                }
+            });
+        }
+
+        if (tanlanganlarForma) {
             tanlanganlarForma.addEventListener('submit', function () {
                 var inputlarQobiq = document.getElementById('tanlanganlar-inputlar');
                 inputlarQobiq.innerHTML = '';

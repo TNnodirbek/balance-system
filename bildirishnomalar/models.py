@@ -36,6 +36,7 @@ class BildirishnomaSozlamasi(models.Model):
     )
     yangi_buyurtma_eslatmasi = models.BooleanField(default=True)
     qarz_eslatmasi = models.BooleanField(default=True)
+    xarajat_eslatmasi = models.BooleanField(default=True)
     eslatma_vaqti = models.TimeField(default='09:00')
 
     def __str__(self):
