@@ -8,6 +8,7 @@ from django.http import HttpResponseForbidden, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.utils import timezone
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
 
 from dokonlar.models import Dokon
@@ -82,6 +83,11 @@ def buyurtma_tahrirlash(request, pk):
             elif mahsulot:
                 mahsulot.delete()
 
+        qaytish_manzili = request.POST.get('qaytish_manzili')
+        if qaytish_manzili and url_has_allowed_host_and_scheme(
+            qaytish_manzili, allowed_hosts={request.get_host()}, require_https=request.is_secure(),
+        ):
+            return redirect(qaytish_manzili)
         return redirect('buyurtmalar_royxati')
 
     mavjud_mahsulotlar = {m.hajm: m for m in buyurtma.mahsulotlar.all()}
@@ -98,6 +104,7 @@ def buyurtma_tahrirlash(request, pk):
         'buyurtma': buyurtma,
         'qatorlar': qatorlar,
         'xato': xato,
+        'qaytish_manzili': request.META.get('HTTP_REFERER', ''),
     })
 
 HAJMLAR = ['5L', '10L']

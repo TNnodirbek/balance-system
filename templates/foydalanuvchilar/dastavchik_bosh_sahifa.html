@@ -12,9 +12,32 @@
             font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
             background: #FFFFFF;
             color: #0C2340;
-            padding-bottom: 96px;
+            padding-bottom: 132px;
         }
         .qobiq { max-width: 480px; margin: 0 auto; padding: 20px 16px; }
+
+        .yolda-jami-panel {
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: calc(60px + env(safe-area-inset-bottom));
+            z-index: 80;
+            max-width: 480px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            background: #FFFFFF;
+            padding: 8px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #0C2340;
+        }
+
+        .yolda-jami-panel .umumiy {
+            font-weight: 700;
+            color: #185FA5;
+        }
         .sarlavha-panel {
             display: flex;
             align-items: center;
@@ -328,6 +351,13 @@
         </div>
         {% endif %}
     </div>
+
+    {% if faol_royxat %}
+    <div class="yolda-jami-panel">
+        {% for hajm, son in yolda_hajm_jami.items %}<span>{{ hajm }}: {{ son }}</span>{% endfor %}
+        <span class="umumiy">Umumiy: {{ yolda_umumiy_son }}</span>
+    </div>
+    {% endif %}
 
     <nav class="pastki-nav">
         <a href="{% url 'dastavchik_bosh_sahifa' %}" class="nav-band faol">

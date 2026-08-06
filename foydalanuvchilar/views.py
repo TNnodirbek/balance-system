@@ -67,17 +67,22 @@ def menejer_bosh_sahifa(request):
         buyurtma.jami_miqdor = sum(m.soni_buyurtma_qilingan for m in buyurtma.mahsulotlar.all())
 
     yolda_royxat = list(
-        buyurtmalar_qs.filter(holat='yetkazilmoqda')
+        buyurtmalar_qs.filter(holat='yetkazilmoqda', yetkazishga_olgan=request.user)
         .select_related('dokon', 'yetkazishga_olgan')
         .prefetch_related('mahsulotlar')
         .order_by('yaratilgan_vaqt')
     ) if menejer else []
+    yolda_hajm_jami = {}
     for b in yolda_royxat:
         b.jami_miqdor = sum(m.soni_buyurtma_qilingan for m in b.mahsulotlar.all())
+        for m in b.mahsulotlar.all():
+            yolda_hajm_jami[m.hajm] = yolda_hajm_jami.get(m.hajm, 0) + m.soni_buyurtma_qilingan
 
     return render(request, 'foydalanuvchilar/menejer_bosh_sahifa.html', {
         'bildirishnoma_bor': bildirishnoma_bor,
         'yolda_royxat': yolda_royxat,
+        'yolda_hajm_jami': yolda_hajm_jami,
+        'yolda_umumiy_son': sum(yolda_hajm_jami.values()),
         'qoldiq': qoldiq,
         'jami_qoldiq': sum(qoldiq.values()),
         'bugungi_buyurtmalar_soni': bugungi_buyurtmalar_soni,
@@ -113,12 +118,17 @@ def dastavchik_bosh_sahifa(request):
         .prefetch_related('mahsulotlar')
         .order_by('yaratilgan_vaqt')
     )
+    yolda_hajm_jami = {}
     for b in faol_royxat:
         b.jami_miqdor = sum(m.soni_buyurtma_qilingan for m in b.mahsulotlar.all())
+        for m in b.mahsulotlar.all():
+            yolda_hajm_jami[m.hajm] = yolda_hajm_jami.get(m.hajm, 0) + m.soni_buyurtma_qilingan
 
     return render(request, 'foydalanuvchilar/dastavchik_bosh_sahifa.html', {
         'bildirishnoma_bor': bildirishnoma_bor,
         'faol_royxat': faol_royxat,
+        'yolda_hajm_jami': yolda_hajm_jami,
+        'yolda_umumiy_son': sum(yolda_hajm_jami.values()),
         'qoldiq': qoldiq,
         'jami_qoldiq': sum(qoldiq.values()),
         'bugungi_yetkazilgan': bugungi_yetkazilgan,
