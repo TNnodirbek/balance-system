@@ -406,14 +406,15 @@
             position: fixed;
             left: 0;
             right: 0;
-            bottom: 0;
-            z-index: 100;
+            bottom: calc(60px + env(safe-area-inset-bottom));
+            z-index: 90;
             max-width: 480px;
             margin: 0 auto;
             background: #FFFFFF;
             border-top: 1px solid #E4EDF6;
+            border-radius: 16px 16px 0 0;
             box-shadow: 0 -4px 16px rgba(12, 35, 64, 0.10);
-            padding: 14px 16px calc(14px + env(safe-area-inset-bottom));
+            padding: 14px 16px;
         }
 
         .tanlov-matn {
@@ -469,8 +470,31 @@
             font-size: 24px;
         }
 
+        .tanlov-tugmalar-qatori {
+            display: flex;
+            gap: 10px;
+        }
+
+        .tanlov-bekor-tugma {
+            flex: 1;
+            height: 48px;
+            border: 1px solid #E4EDF6;
+            border-radius: 12px;
+            background: #F7F8FA;
+            color: #0C2340;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .tanlov-bekor-tugma:hover {
+            background: #EEF1F4;
+        }
+
         .tanlov-saqlash-tugma {
-            width: 100%;
+            flex: 2;
             height: 48px;
             border: none;
             border-radius: 12px;
@@ -598,7 +622,10 @@
         <form method="post" action="{% url 'buyurtmalar_koplab_olish' %}" id="tanlov-forma">
             {% csrf_token %}
             <div id="tanlov-inputlar"></div>
-            <button type="submit" class="tanlov-saqlash-tugma">Saqlash</button>
+            <div class="tanlov-tugmalar-qatori">
+                <button type="button" class="tanlov-bekor-tugma" id="tanlov-bekor-tugma">Bekor qilish</button>
+                <button type="submit" class="tanlov-saqlash-tugma">Saqlash</button>
+            </div>
         </form>
     </div>
 
@@ -686,6 +713,13 @@
             });
         }
         kartalarCheckboxlarniUlash();
+
+        document.getElementById('tanlov-bekor-tugma').addEventListener('click', function () {
+            document.querySelectorAll('.tanlov-checkbox:checked').forEach(function (cb) {
+                cb.checked = false;
+            });
+            tanlovYangilash();
+        });
 
         document.getElementById('tanlov-forma').addEventListener('submit', function () {
             var inputlarQobiq = document.getElementById('tanlov-inputlar');
