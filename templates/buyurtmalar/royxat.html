@@ -496,7 +496,9 @@
 
         {% for buyurtma in buyurtmalar %}
             <div class="buyurtma-karta{% if buyurtma.holat == 'yetkazildi' %} karta-kichik{% endif %}" style="position:relative;">
+                {% if buyurtma.holat != 'yangi' %}
                 <a href="{% url 'buyurtma_batafsil' buyurtma.pk %}" style="position:absolute;right:10px;top:10px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;color:#B9C6D6;font-size:20px;text-decoration:none;z-index:5;" aria-label="Batafsil">&#8250;</a>
+                {% endif %}
                 <div class="karta-tepa">
                     {% if buyurtma.holat == 'yangi' %}
                         <label class="tanlov-doira-qobiq">

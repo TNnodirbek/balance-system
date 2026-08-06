@@ -68,8 +68,8 @@
 
         <div class="karta">
             <h3>Holat</h3>
-            <div class="qator"><span>Zakaz bergan</span><span>{{ buyurtma.zakaz_olgan.first_name|default:buyurtma.zakaz_olgan.username|default:"-" }}</span></div>
-            <div class="qator"><span>Yetkazuvchi</span><span>{{ buyurtma.yetkazishga_olgan.first_name|default:buyurtma.yetkazishga_olgan.username|default:"-" }}</span></div>
+            <div class="qator"><span>Zakaz bergan</span><span>{% if buyurtma.zakaz_olgan %}{{ buyurtma.zakaz_olgan.first_name|default:buyurtma.zakaz_olgan.username }}{% else %}-{% endif %}</span></div>
+            <div class="qator"><span>Yetkazuvchi</span><span>{% if buyurtma.yetkazishga_olgan %}{{ buyurtma.yetkazishga_olgan.first_name|default:buyurtma.yetkazishga_olgan.username }}{% else %}-{% endif %}</span></div>
             <div class="qator"><span>To'lov</span><span>{{ buyurtma.get_tolov_holati_display|default:"-" }}</span></div>
             {% if buyurtma.qarz_summasi %}
             <div class="qator"><span>Qarz</span><span>{{ buyurtma.qarz_summasi|som_format }}</span></div>
