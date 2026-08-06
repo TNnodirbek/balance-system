@@ -372,16 +372,56 @@
         }
 
         .tanlov-matn {
-            font-size: 14px;
-            font-weight: 700;
-            color: #0C2340;
-            margin: 0 0 4px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #7C8B9E;
+            margin: 0 0 10px;
         }
 
-        .tanlov-hisob {
-            font-size: 12px;
+        .tanlov-chiplar {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            margin-bottom: 14px;
+            padding-bottom: 2px;
+        }
+
+        .tanlov-chip {
+            flex-shrink: 0;
+            min-width: 52px;
+            background: #F7F8FA;
+            border-radius: 10px;
+            padding: 6px 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tanlov-chip-hajm {
+            font-size: 10px;
+            font-weight: 600;
             color: #7C8B9E;
-            margin: 0 0 12px;
+            margin-bottom: 2px;
+        }
+
+        .tanlov-chip-son {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0C2340;
+        }
+
+        .tanlov-chip-jami {
+            background: #185FA5;
+        }
+
+        .tanlov-chip-jami .tanlov-chip-hajm {
+            color: #DCE9F5;
+        }
+
+        .tanlov-chip-jami .tanlov-chip-son {
+            color: #FFFFFF;
+            font-size: 24px;
         }
 
         .tanlov-saqlash-tugma {
@@ -506,8 +546,7 @@
                                 type="checkbox"
                                 class="tanlov-checkbox"
                                 data-buyurtma-id="{{ buyurtma.pk }}"
-                                data-5l="{{ buyurtma.miqdor_5l }}"
-                                data-10l="{{ buyurtma.miqdor_10l }}"
+                                data-miqdor='{{ buyurtma.miqdor_json }}'
                             >
                             <span class="tanlov-doira"></span>
                         </label>
@@ -583,7 +622,7 @@
 
     <div class="tanlov-paneli" id="tanlov-paneli">
         <p class="tanlov-matn">Tanlangan: <span id="tanlov-soni">0</span> buyurtma</p>
-        <p class="tanlov-hisob">5L: <span id="tanlov-5l">0</span> | 10L: <span id="tanlov-10l">0</span> | Jami: <span id="tanlov-jami">0</span></p>
+        <div class="tanlov-chiplar" id="tanlov-chiplar"></div>
         <form method="post" action="{% url 'buyurtmalar_koplab_olish' %}" id="tanlov-forma">
             {% csrf_token %}
             <div id="tanlov-inputlar"></div>
@@ -623,19 +662,48 @@
         </nav>
 
     <script>
+        function tanlovHajmSaralash(a, b) {
+            var na = parseFloat(a);
+            var nb = parseFloat(b);
+            if (!isNaN(na) && !isNaN(nb)) return na - nb;
+            return a.localeCompare(b);
+        }
+
+        function tanlovChipYarat(hajm, son, jamiMi) {
+            var chip = document.createElement('div');
+            chip.className = jamiMi ? 'tanlov-chip tanlov-chip-jami' : 'tanlov-chip';
+            var hajmSpan = document.createElement('span');
+            hajmSpan.className = 'tanlov-chip-hajm';
+            hajmSpan.textContent = hajm;
+            var sonSpan = document.createElement('span');
+            sonSpan.className = 'tanlov-chip-son';
+            sonSpan.textContent = son;
+            chip.appendChild(hajmSpan);
+            chip.appendChild(sonSpan);
+            return chip;
+        }
+
         function tanlovYangilash() {
             var checkboxlar = document.querySelectorAll('.tanlov-checkbox:checked');
-            var jami5l = 0;
-            var jami10l = 0;
+            var jamiHajm = {};
             checkboxlar.forEach(function (cb) {
-                jami5l += parseInt(cb.dataset['5l'], 10) || 0;
-                jami10l += parseInt(cb.dataset['10l'], 10) || 0;
+                var miqdor = {};
+                try { miqdor = JSON.parse(cb.dataset.miqdor || '{}'); } catch (e) {}
+                Object.keys(miqdor).forEach(function (hajm) {
+                    jamiHajm[hajm] = (jamiHajm[hajm] || 0) + (parseInt(miqdor[hajm], 10) || 0);
+                });
             });
 
             document.getElementById('tanlov-soni').textContent = checkboxlar.length;
-            document.getElementById('tanlov-5l').textContent = jami5l;
-            document.getElementById('tanlov-10l').textContent = jami10l;
-            document.getElementById('tanlov-jami').textContent = jami5l + jami10l;
+
+            var chiplarQobiq = document.getElementById('tanlov-chiplar');
+            chiplarQobiq.innerHTML = '';
+            var jamiSon = 0;
+            Object.keys(jamiHajm).sort(tanlovHajmSaralash).forEach(function (hajm) {
+                jamiSon += jamiHajm[hajm];
+                chiplarQobiq.appendChild(tanlovChipYarat(hajm, jamiHajm[hajm], false));
+            });
+            chiplarQobiq.appendChild(tanlovChipYarat('Jami', jamiSon, true));
 
             document.getElementById('tanlov-paneli').style.display = checkboxlar.length > 0 ? 'block' : 'none';
         }

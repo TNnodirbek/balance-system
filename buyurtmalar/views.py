@@ -1,4 +1,5 @@
-﻿from decimal import Decimal, InvalidOperation
+﻿import json
+from decimal import Decimal, InvalidOperation
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -234,8 +235,7 @@ def buyurtmalar_royxati(request):
     buyurtmalar = list(buyurtmalar)
     for b in buyurtmalar:
         miqdor = {m.hajm: m.soni_buyurtma_qilingan for m in b.mahsulotlar.all()}
-        b.miqdor_5l = miqdor.get('5L', 0)
-        b.miqdor_10l = miqdor.get('10L', 0)
+        b.miqdor_json = json.dumps(miqdor)
 
     return render(request, 'buyurtmalar/royxat.html', {
         'buyurtmalar': buyurtmalar,
