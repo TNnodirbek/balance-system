@@ -271,6 +271,21 @@
             color: #7C8B9E;
             margin-top: 4px;
         }
+        .bekor-forma {
+            text-align: right;
+            margin-top: 6px;
+        }
+        .bekor-tugma {
+            background: #FCEBEB;
+            color: #A32D2D;
+            border: 1px solid #F0C4C4;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-family: inherit;
+        }
 
         .pastki-nav {
             position: fixed;
@@ -346,6 +361,10 @@
                     <div class="vk-manzil">📍 {{ b.dokon.manzili }}</div>
                     <span class="vk-strelka">&#8250;</span>
                 </a>
+                <form method="post" action="{% url 'buyurtma_bekor_qilish' b.pk %}" class="bekor-forma" onsubmit="return confirm('Buyurtmani bekor qilmoqchimisiz?');">
+                    {% csrf_token %}
+                    <button type="submit" class="bekor-tugma">Bekor qilish</button>
+                </form>
             </div>
             {% endfor %}
         </div>

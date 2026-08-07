@@ -360,6 +360,21 @@ def buyurtmalar_koplab_olish(request):
 
 
 @login_required
+def buyurtma_bekor_qilish(request, pk):
+    menejer = tegishli_menejer(request.user)
+    buyurtma = get_object_or_404(Buyurtma, pk=pk, menejer=menejer, holat='yetkazilmoqda')
+    if buyurtma.yetkazishga_olgan_id != request.user.id and request.user.rol != 'menejer':
+        return HttpResponseForbidden("Ruxsat yo'q.")
+    buyurtma.holat = 'yangi'
+    buyurtma.yetkazishga_olgan = None
+    buyurtma.save()
+    messages.success(request, "Buyurtma bekor qilindi, u yana umumiy ro'yxatga qaytdi.")
+    if request.user.rol == 'menejer':
+        return redirect('menejer_bosh_sahifa')
+    return redirect('dastavchik_bosh_sahifa')
+
+
+@login_required
 def buyurtma_yetkazish(request, pk):
     buyurtma = get_object_or_404(Buyurtma, pk=pk)
     if buyurtma.holat != Buyurtma.Holat.YETKAZILMOQDA or buyurtma.yetkazishga_olgan_id != request.user.id:

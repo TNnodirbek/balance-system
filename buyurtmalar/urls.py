@@ -11,6 +11,7 @@ urlpatterns = [
     path('<int:pk>/olish/', views.buyurtma_olish, name='buyurtma_olish'),
     path('koplab-olish/', views.buyurtmalar_koplab_olish, name='buyurtmalar_koplab_olish'),
     path('<int:pk>/yetkazish/', views.buyurtma_yetkazish, name='buyurtma_yetkazish'),
+    path('<int:pk>/bekor-qilish/', views.buyurtma_bekor_qilish, name='buyurtma_bekor_qilish'),
     path('<int:pk>/qarz-tolash/', views.qarz_tolash, name='qarz_tolash'),
     path('<int:pk>/tahrirlash/', views.buyurtma_tahrirlash, name='buyurtma_tahrirlash'),
     path('<int:pk>/ochirish/', views.buyurtma_ochirish, name='buyurtma_ochirish'),
