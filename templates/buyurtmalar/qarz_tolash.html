@@ -1,22 +1,166 @@
+{% load l10n %}
+{% load summa_filtr %}
 <!DOCTYPE html>
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Qarzni to'lash</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            background: #FFFFFF;
+            color: #0C2340;
+        }
+        .sahifa { max-width: 480px; margin: 0 auto; padding: 20px 16px 40px; }
+        .sarlavha-panel { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+        .orqaga {
+            width: 36px; height: 36px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 10px; background: #F0F8FF; color: #185FA5;
+            text-decoration: none; flex-shrink: 0;
+        }
+        h1 { font-size: 18px; font-weight: 700; color: #0C2340; margin: 0; }
+
+        .karta {
+            background: #FFFFFF;
+            border: 1px solid #E4EDF6;
+            border-radius: 16px;
+            padding: 18px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+        .karta-dokon { font-size: 15px; font-weight: 700; color: #0C2340; }
+        .karta-raqam { font-size: 12px; color: #7C8B9E; margin-top: 2px; }
+        .karta-qarz-label { font-size: 12px; color: #7C8B9E; margin: 16px 0 4px; }
+        .karta-qarz-son { font-size: 28px; font-weight: 700; color: #A32D2D; margin: 0; }
+
+        .xato-quti {
+            background: #FCEBEB;
+            color: #A32D2D;
+            border-radius: 10px;
+            padding: 12px 14px;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #0C2340;
+            margin-bottom: 6px;
+        }
+
+        .maydon { margin-bottom: 8px; }
+
+        .input-qobiq { position: relative; display: flex; align-items: center; }
+
+        .input-qobiq input {
+            width: 100%;
+            height: 48px;
+            border: 1px solid #E4EDF6;
+            border-radius: 10px;
+            padding: 0 48px 0 14px;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            color: #0C2340;
+            background: #FFFFFF;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .input-qobiq input:focus {
+            border-color: #185FA5;
+            box-shadow: 0 0 0 3px rgba(24, 95, 165, 0.15);
+        }
+
+        .som-belgisi {
+            position: absolute;
+            right: 14px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #94A7BD;
+            pointer-events: none;
+        }
+
+        .barchasini-tolash {
+            display: inline-block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #185FA5;
+            text-decoration: none;
+            background: none;
+            border: none;
+            padding: 0;
+            margin: 8px 0 24px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .saqlash-tugma {
+            width: 100%;
+            height: 52px;
+            border: none;
+            border-radius: 12px;
+            background: #185FA5;
+            color: #FFFFFF;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: box-shadow 0.2s ease, background-color 0.2s ease;
+        }
+
+        .saqlash-tugma:hover {
+            background: #1B6BBA;
+            box-shadow: 0 0 0 4px rgba(24, 95, 165, 0.2);
+        }
+    </style>
 </head>
 <body>
-    <h1>Qarzni to'lash</h1>
-    <p>Buyurtma #{{ buyurtma.pk }} - {{ buyurtma.dokon.nomi }}</p>
-    <p>Joriy qarz summasi: {{ buyurtma.qarz_summasi }}</p>
+    <div class="sahifa">
+        <div class="sarlavha-panel">
+            <a href="javascript:history.back()" class="orqaga" aria-label="Orqaga">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+            <h1>Qarzni to'lash</h1>
+        </div>
 
-    {% if xato %}
-        <p>{{ xato }}</p>
-    {% endif %}
+        <div class="karta">
+            <div class="karta-dokon">{{ buyurtma.dokon.nomi }}</div>
+            <div class="karta-raqam">Buyurtma #{{ buyurtma.pk }}</div>
+            <p class="karta-qarz-label">Joriy qarz</p>
+            <p class="karta-qarz-son">{{ buyurtma.qarz_summasi|som_format }}</p>
+        </div>
 
-    <form method="post">
-        {% csrf_token %}
-        <label>To'lov summasi: <input type="number" step="0.01" name="summa" max="{{ buyurtma.qarz_summasi }}" required></label><br>
-        <button type="submit">Saqlash</button>
-    </form>
+        {% if xato %}
+            <div class="xato-quti">{{ xato }}</div>
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="maydon">
+                <label for="id_summa">To'lov summasi</label>
+                <div class="input-qobiq">
+                    <input type="number" step="0.01" min="0" name="summa" id="id_summa" max="{{ buyurtma.qarz_summasi|unlocalize }}" required>
+                    <span class="som-belgisi">so'm</span>
+                </div>
+            </div>
+            <a href="javascript:void(0)" class="barchasini-tolash" id="barchasini-tolash">Barchasini to'lash</a>
+
+            <button type="submit" class="saqlash-tugma">Saqlash</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('barchasini-tolash').addEventListener('click', function () {
+            document.getElementById('id_summa').value = '{{ buyurtma.qarz_summasi|unlocalize }}';
+        });
+    </script>
 </body>
 </html>
