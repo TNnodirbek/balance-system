@@ -32,7 +32,6 @@ INSTALLED_APPS = [
     'ombor',
     'dokonlar',
     'buyurtmalar',
-    'yetkazish',
     'bildirishnomalar',
     'statistika',
 ]
