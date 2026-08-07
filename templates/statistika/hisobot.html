@@ -162,11 +162,43 @@
         }
 
         /* Asosiy ko'rsatkich kartalari */
+        .korsatkich-boshqaruv {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .korsatkich-boshqaruv-matn {
+            font-size: 15px;
+            font-weight: 700;
+            color: #0C2340;
+        }
+
+        .koz-tugma {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 9px;
+            background: #F0F8FF;
+            color: #185FA5;
+            border: none;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .koz-tugma svg {
+            width: 16px;
+            height: 16px;
+        }
+
         .korsatkich-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 12px;
-            margin: 20px 0 24px;
+            margin: 12px 0 24px;
         }
 
         .korsatkich-karta {
@@ -392,22 +424,31 @@
             </form>
         </details>
 
+        <div class="korsatkich-boshqaruv">
+            <span class="korsatkich-boshqaruv-matn">Asosiy ko'rsatkichlar</span>
+            <button type="button" class="koz-tugma" id="koz-tugma" onclick="summaToggle()" aria-label="Summalarni yashirish">
+                <svg id="koz-ikonka" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M2 12S5.5 5 12 5S22 12 22 12S18.5 19 12 19S2 12 2 12Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+                    <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.7"/>
+                </svg>
+            </button>
+        </div>
         <div class="korsatkich-grid">
             <div class="korsatkich-karta">
                 <p class="korsatkich-sarlavha">Umumiy savdo</p>
-                <p class="korsatkich-son">{{ umumiy_savdo|som_format }}</p>
+                <p class="korsatkich-son yashirin-qiymat">{{ umumiy_savdo|som_format }}</p>
             </div>
             <div class="korsatkich-karta">
                 <p class="korsatkich-sarlavha">Sof foyda</p>
-                <p class="korsatkich-son{% if sof_foyda < 0 %} manfiy{% else %} musbat{% endif %}">{{ sof_foyda|som_format }}</p>
+                <p class="korsatkich-son yashirin-qiymat{% if sof_foyda < 0 %} manfiy{% else %} musbat{% endif %}">{{ sof_foyda|som_format }}</p>
             </div>
             <div class="korsatkich-karta">
                 <p class="korsatkich-sarlavha">Jami xarajat</p>
-                <p class="korsatkich-son">{{ jami_xarajat|som_format }}</p>
+                <p class="korsatkich-son yashirin-qiymat">{{ jami_xarajat|som_format }}</p>
             </div>
             <div class="korsatkich-karta">
                 <p class="korsatkich-sarlavha">Yig'ilgan qarz</p>
-                <p class="korsatkich-son">{{ yig_ilgan_qarz|som_format }}</p>
+                <p class="korsatkich-son yashirin-qiymat">{{ yig_ilgan_qarz|som_format }}</p>
             </div>
         </div>
 
@@ -495,6 +536,25 @@
             Hisobot
         </a>
         </nav>
+
+    <script>
+        var yashirinKozSvg = '<path d="M2 12S5.5 5 12 5S22 12 22 12S18.5 19 12 19S2 12 2 12Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.7"/>';
+        var yopiqKozSvg = '<path d="M3 3L21 21" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M10.6 5.2A10.6 10.6 0 0 1 12 5C18.5 5 22 12 22 12A18.6 18.6 0 0 1 18.4 16.4M6.5 6.9C3.7 8.8 2 12 2 12S5.5 19 12 19A10.3 10.3 0 0 0 15.4 18.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M9.9 10A3 3 0 0 0 14 14" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>';
+
+        document.querySelectorAll('.yashirin-qiymat').forEach(function (el) {
+            el.dataset.qiymat = el.textContent;
+        });
+
+        var summaYashirilganMi = false;
+
+        function summaToggle() {
+            summaYashirilganMi = !summaYashirilganMi;
+            document.querySelectorAll('.yashirin-qiymat').forEach(function (el) {
+                el.textContent = summaYashirilganMi ? '•••••••' : el.dataset.qiymat;
+            });
+            document.getElementById('koz-ikonka').innerHTML = summaYashirilganMi ? yopiqKozSvg : yashirinKozSvg;
+        }
+    </script>
 </body>
 </html>
 
