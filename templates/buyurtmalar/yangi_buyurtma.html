@@ -8,6 +8,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
         * {
             box-sizing: border-box;
@@ -370,6 +372,120 @@
             display: none;
             margin: 0;
         }
+
+        /* Joylashuv tanlash xarita qatlami */
+        .joylashuv-xarita-qatlam {
+            position: fixed;
+            inset: 0;
+            background: #FFFFFF;
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+        }
+
+        .joylashuv-xarita-qatlam.ochiq {
+            display: flex;
+        }
+
+        .jx-panel {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            border-bottom: 1px solid #E4EDF6;
+            flex-shrink: 0;
+        }
+
+        .jx-orqaga {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: #F0F8FF;
+            color: #185FA5;
+            border: none;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .jx-orqaga svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .jx-panel h2 {
+            font-size: 15px;
+            font-weight: 700;
+            color: #0C2340;
+            margin: 0;
+        }
+
+        .jx-korpus {
+            flex: 1;
+            position: relative;
+            min-height: 0;
+        }
+
+        #joylashuv-leaflet-map {
+            width: 100%;
+            height: 100%;
+        }
+
+        .jx-mening-joylashuvim {
+            position: absolute;
+            right: 16px;
+            bottom: 16px;
+            z-index: 500;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            border: none;
+            background: #185FA5;
+            color: #FFFFFF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(24, 95, 165, 0.35);
+        }
+
+        .jx-mening-joylashuvim svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .jx-pastki-panel {
+            flex-shrink: 0;
+            padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+            border-top: 1px solid #E4EDF6;
+        }
+
+        .jx-xato {
+            font-size: 12px;
+            color: #A32D2D;
+            text-align: center;
+            margin: 0 0 8px;
+        }
+
+        .jx-xato:empty {
+            display: none;
+            margin: 0;
+        }
+
+        .jx-tasdiqlash-tugma {
+            width: 100%;
+            height: 48px;
+            border: none;
+            border-radius: 12px;
+            background: #185FA5;
+            color: #FFFFFF;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -470,11 +586,34 @@
                     </svg>
                     <span id="joylashuv-matn">Joylashuvni aniqlash</span>
                 </button>
-                <p class="joylashuv-xato" id="joylashuv-xato"></p>
             </div>
 
             <button type="submit" class="yaratish-tugma">Buyurtma yaratish</button>
         </form>
+    </div>
+
+    <div class="joylashuv-xarita-qatlam" id="joylashuv-xarita-qatlam">
+        <div class="jx-panel">
+            <button type="button" class="jx-orqaga" id="jx-orqaga" aria-label="Orqaga">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+            <h2>Joylashuvni tanlang</h2>
+        </div>
+        <div class="jx-korpus">
+            <div id="joylashuv-leaflet-map"></div>
+            <button type="button" class="jx-mening-joylashuvim" id="jx-mening-joylashuvim" aria-label="Mening joylashuvim">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2V5M12 19V22M2 12H5M19 12H22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="2"/>
+                </svg>
+            </button>
+        </div>
+        <div class="jx-pastki-panel">
+            <p class="jx-xato" id="jx-xato"></p>
+            <button type="button" class="jx-tasdiqlash-tugma" id="jx-tasdiqlash">Tasdiqlash</button>
+        </div>
     </div>
 
     <script>
@@ -596,29 +735,93 @@
 
         var joylashuvTugma = document.getElementById('joylashuv-tugma');
         var joylashuvMatn = document.getElementById('joylashuv-matn');
-        var joylashuvXato = document.getElementById('joylashuv-xato');
 
-        joylashuvTugma.addEventListener('click', function () {
-            joylashuvXato.textContent = '';
+        /* Joylashuv tanlash xarita qatlami (Leaflet + OpenStreetMap) */
+        var jxQatlam = document.getElementById('joylashuv-xarita-qatlam');
+        var jxXato = document.getElementById('jx-xato');
+        var jxXaritaObj = null;
+        var jxMarker = null;
+
+        var kokNuqtaIkonka = L.divIcon({
+            className: '',
+            html: '<div style="width:18px;height:18px;border-radius:50%;background:#185FA5;border:3px solid #fff;box-shadow:0 0 0 2px #185FA5;"></div>',
+            iconSize: [18, 18],
+            iconAnchor: [9, 9],
+        });
+
+        function jxMarkerJoylash(lat, lng) {
+            var latlng = L.latLng(lat, lng);
+            if (jxMarker) {
+                jxMarker.setLatLng(latlng);
+            } else {
+                jxMarker = L.marker(latlng, { icon: kokNuqtaIkonka, draggable: true }).addTo(jxXaritaObj);
+            }
+        }
+
+        function joylashuvXaritaOch() {
+            jxQatlam.classList.add('ochiq');
+            jxXato.textContent = '';
+
+            if (!jxXaritaObj) {
+                var mavjudLat = document.getElementById('joylashuv_lat').value;
+                var mavjudLng = document.getElementById('joylashuv_lng').value;
+                var markaz = (mavjudLat && mavjudLng) ? [parseFloat(mavjudLat), parseFloat(mavjudLng)] : [40.3894, 71.7864];
+                var boshlangichZoom = (mavjudLat && mavjudLng) ? 16 : 11;
+
+                jxXaritaObj = L.map('joylashuv-leaflet-map').setView(markaz, boshlangichZoom);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                    attribution: '&copy; OpenStreetMap',
+                }).addTo(jxXaritaObj);
+
+                jxMarkerJoylash(markaz[0], markaz[1]);
+
+                jxXaritaObj.on('click', function (e) {
+                    jxMarkerJoylash(e.latlng.lat, e.latlng.lng);
+                });
+            } else {
+                setTimeout(function () { jxXaritaObj.invalidateSize(); }, 0);
+            }
+        }
+
+        function joylashuvXaritaYop() {
+            jxQatlam.classList.remove('ochiq');
+        }
+
+        joylashuvTugma.addEventListener('click', joylashuvXaritaOch);
+        document.getElementById('jx-orqaga').addEventListener('click', joylashuvXaritaYop);
+
+        document.getElementById('jx-mening-joylashuvim').addEventListener('click', function () {
+            jxXato.textContent = '';
 
             if (!navigator.geolocation) {
-                joylashuvXato.textContent = "Joylashuvni aniqlab bo'lmadi, buyurtmani joylashuvsiz ham yuborishingiz mumkin.";
+                jxXato.textContent = "Joylashuvni avtomatik aniqlab bo'lmadi, xaritadan qo'lda belgilang.";
                 return;
             }
 
             navigator.geolocation.getCurrentPosition(
                 function (position) {
-                    document.getElementById('joylashuv_lat').value = position.coords.latitude;
-                    document.getElementById('joylashuv_lng').value = position.coords.longitude;
-                    joylashuvMatn.textContent = 'Joylashuv aniqlandi ✓';
-                    joylashuvTugma.classList.add('aniqlandi');
-                    joylashuvXato.textContent = '';
+                    var lat = position.coords.latitude;
+                    var lng = position.coords.longitude;
+                    jxMarkerJoylash(lat, lng);
+                    jxXaritaObj.setView([lat, lng], 16);
                 },
                 function () {
-                    joylashuvXato.textContent = "Joylashuvni aniqlab bo'lmadi, buyurtmani joylashuvsiz ham yuborishingiz mumkin.";
+                    jxXato.textContent = "Joylashuvni avtomatik aniqlab bo'lmadi, xaritadan qo'lda belgilang.";
                 },
                 { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
             );
+        });
+
+        document.getElementById('jx-tasdiqlash').addEventListener('click', function () {
+            if (jxMarker) {
+                var latlng = jxMarker.getLatLng();
+                document.getElementById('joylashuv_lat').value = latlng.lat;
+                document.getElementById('joylashuv_lng').value = latlng.lng;
+                joylashuvMatn.textContent = 'Joylashuv aniqlandi ✓';
+                joylashuvTugma.classList.add('aniqlandi');
+            }
+            joylashuvXaritaYop();
         });
     </script>
 </body>

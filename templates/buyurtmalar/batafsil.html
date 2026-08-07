@@ -6,6 +6,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Buyurtma #{{ buyurtma.pk }}</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
         * { box-sizing: border-box; }
         body { margin: 0; font-family: 'Manrope', 'Segoe UI', Arial, sans-serif; background: #FFFFFF; color: #0C2340; }
@@ -36,8 +38,14 @@
         .xarita-panel { display: flex; align-items: center; gap: 12px; padding: 16px; border-bottom: 1px solid #E4EDF6; flex-shrink: 0; }
         .xarita-orqaga { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 10px; background: #F0F8FF; color: #185FA5; border: none; cursor: pointer; flex-shrink: 0; }
         .xarita-panel h2 { font-size: 15px; font-weight: 700; color: #0C2340; margin: 0; }
-        .xarita-korpus { flex: 1; }
+        .xarita-korpus { flex: 1; position: relative; min-height: 0; }
         .xarita-korpus iframe { width: 100%; height: 100%; }
+        #nav-leaflet-map { width: 100%; height: 100%; }
+        .xarita-pastki-panel { flex-shrink: 0; padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid #E4EDF6; background: #FFFFFF; }
+        .nav-masofa-blok { display: none; align-items: center; justify-content: space-between; background: #F0F8FF; border-radius: 12px; padding: 10px 14px; margin-bottom: 10px; font-size: 13px; font-weight: 600; color: #0C2340; }
+        .nav-masofa-blok span:last-child { color: #185FA5; font-weight: 700; }
+        .harakat-tugma { width: 100%; height: 48px; border: none; border-radius: 12px; background: #2E7D32; color: #FFFFFF; font-family: 'Manrope', 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; }
+        .harakat-tugma.faol { background: #A32D2D; }
     </style>
 </head>
 <body>
@@ -226,16 +234,127 @@
             <h2>Joylashuv</h2>
         </div>
         <div class="xarita-korpus">
-            <iframe src="https://maps.google.com/maps?q={{ buyurtma.joylashuv_lat|unlocalize }},{{ buyurtma.joylashuv_lng|unlocalize }}&z=15&output=embed" width="100%" height="100%" style="border:0;"></iframe>
+            <div id="nav-leaflet-map"></div>
+        </div>
+        <div class="xarita-pastki-panel">
+            <div class="nav-masofa-blok" id="nav-masofa-blok">
+                <span>Qolgan masofa</span>
+                <span id="nav-masofa-son">&mdash;</span>
+            </div>
+            <button type="button" class="harakat-tugma" id="harakat-tugma">🚗 Harakatni boshlash</button>
         </div>
     </div>
     <script>
+        var navManzilLat = {{ buyurtma.joylashuv_lat|unlocalize }};
+        var navManzilLng = {{ buyurtma.joylashuv_lng|unlocalize }};
+
+        var navXaritaObj = null;
+        var navManzilMarker = null;
+        var navJoriyMarker = null;
+        var navYonalishChizigi = null;
+        var navWatchId = null;
+        var navFaolMi = false;
+
+        var navQizilIkonka = L.divIcon({
+            className: '',
+            html: '<div style="width:16px;height:16px;border-radius:50% 50% 50% 0;background:#A32D2D;border:2px solid #fff;transform:rotate(-45deg);box-shadow:0 1px 4px rgba(0,0,0,0.4);"></div>',
+            iconSize: [16, 16],
+            iconAnchor: [8, 16],
+        });
+        var navKokIkonka = L.divIcon({
+            className: '',
+            html: '<div style="width:18px;height:18px;border-radius:50%;background:#185FA5;border:3px solid #fff;box-shadow:0 0 0 2px #185FA5;"></div>',
+            iconSize: [18, 18],
+            iconAnchor: [9, 9],
+        });
+
         function xaritaOch() {
             document.getElementById('xarita-qatlam').classList.add('ochiq');
+            if (!navXaritaObj) {
+                navXaritaObj = L.map('nav-leaflet-map').setView([navManzilLat, navManzilLng], 14);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                    attribution: '&copy; OpenStreetMap',
+                }).addTo(navXaritaObj);
+                navManzilMarker = L.marker([navManzilLat, navManzilLng], { icon: navQizilIkonka }).addTo(navXaritaObj);
+            } else {
+                setTimeout(function () { navXaritaObj.invalidateSize(); }, 0);
+            }
         }
+
         function xaritaYop() {
             document.getElementById('xarita-qatlam').classList.remove('ochiq');
+            navigatsiyaToxtat();
         }
+
+        function masofaniYangila(lat, lng) {
+            var url = 'https://router.project-osrm.org/route/v1/driving/' + lng + ',' + lat + ';' + navManzilLng + ',' + navManzilLat + '?overview=full&geometries=geojson';
+            fetch(url)
+                .then(function (r) { return r.json(); })
+                .then(function (data) {
+                    if (data.code !== 'Ok' || !data.routes || !data.routes.length) return;
+                    var route = data.routes[0];
+                    var chiziq = route.geometry.coordinates.map(function (c) { return [c[1], c[0]]; });
+                    if (navYonalishChizigi) {
+                        navYonalishChizigi.setLatLngs(chiziq);
+                    } else {
+                        navYonalishChizigi = L.polyline(chiziq, { color: '#185FA5', weight: 5 }).addTo(navXaritaObj);
+                    }
+                    var km = (route.distance / 1000).toFixed(1);
+                    document.getElementById('nav-masofa-son').textContent = km + ' km';
+                })
+                .catch(function () {
+                    document.getElementById('nav-masofa-son').textContent = "aniqlanmadi";
+                });
+        }
+
+        var harakatTugma = document.getElementById('harakat-tugma');
+        var navMasofaBlok = document.getElementById('nav-masofa-blok');
+
+        function navigatsiyaToxtat() {
+            navFaolMi = false;
+            harakatTugma.textContent = '🚗 Harakatni boshlash';
+            harakatTugma.classList.remove('faol');
+            navMasofaBlok.style.display = 'none';
+            if (navWatchId !== null) {
+                navigator.geolocation.clearWatch(navWatchId);
+                navWatchId = null;
+            }
+        }
+
+        harakatTugma.addEventListener('click', function () {
+            if (navFaolMi) {
+                navigatsiyaToxtat();
+                return;
+            }
+
+            if (!navigator.geolocation) {
+                alert("Joylashuvni aniqlab bo'lmadi, bu qurilmada GPS mavjud emas.");
+                return;
+            }
+
+            navFaolMi = true;
+            harakatTugma.textContent = "⛔ Navigatsiyani to'xtatish";
+            harakatTugma.classList.add('faol');
+            navMasofaBlok.style.display = 'flex';
+
+            navWatchId = navigator.geolocation.watchPosition(
+                function (position) {
+                    var lat = position.coords.latitude;
+                    var lng = position.coords.longitude;
+                    if (navJoriyMarker) {
+                        navJoriyMarker.setLatLng([lat, lng]);
+                    } else {
+                        navJoriyMarker = L.marker([lat, lng], { icon: navKokIkonka }).addTo(navXaritaObj);
+                    }
+                    masofaniYangila(lat, lng);
+                },
+                function () {
+                    document.getElementById('nav-masofa-son').textContent = "Joylashuvni aniqlab bo'lmadi";
+                },
+                { enableHighAccuracy: true, maximumAge: 5000, timeout: 15000 }
+            );
+        });
     </script>
     {% endif %}
 </body>
