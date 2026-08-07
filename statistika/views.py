@@ -1,8 +1,9 @@
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.utils.dateparse import parse_date
 
@@ -40,6 +41,46 @@ def xarajat_qoshish(request):
         'xabar': xabar,
         'bugungi_xarajatlar': bugungi_xarajatlar,
     })
+
+
+@login_required
+def xarajat_tahrirlash(request, pk):
+    menejer = tegishli_menejer(request.user)
+    xarajat = get_object_or_404(Xarajat, pk=pk, menejer=menejer)
+    xato = None
+
+    if request.method == 'POST':
+        try:
+            summa = Decimal(request.POST.get('summa', ''))
+        except InvalidOperation:
+            summa = None
+            xato = "Summani to'g'ri kiriting."
+
+        izoh = request.POST.get('izoh', '').strip()
+        if not izoh:
+            xato = 'Izohni kiriting.'
+
+        if not xato:
+            xarajat.summa = summa
+            xarajat.izoh = izoh
+            xarajat.sana = request.POST.get('sana') or xarajat.sana
+            xarajat.save()
+            messages.success(request, "Xarajat muvaffaqiyatli yangilandi.")
+            return redirect('xarajat_qoshish')
+
+    return render(request, 'statistika/xarajat_tahrirlash.html', {
+        'xarajat': xarajat,
+        'xato': xato,
+    })
+
+
+@login_required
+def xarajat_ochirish(request, pk):
+    menejer = tegishli_menejer(request.user)
+    xarajat = get_object_or_404(Xarajat, pk=pk, menejer=menejer)
+    xarajat.delete()
+    messages.success(request, "Xarajat o'chirildi.")
+    return redirect('xarajat_qoshish')
 
 
 @login_required

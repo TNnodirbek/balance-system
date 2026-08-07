@@ -1,0 +1,185 @@
+{% load l10n %}
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Xarajatni tahrirlash</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #FFFFFF;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            color: #0C2340;
+        }
+
+        .sahifa {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 20px 16px 40px;
+        }
+
+        .sarlavha-panel {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .orqaga {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: #F0F8FF;
+            color: #185FA5;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+
+        .orqaga svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        h1 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0C2340;
+            margin: 0;
+        }
+
+        .xato {
+            background: #FCEBEB;
+            color: #A32D2D;
+            border-radius: 10px;
+            padding: 12px 14px;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #0C2340;
+            margin-bottom: 6px;
+        }
+
+        .maydon {
+            margin-bottom: 14px;
+        }
+
+        .input-qobiq {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-qobiq input {
+            width: 100%;
+            height: 44px;
+            border: 1px solid #E4EDF6;
+            border-radius: 10px;
+            padding: 0 14px;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            font-size: 14px;
+            color: #0C2340;
+            background: #FFFFFF;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .input-qobiq input:focus {
+            border-color: #185FA5;
+            box-shadow: 0 0 0 3px rgba(24, 95, 165, 0.15);
+        }
+
+        .input-qobiq.summa-qobiq input {
+            padding-right: 48px;
+        }
+
+        .som-belgisi {
+            position: absolute;
+            right: 14px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #94A7BD;
+            pointer-events: none;
+        }
+
+        .saqlash-tugma {
+            width: 100%;
+            height: 52px;
+            border: none;
+            border-radius: 12px;
+            background: #185FA5;
+            color: #FFFFFF;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: box-shadow 0.2s ease, background-color 0.2s ease;
+        }
+
+        .saqlash-tugma:hover {
+            background: #1B6BBA;
+            box-shadow: 0 0 0 4px rgba(24, 95, 165, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="sahifa">
+        <div class="sarlavha-panel">
+            <a href="{% url 'xarajat_qoshish' %}" class="orqaga" aria-label="Orqaga">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15 19L8 12L15 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </a>
+            <h1>Xarajatni tahrirlash</h1>
+        </div>
+
+        {% if xato %}
+            <div class="xato">{{ xato }}</div>
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="maydon">
+                <label for="id_summa">Summa</label>
+                <div class="input-qobiq summa-qobiq">
+                    <input type="number" step="0.01" name="summa" id="id_summa" value="{{ xarajat.summa|unlocalize }}" required>
+                    <span class="som-belgisi">so'm</span>
+                </div>
+            </div>
+
+            <div class="maydon">
+                <label for="id_izoh">Izoh</label>
+                <div class="input-qobiq">
+                    <input type="text" name="izoh" id="id_izoh" value="{{ xarajat.izoh }}" required>
+                </div>
+            </div>
+
+            <div class="maydon">
+                <label for="id_sana">Sana</label>
+                <div class="input-qobiq">
+                    <input type="date" name="sana" id="id_sana" value="{{ xarajat.sana|date:'Y-m-d' }}">
+                </div>
+            </div>
+
+            <button type="submit" class="saqlash-tugma">Saqlash</button>
+        </form>
+    </div>
+</body>
+</html>

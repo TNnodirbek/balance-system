@@ -179,6 +179,13 @@
             margin-top: 2px;
         }
 
+        .xarajat-ong {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
         .xarajat-summa {
             font-size: 15px;
             font-weight: 700;
@@ -186,11 +193,91 @@
             flex-shrink: 0;
         }
 
+        .xarajat-amallar {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .xarajat-ikonka {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+
+        .xarajat-ikonka svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .xarajat-ikonka.tahrirlash-ikonka {
+            background: #F0F8FF;
+            color: #185FA5;
+        }
+
+        .xarajat-ikonka.ochirish-ikonka {
+            background: #FCEBEB;
+            color: #A32D2D;
+        }
+
         .bosh-matn {
             text-align: center;
             color: #94A7BD;
             font-size: 13px;
             padding: 20px 0;
+        }
+
+        .royxat-sarlavha-qatori {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .qoshish-doira-tugma {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            background: #185FA5;
+            color: #FFFFFF;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: box-shadow 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .qoshish-doira-tugma:hover {
+            background: #1B6BBA;
+            box-shadow: 0 0 0 4px rgba(24, 95, 165, 0.2);
+        }
+
+        .qoshish-doira-tugma svg {
+            width: 20px;
+            height: 20px;
+            transition: transform 0.2s ease;
+        }
+
+        .qoshish-doira-tugma.ochiq svg {
+            transform: rotate(45deg);
+        }
+
+        .xarajat-forma-blok {
+            display: none;
+            margin-bottom: 24px;
+        }
+
+        .xarajat-forma-blok.ochiq {
+            display: block;
         }
     </style>
 </head>
@@ -202,8 +289,14 @@
                     <path d="M15 19L8 12L15 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
             </a>
-            <h1>Xarajat qo'shish</h1>
+            <h1>Xarajatlar</h1>
         </div>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="xabar muvaffaqiyat">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
 
         {% if xabar %}
             <div class="xabar{% if 'muvaffaqiyatli' in xabar %} muvaffaqiyat{% else %} xato{% endif %}">
@@ -211,48 +304,82 @@
             </div>
         {% endif %}
 
-        <form method="post">
-            {% csrf_token %}
+        <div class="royxat-sarlavha-qatori">
+            <p class="bolim-sarlavha" style="margin:0;">Bugungi xarajatlar</p>
+            <button type="button" class="qoshish-doira-tugma" id="qoshish-tugma" onclick="xarajatFormaToggle()" aria-label="Xarajat qo'shish">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+                </svg>
+            </button>
+        </div>
 
-            <div class="maydon">
-                <label for="id_summa">Summa</label>
-                <div class="input-qobiq summa-qobiq">
-                    <input type="number" step="0.01" name="summa" id="id_summa" required>
-                    <span class="som-belgisi">so'm</span>
+        <div class="xarajat-forma-blok" id="xarajat-forma-blok">
+            <form method="post">
+                {% csrf_token %}
+
+                <div class="maydon">
+                    <label for="id_summa">Summa</label>
+                    <div class="input-qobiq summa-qobiq">
+                        <input type="number" step="0.01" name="summa" id="id_summa" required>
+                        <span class="som-belgisi">so'm</span>
+                    </div>
                 </div>
-            </div>
 
-            <div class="maydon">
-                <label for="id_izoh">Izoh</label>
-                <div class="input-qobiq">
-                    <input type="text" name="izoh" id="id_izoh" placeholder="masalan: Yoqilg'i" required>
+                <div class="maydon">
+                    <label for="id_izoh">Izoh</label>
+                    <div class="input-qobiq">
+                        <input type="text" name="izoh" id="id_izoh" placeholder="masalan: Yoqilg'i" required>
+                    </div>
                 </div>
-            </div>
 
-            <div class="maydon">
-                <label for="id_sana">Sana</label>
-                <div class="input-qobiq">
-                    <input type="date" name="sana" id="id_sana">
+                <div class="maydon">
+                    <label for="id_sana">Sana</label>
+                    <div class="input-qobiq">
+                        <input type="date" name="sana" id="id_sana">
+                    </div>
                 </div>
-            </div>
 
-            <button type="submit" class="saqlash-tugma">Saqlash</button>
-        </form>
+                <button type="submit" class="saqlash-tugma">Saqlash</button>
+            </form>
+        </div>
 
-        <div class="bolim" style="margin-top: 28px;">
-            <p class="bolim-sarlavha">Bugungi xarajatlar</p>
+        <div class="bolim">
             {% for xarajat in bugungi_xarajatlar %}
                 <div class="xarajat-qatori">
                     <div>
                         <div class="xarajat-izoh">{{ xarajat.izoh }}</div>
                         <div class="xarajat-kim">{{ xarajat.kim_yozgan.username }}</div>
                     </div>
-                    <span class="xarajat-summa">{{ xarajat.summa }} so'm</span>
+                    <div class="xarajat-ong">
+                        <span class="xarajat-summa">{{ xarajat.summa }} so'm</span>
+                        <div class="xarajat-amallar">
+                            <a href="{% url 'xarajat_tahrirlash' xarajat.pk %}" class="xarajat-ikonka tahrirlash-ikonka" aria-label="Tahrirlash">
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M16.5 3.5A2.1 2.1 0 0 1 19.5 6.5L7 19L3 20L4 16L16.5 3.5Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+                                </svg>
+                            </a>
+                            <form method="post" action="{% url 'xarajat_ochirish' xarajat.pk %}" onsubmit="return confirm('Xarajatni ochirmoqchimisiz?');">
+                                {% csrf_token %}
+                                <button type="submit" class="xarajat-ikonka ochirish-ikonka" aria-label="O'chirish">
+                                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M4 7H20M9 7V4.5A1.5 1.5 0 0 1 10.5 3H13.5A1.5 1.5 0 0 1 15 4.5V7M18 7L17.3 19A2 2 0 0 1 15.3 21H8.7A2 2 0 0 1 6.7 19L6 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             {% empty %}
                 <p class="bosh-matn">Bugun hali xarajat yozilmagan</p>
             {% endfor %}
         </div>
     </div>
+
+    <script>
+        function xarajatFormaToggle() {
+            document.getElementById('xarajat-forma-blok').classList.toggle('ochiq');
+            document.getElementById('qoshish-tugma').classList.toggle('ochiq');
+        }
+    </script>
 </body>
 </html>
