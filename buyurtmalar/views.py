@@ -17,7 +17,7 @@ from foydalanuvchilar.models import Foydalanuvchi
 from bildirishnomalar.models import Bildirishnoma
 from bildirishnomalar.utils import bildirishnoma_yarat
 from ombor.models import HajmNarxi
-from ombor.utils import menejer_hajmlari
+from ombor.utils import menejer_hajmlari, ombor_qoldigi
 from statistika.models import QarzTolovi
 
 from .models import Buyurtma, BuyurtmaMahsulot
@@ -182,8 +182,9 @@ def yangi_buyurtma(request):
     mahsulot_qatorlari = []
     if menejer:
         narx_dict = {h.hajm: h.narx for h in HajmNarxi.objects.filter(menejer=menejer)}
+        qoldiqlar = ombor_qoldigi(menejer)
         mahsulot_qatorlari = [
-            {'hajm': hajm, 'narx_standart': narx_dict.get(hajm, 0)}
+            {'hajm': hajm, 'narx_standart': narx_dict.get(hajm, 0), 'qoldiq': qoldiqlar.get(hajm, 0)}
             for hajm in menejer_hajmlari(menejer)
         ]
 

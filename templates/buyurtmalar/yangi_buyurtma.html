@@ -266,6 +266,29 @@
             font-weight: 700;
         }
 
+        .mahsulot-karta.omborda-yoq {
+            background: #FCEBEB;
+            border-color: #F0C4C4;
+        }
+
+        .stepper-input.omborda-xato {
+            border-color: #A32D2D;
+            box-shadow: 0 0 0 3px rgba(163, 45, 45, 0.15);
+        }
+
+        .omborda-xabar {
+            font-size: 11px;
+            font-weight: 600;
+            color: #A32D2D;
+            text-align: center;
+            margin: 10px 0 0;
+        }
+
+        .omborda-xabar:empty {
+            display: none;
+            margin: 0;
+        }
+
         .jami-panel {
             display: flex;
             align-items: center;
@@ -408,7 +431,7 @@
                 <p class="bolim-sarlavha">Mahsulotlar</p>
 
                 {% for item in mahsulot_qatorlari %}
-                <div class="mahsulot-karta">
+                <div class="mahsulot-karta" data-qoldiq="{{ item.qoldiq|default:0 }}">
                     <div class="mahsulot-qatori-tepa">
                         <span class="mahsulot-nomi">{{ item.hajm }} suv</span>
                         <div class="narx-maydoni">
@@ -419,9 +442,10 @@
                     <input type="hidden" name="hajm[]" value="{{ item.hajm }}">
                     <div class="stepper">
                         <button type="button" class="stepper-tugma" data-target="soni_{{ forloop.counter0 }}" data-delta="-1">&minus;</button>
-                        <input type="number" min="0" name="soni[]" id="soni_{{ forloop.counter0 }}" value="0" class="stepper-input mahsulot-soni-input">
+                        <input type="number" min="0" name="soni[]" id="soni_{{ forloop.counter0 }}" value="0" class="stepper-input mahsulot-soni-input" data-qoldiq="{{ item.qoldiq|default:0 }}">
                         <button type="button" class="stepper-tugma" data-target="soni_{{ forloop.counter0 }}" data-delta="1">+</button>
                     </div>
+                    <p class="omborda-xabar"></p>
                 </div>
                 {% endfor %}
 
@@ -496,10 +520,37 @@
             }
             document.getElementById('umumiy_summa').textContent = formatSom(summa);
         }
+        function ombordaTekshir() {
+            document.querySelectorAll('.mahsulot-karta').forEach(function (karta) {
+                var qoldiq = parseInt(karta.dataset.qoldiq, 10) || 0;
+                var soniInput = karta.querySelector('.mahsulot-soni-input');
+                var xabarEl = karta.querySelector('.omborda-xabar');
+                var soni = parseInt(soniInput.value, 10) || 0;
+
+                if (qoldiq <= 0) {
+                    karta.classList.add('omborda-yoq');
+                    soniInput.classList.toggle('omborda-xato', soni > 0);
+                    xabarEl.textContent = 'Omborda qolmagan';
+                } else if (soni > qoldiq) {
+                    karta.classList.remove('omborda-yoq');
+                    soniInput.classList.add('omborda-xato');
+                    xabarEl.textContent = 'Omborda faqat ' + qoldiq + ' ta bor';
+                } else {
+                    karta.classList.remove('omborda-yoq');
+                    soniInput.classList.remove('omborda-xato');
+                    xabarEl.textContent = '';
+                }
+            });
+        }
+
         document.querySelectorAll('.mahsulot-narx-input, .mahsulot-soni-input').forEach(function (input) {
-            input.addEventListener('input', hisoblaSumma);
+            input.addEventListener('input', function () {
+                hisoblaSumma();
+                ombordaTekshir();
+            });
         });
         hisoblaSumma();
+        ombordaTekshir();
 
         document.querySelectorAll('.stepper-tugma').forEach(function (btn) {
             btn.addEventListener('click', function () {
@@ -509,6 +560,7 @@
                 qiymat = Math.max(0, qiymat + delta);
                 input.value = qiymat;
                 hisoblaSumma();
+                ombordaTekshir();
             });
         });
 
