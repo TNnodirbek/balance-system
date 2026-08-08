@@ -1,9 +1,10 @@
+{% load l10n %}
 <!DOCTYPE html>
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Yangi partiya</title>
+    <title>Partiyani tahrirlash</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -136,12 +137,12 @@
 <body>
     <div class="sahifa">
         <div class="sarlavha-panel">
-            <a href="javascript:history.back()" class="orqaga" aria-label="Orqaga">
+            <a href="{% url 'partiya_batafsil' partiya.pk %}" class="orqaga" aria-label="Orqaga">
                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M15 19L8 12L15 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
             </a>
-            <h1>Yangi partiya</h1>
+            <h1>Partiyani tahrirlash</h1>
         </div>
 
         {% if xato %}
@@ -155,7 +156,7 @@
                 <label for="id_mahsulot_tanlov">Mahsulot turi</label>
                 <select name="mahsulot_tanlov" id="id_mahsulot_tanlov">
                     {% for mahsulot in mahsulot_turlari %}
-                        <option value="{{ mahsulot.pk }}">{{ mahsulot.nomi }}</option>
+                        <option value="{{ mahsulot.pk }}"{% if mahsulot.pk == partiya.mahsulot_id %} selected{% endif %}>{{ mahsulot.nomi }}</option>
                     {% endfor %}
                     <option value="yangi">+ Yangi tur qo'shish</option>
                 </select>
@@ -171,29 +172,29 @@
                 <select name="fura" id="id_fura">
                     <option value="">Tanlanmagan</option>
                     {% for fura in furalar %}
-                        <option value="{{ fura.pk }}">{{ fura.sana|date:"d.m.Y" }}</option>
+                        <option value="{{ fura.pk }}"{% if partiya.fura_id == fura.pk %} selected{% endif %}>{{ fura.sana|date:"d.m.Y" }}</option>
                     {% endfor %}
                 </select>
             </div>
 
             <div class="maydon">
                 <label for="id_kelgan_soni">Kelgan soni</label>
-                <input type="number" min="1" name="kelgan_soni" id="id_kelgan_soni" required>
+                <input type="number" min="1" name="kelgan_soni" id="id_kelgan_soni" value="{{ partiya.kelgan_soni }}" required>
             </div>
 
             <div class="maydon">
                 <label for="id_umumiy_tannarx">Umumiy tannarx (butun partiya uchun)</label>
-                <input type="number" step="0.01" min="0" name="umumiy_tannarx" id="id_umumiy_tannarx">
+                <input type="number" step="0.01" min="0" name="umumiy_tannarx" id="id_umumiy_tannarx" value="{{ partiya.umumiy_tannarx|unlocalize|default:'' }}">
             </div>
 
             <div class="maydon">
                 <label for="id_sana">Sana</label>
-                <input type="date" name="sana" id="id_sana" required>
+                <input type="date" name="sana" id="id_sana" value="{{ partiya.sana|date:'Y-m-d' }}" required>
             </div>
 
             <div class="maydon">
                 <label for="id_izoh">Izoh (ixtiyoriy)</label>
-                <textarea name="izoh" id="id_izoh" rows="2" style="height:auto;padding:10px 14px;resize:vertical;"></textarea>
+                <textarea name="izoh" id="id_izoh" rows="2" style="height:auto;padding:10px 14px;resize:vertical;">{{ partiya.izoh }}</textarea>
             </div>
 
             <button type="submit" class="saqlash-tugma">Saqlash</button>

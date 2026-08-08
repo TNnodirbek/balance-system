@@ -1,3 +1,4 @@
+{% load summa_filtr %}
 <!DOCTYPE html>
 <html lang="uz">
 <head>
@@ -156,6 +157,54 @@
             font-size: 20px;
         }
 
+        .partiya-sotilgan {
+            font-size: 12px;
+            color: #2E7D32;
+            margin-top: 4px;
+        }
+
+        .partiya-band {
+            margin-bottom: 12px;
+        }
+
+        .partiya-band .partiya-karta {
+            margin-bottom: 6px;
+        }
+
+        .partiya-amallar {
+            display: flex;
+            justify-content: flex-end;
+            gap: 6px;
+        }
+
+        .partiya-ikonka {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+
+        .partiya-ikonka svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .partiya-ikonka.tahrirlash-ikonka {
+            background: #F0F8FF;
+            color: #185FA5;
+        }
+
+        .partiya-ikonka.ochirish-ikonka {
+            background: #FCEBEB;
+            color: #A32D2D;
+        }
+
         .bosh-holat {
             text-align: center;
             padding: 50px 20px;
@@ -179,7 +228,7 @@
     <div class="sahifa">
         <div class="sarlavha-panel">
             <div class="sarlavha-chap">
-                <a href="javascript:history.back()" class="orqaga" aria-label="Orqaga">
+                <a href="{% url 'ombor_royxati' %}" class="orqaga" aria-label="Orqaga">
                     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
@@ -194,20 +243,38 @@
         </div>
 
         {% for partiya in partiyalar %}
-            <a href="{% url 'partiya_batafsil' partiya.pk %}" class="partiya-karta">
-                <div class="partiya-chap">
-                    <div class="partiya-nomi">{{ partiya.mahsulot.nomi }}</div>
-                    <div class="partiya-sana">{{ partiya.sana|date:"d.m.Y" }}</div>
-                    <div class="partiya-kelgan">Kelgan: {{ partiya.kelgan_soni }}</div>
-                </div>
-                <div class="partiya-ong">
-                    <div class="partiya-qoldiq-blok">
-                        <p class="partiya-qoldiq-label">Qoldiq</p>
-                        <p class="partiya-qoldiq-son{% if partiya.qoldiq == 0 %} tugagan{% endif %}">{{ partiya.qoldiq }}</p>
+            <div class="partiya-band">
+                <a href="{% url 'partiya_batafsil' partiya.pk %}" class="partiya-karta">
+                    <div class="partiya-chap">
+                        <div class="partiya-nomi">{{ partiya.mahsulot.nomi }}</div>
+                        <div class="partiya-sana">{{ partiya.sana|date:"d.m.Y" }}</div>
+                        <div class="partiya-kelgan">Kelgan: {{ partiya.kelgan_soni }}</div>
+                        <div class="partiya-sotilgan">Sotilgan: {{ partiya.sotilgan_puli|som_format }}</div>
                     </div>
-                    <span class="partiya-strelka">&#8250;</span>
+                    <div class="partiya-ong">
+                        <div class="partiya-qoldiq-blok">
+                            <p class="partiya-qoldiq-label">Qoldiq</p>
+                            <p class="partiya-qoldiq-son{% if partiya.qoldiq == 0 %} tugagan{% endif %}">{{ partiya.qoldiq }}</p>
+                        </div>
+                        <span class="partiya-strelka">&#8250;</span>
+                    </div>
+                </a>
+                <div class="partiya-amallar">
+                    <a href="{% url 'partiya_tahrirlash' partiya.pk %}" class="partiya-ikonka tahrirlash-ikonka" aria-label="Tahrirlash">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M16.5 3.5A2.1 2.1 0 0 1 19.5 6.5L7 19L3 20L4 16L16.5 3.5Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+                        </svg>
+                    </a>
+                    <form method="post" action="{% url 'partiya_ochirish' partiya.pk %}" onsubmit="return confirm('Bu partiyani ochirishni tasdiqlaysizmi? Barcha sotuv/ishlatish tarixi ham ochadi.');">
+                        {% csrf_token %}
+                        <button type="submit" class="partiya-ikonka ochirish-ikonka" aria-label="O'chirish">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M4 7H20M9 7V4.5A1.5 1.5 0 0 1 10.5 3H13.5A1.5 1.5 0 0 1 15 4.5V7M18 7L17.3 19A2 2 0 0 1 15.3 21H8.7A2 2 0 0 1 6.7 19L6 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                    </form>
                 </div>
-            </a>
+            </div>
         {% empty %}
             <div class="bosh-holat">
                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

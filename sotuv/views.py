@@ -64,14 +64,14 @@ def partiya_qoshish(request):
             if not xato:
                 fura_id = request.POST.get('fura') or None
                 fura = Fura.objects.filter(pk=fura_id, menejer=menejer).first() if fura_id else None
-                tannarx = request.POST.get('tannarx') or None
+                umumiy_tannarx = request.POST.get('umumiy_tannarx') or None
 
                 MahsulotPartiyasi.objects.create(
                     menejer=menejer,
                     mahsulot=mahsulot,
                     fura=fura,
                     kelgan_soni=kelgan_soni,
-                    tannarx=tannarx,
+                    umumiy_tannarx=umumiy_tannarx,
                     sana=sana,
                     izoh=request.POST.get('izoh', '').strip(),
                 )
@@ -97,6 +97,74 @@ def partiya_batafsil(request, pk):
         'partiya': partiya,
         'harakatlar': harakatlar,
     })
+
+
+@login_required
+def partiya_tahrirlash(request, pk):
+    menejer = tegishli_menejer(request.user)
+    partiya = get_object_or_404(MahsulotPartiyasi, pk=pk, menejer=menejer)
+    mahsulot_turlari = QoshimchaMahsulot.objects.filter(menejer=menejer).order_by('nomi')
+    furalar = Fura.objects.filter(menejer=menejer).order_by('-sana')[:20]
+    xato = None
+
+    if request.method == 'POST':
+        mahsulot_tanlov = request.POST.get('mahsulot_tanlov', '')
+        yangi_nomi = request.POST.get('yangi_mahsulot_nomi', '').strip()
+        mahsulot = None
+
+        if mahsulot_tanlov == 'yangi':
+            if not yangi_nomi:
+                xato = "Yangi mahsulot turi nomini kiriting."
+            else:
+                mahsulot, _ = QoshimchaMahsulot.objects.get_or_create(menejer=menejer, nomi=yangi_nomi)
+        else:
+            mahsulot = QoshimchaMahsulot.objects.filter(pk=mahsulot_tanlov, menejer=menejer).first()
+            if not mahsulot:
+                xato = "Mahsulot turini tanlang."
+
+        kelgan_soni = None
+        if not xato:
+            try:
+                kelgan_soni = int(request.POST.get('kelgan_soni', ''))
+                if kelgan_soni <= 0:
+                    raise ValueError
+            except (TypeError, ValueError):
+                xato = "Kelgan sonini to'g'ri kiriting."
+
+        if not xato and kelgan_soni < partiya.chiqim:
+            xato = f"Kelgan sonini chiqimdan ({partiya.chiqim}) kam qila olmaysiz."
+
+        sana = request.POST.get('sana')
+        if not xato and not sana:
+            xato = "Sanani kiriting."
+
+        if not xato:
+            fura_id = request.POST.get('fura') or None
+            fura = Fura.objects.filter(pk=fura_id, menejer=menejer).first() if fura_id else None
+
+            partiya.mahsulot = mahsulot
+            partiya.fura = fura
+            partiya.kelgan_soni = kelgan_soni
+            partiya.umumiy_tannarx = request.POST.get('umumiy_tannarx') or None
+            partiya.sana = sana
+            partiya.izoh = request.POST.get('izoh', '').strip()
+            partiya.save()
+            return redirect('partiya_batafsil', pk=partiya.pk)
+
+    return render(request, 'sotuv/partiya_tahrirlash.html', {
+        'partiya': partiya,
+        'mahsulot_turlari': mahsulot_turlari,
+        'furalar': furalar,
+        'xato': xato,
+    })
+
+
+@login_required
+def partiya_ochirish(request, pk):
+    menejer = tegishli_menejer(request.user)
+    partiya = get_object_or_404(MahsulotPartiyasi, pk=pk, menejer=menejer)
+    partiya.delete()
+    return redirect('sotuv_royxati')
 
 
 @login_required

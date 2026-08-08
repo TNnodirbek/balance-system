@@ -125,6 +125,68 @@
             font-weight: 600;
         }
 
+        .karta-grid-ikkinchi {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1px solid #F0F3F7;
+        }
+
+        .karta-son-kichik {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0C2340;
+            margin: 0;
+        }
+
+        .karta-son-kichik.yashil {
+            color: #2E7D32;
+        }
+
+        .sarlavha-amallar {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-left: auto;
+        }
+
+        .sarlavha-ikonka {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 9px;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+
+        .sarlavha-ikonka svg {
+            width: 15px;
+            height: 15px;
+        }
+
+        .sarlavha-ikonka.tahrirlash-ikonka {
+            background: #F0F8FF;
+            color: #185FA5;
+        }
+
+        .sarlavha-ikonka.ochirish-ikonka {
+            background: #FCEBEB;
+            color: #A32D2D;
+        }
+
+        .harakat-jami {
+            font-size: 12px;
+            color: #185FA5;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+
         .harakat-tugmalar {
             display: flex;
             gap: 10px;
@@ -302,6 +364,21 @@
                 <h1>{{ partiya.mahsulot.nomi }}</h1>
                 <div class="sarlavha-sana">{{ partiya.sana|date:"d.m.Y" }}{% if partiya.fura %} &middot; Fura: {{ partiya.fura.sana|date:"d.m.Y" }}{% endif %}</div>
             </div>
+            <div class="sarlavha-amallar">
+                <a href="{% url 'partiya_tahrirlash' partiya.pk %}" class="sarlavha-ikonka tahrirlash-ikonka" aria-label="Tahrirlash">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M16.5 3.5A2.1 2.1 0 0 1 19.5 6.5L7 19L3 20L4 16L16.5 3.5Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+                    </svg>
+                </a>
+                <form method="post" action="{% url 'partiya_ochirish' partiya.pk %}" onsubmit="return confirm('Bu partiyani ochirishni tasdiqlaysizmi? Barcha sotuv/ishlatish tarixi ham ochadi.');">
+                    {% csrf_token %}
+                    <button type="submit" class="sarlavha-ikonka ochirish-ikonka" aria-label="O'chirish">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M4 7H20M9 7V4.5A1.5 1.5 0 0 1 10.5 3H13.5A1.5 1.5 0 0 1 15 4.5V7M18 7L17.3 19A2 2 0 0 1 15.3 21H8.7A2 2 0 0 1 6.7 19L6 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </form>
+            </div>
         </div>
 
         {% if xato %}
@@ -319,12 +396,16 @@
                     <p class="karta-son qoldiq{% if partiya.qoldiq == 0 %} tugagan{% endif %}">{{ partiya.qoldiq }}</p>
                 </div>
             </div>
-            {% if partiya.tannarx %}
-            <div class="karta-qator">
-                <span>Bir dona tannarx</span>
-                <span>{{ partiya.tannarx|som_format }}</span>
+            <div class="karta-grid-ikkinchi">
+                <div>
+                    <p class="karta-label">Umumiy tannarx</p>
+                    <p class="karta-son-kichik">{% if partiya.umumiy_tannarx %}{{ partiya.umumiy_tannarx|som_format }}{% else %}&mdash;{% endif %}</p>
+                </div>
+                <div>
+                    <p class="karta-label">Sotilgan puli</p>
+                    <p class="karta-son-kichik yashil">{{ partiya.sotilgan_puli|som_format }}</p>
+                </div>
             </div>
-            {% endif %}
             {% if partiya.izoh %}
             <div class="karta-qator">
                 <span>Izoh</span>
@@ -386,6 +467,9 @@
                 <div class="harakat-detal">
                     <span class="son">{{ harakat.soni }} dona</span>{% if harakat.narx %} &middot; {{ harakat.narx|som_format }}/dona{% endif %}
                 </div>
+                {% if harakat.turi == 'sotuv' and harakat.narx %}
+                    <div class="harakat-jami">Jami: {{ harakat.jami_summa|som_format }}</div>
+                {% endif %}
                 {% if harakat.xaridor %}
                     <div class="harakat-qoshimcha">Xaridor: {{ harakat.xaridor }}</div>
                 {% endif %}

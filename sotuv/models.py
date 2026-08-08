@@ -43,9 +43,9 @@ class MahsulotPartiyasi(models.Model):
         help_text="Qaysi fura bilan kelgani (ixtiyoriy)",
     )
     kelgan_soni = models.PositiveIntegerField()
-    tannarx = models.DecimalField(
+    umumiy_tannarx = models.DecimalField(
         max_digits=12, decimal_places=2, null=True, blank=True,
-        help_text="Bir dona tannarxi (ixtiyoriy)",
+        help_text="Butun partiya uchun umumiy tannarx (masalan 2100 dona uchun jami qancha to'langan bo'lsa)",
     )
     sana = models.DateField()
     izoh = models.CharField(max_length=255, blank=True)
@@ -63,6 +63,19 @@ class MahsulotPartiyasi(models.Model):
     @property
     def qoldiq(self):
         return self.kelgan_soni - self.chiqim
+
+    @property
+    def bir_dona_tannarx(self):
+        if self.kelgan_soni:
+            return self.umumiy_tannarx / self.kelgan_soni if self.umumiy_tannarx else 0
+        return 0
+
+    @property
+    def sotilgan_puli(self):
+        jami = self.harakatlar.filter(turi=PartiyaHarakati.Turi.SOTUV).aggregate(
+            jami=Sum(models.F('soni') * models.F('narx'))
+        )['jami']
+        return jami or 0
 
     def __str__(self):
         return f'{self.mahsulot} - {self.sana} ({self.kelgan_soni})'
@@ -91,6 +104,12 @@ class PartiyaHarakati(models.Model):
         verbose_name = 'Partiya harakati'
         verbose_name_plural = 'Partiya harakatlari'
         ordering = ['-yaratilgan_vaqt']
+
+    @property
+    def jami_summa(self):
+        if self.narx is not None:
+            return self.soni * self.narx
+        return None
 
     def __str__(self):
         return f'{self.partiya} - {self.get_turi_display()} x {self.soni}'
