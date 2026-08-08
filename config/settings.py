@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'buyurtmalar',
     'bildirishnomalar',
     'statistika',
+    'sotuv',
 ]
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

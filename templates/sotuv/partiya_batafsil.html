@@ -1,0 +1,429 @@
+{% load summa_filtr %}
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ partiya.mahsulot.nomi }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #FFFFFF;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            color: #0C2340;
+        }
+
+        .sahifa {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 20px 16px 40px;
+        }
+
+        .sarlavha-panel {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .orqaga {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: #F0F8FF;
+            color: #185FA5;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+
+        .orqaga svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        h1 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0C2340;
+            margin: 0;
+        }
+
+        .sarlavha-sana {
+            font-size: 12px;
+            color: #7C8B9E;
+            margin-top: 2px;
+        }
+
+        .xato {
+            background: #FCEBEB;
+            color: #A32D2D;
+            border-radius: 10px;
+            padding: 12px 14px;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 18px;
+        }
+
+        .karta {
+            background: #FFFFFF;
+            border: 1px solid #E4EDF6;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            padding: 18px;
+            margin-bottom: 20px;
+        }
+
+        .karta-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        .karta-label {
+            font-size: 12px;
+            color: #7C8B9E;
+            margin: 0 0 4px;
+        }
+
+        .karta-son {
+            font-size: 26px;
+            font-weight: 700;
+            color: #0C2340;
+            margin: 0;
+        }
+
+        .karta-son.qoldiq {
+            color: #185FA5;
+        }
+
+        .karta-son.qoldiq.tugagan {
+            color: #B9C6D6;
+        }
+
+        .karta-qator {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #7C8B9E;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #F0F3F7;
+        }
+
+        .karta-qator span:last-child {
+            color: #0C2340;
+            font-weight: 600;
+        }
+
+        .harakat-tugmalar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .harakat-tugma {
+            flex: 1;
+            height: 46px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border: 1px solid #B5D4F4;
+            background: #F0F8FF;
+            color: #185FA5;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            transition: background-color 0.2s ease;
+        }
+
+        .harakat-tugma:hover {
+            background: #E1EFFB;
+        }
+
+        .harakat-tugma.faol {
+            background: #185FA5;
+            color: #FFFFFF;
+            border-color: #185FA5;
+        }
+
+        .mini-forma {
+            display: none;
+            background: #FFFFFF;
+            border: 1px solid #E4EDF6;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            padding: 18px;
+            margin-bottom: 20px;
+        }
+
+        .mini-forma.ochiq {
+            display: block;
+        }
+
+        .mini-forma-sarlavha {
+            font-size: 14px;
+            font-weight: 700;
+            color: #0C2340;
+            margin: 0 0 14px;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #0C2340;
+            margin-bottom: 6px;
+        }
+
+        .maydon {
+            margin-bottom: 12px;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        textarea {
+            width: 100%;
+            height: 44px;
+            border: 1px solid #E4EDF6;
+            border-radius: 10px;
+            padding: 0 14px;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            font-size: 14px;
+            color: #0C2340;
+            background: #FFFFFF;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        input:focus,
+        textarea:focus {
+            border-color: #185FA5;
+            box-shadow: 0 0 0 3px rgba(24, 95, 165, 0.15);
+        }
+
+        .mini-forma-saqlash {
+            width: 100%;
+            height: 46px;
+            border: none;
+            border-radius: 10px;
+            background: #185FA5;
+            color: #FFFFFF;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .bolim-sarlavha {
+            font-size: 15px;
+            font-weight: 700;
+            color: #0C2340;
+            margin: 0 0 12px;
+        }
+
+        .harakat-qatori {
+            background: #FFFFFF;
+            border: 1px solid #E4EDF6;
+            border-radius: 14px;
+            padding: 12px 14px;
+            margin-bottom: 8px;
+        }
+
+        .harakat-tepa {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+
+        .turi-pill {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 999px;
+        }
+
+        .turi-pill.sotuv {
+            background: #E8F5E9;
+            color: #2E7D32;
+        }
+
+        .turi-pill.ishlatish {
+            background: #F0F3F7;
+            color: #7C8B9E;
+        }
+
+        .harakat-sana {
+            font-size: 11px;
+            color: #94A7BD;
+        }
+
+        .harakat-detal {
+            font-size: 13px;
+            color: #0C2340;
+        }
+
+        .harakat-detal .son {
+            font-weight: 700;
+        }
+
+        .harakat-qoshimcha {
+            font-size: 12px;
+            color: #7C8B9E;
+            margin-top: 4px;
+        }
+
+        .bosh-matn {
+            text-align: center;
+            color: #94A7BD;
+            font-size: 13px;
+            padding: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="sahifa">
+        <div class="sarlavha-panel">
+            <a href="{% url 'sotuv_royxati' %}" class="orqaga" aria-label="Orqaga">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15 19L8 12L15 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </a>
+            <div>
+                <h1>{{ partiya.mahsulot.nomi }}</h1>
+                <div class="sarlavha-sana">{{ partiya.sana|date:"d.m.Y" }}{% if partiya.fura %} &middot; Fura: {{ partiya.fura.sana|date:"d.m.Y" }}{% endif %}</div>
+            </div>
+        </div>
+
+        {% if xato %}
+            <div class="xato">{{ xato }}</div>
+        {% endif %}
+
+        <div class="karta">
+            <div class="karta-grid">
+                <div>
+                    <p class="karta-label">Kelgan</p>
+                    <p class="karta-son">{{ partiya.kelgan_soni }}</p>
+                </div>
+                <div>
+                    <p class="karta-label">Qoldiq</p>
+                    <p class="karta-son qoldiq{% if partiya.qoldiq == 0 %} tugagan{% endif %}">{{ partiya.qoldiq }}</p>
+                </div>
+            </div>
+            {% if partiya.tannarx %}
+            <div class="karta-qator">
+                <span>Bir dona tannarx</span>
+                <span>{{ partiya.tannarx|som_format }}</span>
+            </div>
+            {% endif %}
+            {% if partiya.izoh %}
+            <div class="karta-qator">
+                <span>Izoh</span>
+                <span>{{ partiya.izoh }}</span>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="harakat-tugmalar">
+            <button type="button" class="harakat-tugma" id="sotish-tugma" onclick="formaToggle('sotish')">🏷️ Sotish</button>
+            <button type="button" class="harakat-tugma" id="ishlatish-tugma" onclick="formaToggle('ishlatish')">🔧 Ishlatish</button>
+        </div>
+
+        <div class="mini-forma" id="sotish-forma">
+            <p class="mini-forma-sarlavha">Sotish</p>
+            <form method="post" action="{% url 'harakat_qoshish' partiya.pk %}">
+                {% csrf_token %}
+                <input type="hidden" name="turi" value="sotuv">
+                <div class="maydon">
+                    <label for="id_sotish_soni">Soni</label>
+                    <input type="number" min="1" max="{{ partiya.qoldiq }}" name="soni" id="id_sotish_soni" required>
+                </div>
+                <div class="maydon">
+                    <label for="id_sotish_narx">Narx (bir dona)</label>
+                    <input type="number" step="0.01" min="0" name="narx" id="id_sotish_narx">
+                </div>
+                <div class="maydon">
+                    <label for="id_sotish_xaridor">Xaridor (ixtiyoriy)</label>
+                    <input type="text" name="xaridor" id="id_sotish_xaridor">
+                </div>
+                <button type="submit" class="mini-forma-saqlash">Sotish</button>
+            </form>
+        </div>
+
+        <div class="mini-forma" id="ishlatish-forma">
+            <p class="mini-forma-sarlavha">Ishlatish</p>
+            <form method="post" action="{% url 'harakat_qoshish' partiya.pk %}">
+                {% csrf_token %}
+                <input type="hidden" name="turi" value="ishlatish">
+                <div class="maydon">
+                    <label for="id_ishlatish_soni">Soni</label>
+                    <input type="number" min="1" max="{{ partiya.qoldiq }}" name="soni" id="id_ishlatish_soni" required>
+                </div>
+                <div class="maydon">
+                    <label for="id_ishlatish_izoh">Sabab / izoh (ixtiyoriy)</label>
+                    <input type="text" name="izoh" id="id_ishlatish_izoh">
+                </div>
+                <button type="submit" class="mini-forma-saqlash">Ishlatish</button>
+            </form>
+        </div>
+
+        <p class="bolim-sarlavha">Tarix</p>
+        {% for harakat in harakatlar %}
+            <div class="harakat-qatori">
+                <div class="harakat-tepa">
+                    <span class="turi-pill {{ harakat.turi }}">{{ harakat.get_turi_display }}</span>
+                    <span class="harakat-sana">{{ harakat.sana|date:"d.m.Y" }}</span>
+                </div>
+                <div class="harakat-detal">
+                    <span class="son">{{ harakat.soni }} dona</span>{% if harakat.narx %} &middot; {{ harakat.narx|som_format }}/dona{% endif %}
+                </div>
+                {% if harakat.xaridor %}
+                    <div class="harakat-qoshimcha">Xaridor: {{ harakat.xaridor }}</div>
+                {% endif %}
+                {% if harakat.izoh %}
+                    <div class="harakat-qoshimcha">{{ harakat.izoh }}</div>
+                {% endif %}
+            </div>
+        {% empty %}
+            <p class="bosh-matn">Hali harakat yo'q</p>
+        {% endfor %}
+    </div>
+
+    <script>
+        var sotishTugma = document.getElementById('sotish-tugma');
+        var ishlatishTugma = document.getElementById('ishlatish-tugma');
+        var sotishForma = document.getElementById('sotish-forma');
+        var ishlatishForma = document.getElementById('ishlatish-forma');
+
+        function formaToggle(qaysi) {
+            var forma = qaysi === 'sotish' ? sotishForma : ishlatishForma;
+            var boshqaForma = qaysi === 'sotish' ? ishlatishForma : sotishForma;
+            var tugma = qaysi === 'sotish' ? sotishTugma : ishlatishTugma;
+            var boshqaTugma = qaysi === 'sotish' ? ishlatishTugma : sotishTugma;
+
+            var ochiladimi = !forma.classList.contains('ochiq');
+
+            boshqaForma.classList.remove('ochiq');
+            boshqaTugma.classList.remove('faol');
+
+            forma.classList.toggle('ochiq', ochiladimi);
+            tugma.classList.toggle('faol', ochiladimi);
+        }
+
+        {% if ochiq_forma == 'sotuv' %}
+            formaToggle('sotish');
+        {% elif ochiq_forma == 'ishlatish' %}
+            formaToggle('ishlatish');
+        {% endif %}
+    </script>
+</body>
+</html>

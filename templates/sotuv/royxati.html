@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sotuv</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #FFFFFF;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            color: #0C2340;
+        }
+
+        .sahifa {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 20px 16px 40px;
+        }
+
+        .sarlavha-panel {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .sarlavha-chap {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .orqaga {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: #F0F8FF;
+            color: #185FA5;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+
+        .orqaga svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        h1 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0C2340;
+            margin: 0;
+        }
+
+        .qoshish-tugma {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: #185FA5;
+            color: #FFFFFF;
+            text-decoration: none;
+            flex-shrink: 0;
+            transition: background-color 0.2s ease;
+        }
+
+        .qoshish-tugma:hover {
+            background: #1B6BBA;
+        }
+
+        .qoshish-tugma svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .partiya-karta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            background: #FFFFFF;
+            border: 1px solid #E4EDF6;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            padding: 16px;
+            margin-bottom: 12px;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .partiya-chap {
+            min-width: 0;
+        }
+
+        .partiya-nomi {
+            font-size: 15px;
+            font-weight: 700;
+            color: #0C2340;
+        }
+
+        .partiya-sana {
+            font-size: 12px;
+            color: #7C8B9E;
+            margin-top: 2px;
+        }
+
+        .partiya-kelgan {
+            font-size: 12px;
+            color: #7C8B9E;
+            margin-top: 8px;
+        }
+
+        .partiya-ong {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .partiya-qoldiq-blok {
+            text-align: right;
+        }
+
+        .partiya-qoldiq-label {
+            font-size: 11px;
+            color: #7C8B9E;
+            margin: 0 0 2px;
+        }
+
+        .partiya-qoldiq-son {
+            font-size: 20px;
+            font-weight: 700;
+            color: #185FA5;
+        }
+
+        .partiya-qoldiq-son.tugagan {
+            color: #B9C6D6;
+        }
+
+        .partiya-strelka {
+            color: #B9C6D6;
+            font-size: 20px;
+        }
+
+        .bosh-holat {
+            text-align: center;
+            padding: 50px 20px;
+            color: #94A7BD;
+        }
+
+        .bosh-holat svg {
+            width: 44px;
+            height: 44px;
+            margin-bottom: 12px;
+            color: #DCE9F5;
+        }
+
+        .bosh-holat p {
+            font-size: 14px;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="sahifa">
+        <div class="sarlavha-panel">
+            <div class="sarlavha-chap">
+                <a href="javascript:history.back()" class="orqaga" aria-label="Orqaga">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </a>
+                <h1>Sotuv</h1>
+            </div>
+            <a href="{% url 'partiya_qoshish' %}" class="qoshish-tugma" aria-label="Yangi partiya">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+                </svg>
+            </a>
+        </div>
+
+        {% for partiya in partiyalar %}
+            <a href="{% url 'partiya_batafsil' partiya.pk %}" class="partiya-karta">
+                <div class="partiya-chap">
+                    <div class="partiya-nomi">{{ partiya.mahsulot.nomi }}</div>
+                    <div class="partiya-sana">{{ partiya.sana|date:"d.m.Y" }}</div>
+                    <div class="partiya-kelgan">Kelgan: {{ partiya.kelgan_soni }}</div>
+                </div>
+                <div class="partiya-ong">
+                    <div class="partiya-qoldiq-blok">
+                        <p class="partiya-qoldiq-label">Qoldiq</p>
+                        <p class="partiya-qoldiq-son{% if partiya.qoldiq == 0 %} tugagan{% endif %}">{{ partiya.qoldiq }}</p>
+                    </div>
+                    <span class="partiya-strelka">&#8250;</span>
+                </div>
+            </a>
+        {% empty %}
+            <div class="bosh-holat">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20.59 13.41L13.42 20.58C13.23 20.77 13.01 20.92 12.77 21.02C12.52 21.13 12.26 21.18 12 21.18C11.74 21.18 11.48 21.13 11.23 21.02C10.99 20.92 10.77 20.77 10.58 20.58L2 12V2H12L20.59 10.59C20.97 10.98 21.18 11.5 21.18 12.05C21.18 12.59 20.97 13.12 20.59 13.41Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                </svg>
+                <p>Hali partiyalar qo'shilmagan</p>
+            </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

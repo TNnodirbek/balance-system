@@ -90,6 +90,38 @@
             height: 14px;
         }
 
+        .sarlavha-tugmalar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sotuv-tugma {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            height: 34px;
+            padding: 0 12px;
+            border-radius: 10px;
+            background: #F0F8FF;
+            color: #185FA5;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            flex-shrink: 0;
+            border: 1px solid #B5D4F4;
+            transition: background-color 0.2s ease;
+        }
+
+        .sotuv-tugma:hover {
+            background: #E1EFFB;
+        }
+
+        .sotuv-tugma svg {
+            width: 14px;
+            height: 14px;
+        }
+
         .bolim-sarlavha {
             font-size: 15px;
             font-weight: 700;
@@ -268,12 +300,21 @@
             <div class="sarlavha-chap">
                 <h1>Ombor</h1>
             </div>
-            <a href="{% url 'fura_qoshish' %}" class="fura-tugma">
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
-                </svg>
-                Fura
-            </a>
+            <div class="sarlavha-tugmalar">
+                <a href="{% url 'sotuv_royxati' %}" class="sotuv-tugma">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20.59 13.41L13.42 20.58C13.23 20.77 13.01 20.92 12.77 21.02C12.52 21.13 12.26 21.18 12 21.18C11.74 21.18 11.48 21.13 11.23 21.02C10.99 20.92 10.77 20.77 10.58 20.58L2 12V2H12L20.59 10.59C20.97 10.98 21.18 11.5 21.18 12.05C21.18 12.59 20.97 13.12 20.59 13.41Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+                        <circle cx="7" cy="7" r="1.3" fill="currentColor"/>
+                    </svg>
+                    Sotuv
+                </a>
+                <a href="{% url 'fura_qoshish' %}" class="fura-tugma">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+                    </svg>
+                    Fura
+                </a>
+            </div>
         </div>
 
         <p class="bolim-sarlavha">Umumiy qoldiq</p>

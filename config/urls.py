@@ -37,6 +37,7 @@ urlpatterns = [
     path('', include('foydalanuvchilar.urls')),
     path('buyurtmalar/', include('buyurtmalar.urls')),
     path('ombor/', include('ombor.urls')),
+    path('sotuv/', include('sotuv.urls')),
     path('statistika/', include('statistika.urls')),
     path('bildirishnomalar/', include('bildirishnomalar.urls')),
 ]
