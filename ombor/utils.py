@@ -4,9 +4,43 @@ from django.db.models import Sum
 from django.db.models.functions import Coalesce
 
 from buyurtmalar.models import BuyurtmaMahsulot
-from ombor.models import FuraMahsulot, HajmNarxi
+from ombor.models import Fura, FuraMahsulot, HajmNarxi
 
 BAZAVIY_HAJMLAR = ['5L', '10L']
+
+
+def fura_fifo_qoldiqlari(menejer):
+    """Har bir Fura + hajm uchun FIFO tartibida qoldiqni hisoblaydi.
+    Eng birinchi (eng eski sanali) fura to'liq sotilmaguncha, undan
+    keyingi furalardan hech narsa 'sarflanmagan' deb hisoblanadi."""
+    sotilgan = BuyurtmaMahsulot.objects.filter(buyurtma__menejer=menejer).values('hajm').annotate(
+        jami=Sum(Coalesce('soni_yetkazilgan', 'soni_buyurtma_qilingan'))
+    )
+    sarflangan_hisoblagich = {row['hajm']: row['jami'] for row in sotilgan}
+
+    furalar = (
+        Fura.objects
+        .filter(menejer=menejer)
+        .order_by('sana', 'yaratilgan_vaqt')
+        .prefetch_related('mahsulotlar')
+    )
+
+    natija = {}
+    for fura in furalar:
+        natija[fura.pk] = {}
+        for mahsulot in fura.mahsulotlar.all():
+            hajm = mahsulot.hajm
+            kelgan = mahsulot.miqdor
+            hali_sarflanmagan = sarflangan_hisoblagich.get(hajm, 0)
+
+            if hali_sarflanmagan >= kelgan:
+                natija[fura.pk][hajm] = 0
+                sarflangan_hisoblagich[hajm] = hali_sarflanmagan - kelgan
+            else:
+                natija[fura.pk][hajm] = kelgan - hali_sarflanmagan
+                sarflangan_hisoblagich[hajm] = 0
+
+    return natija
 
 
 def ombor_qoldigi(menejer):

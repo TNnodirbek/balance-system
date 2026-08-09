@@ -6,7 +6,7 @@ from foydalanuvchilar.utils import ruxsat_bor, tegishli_menejer
 
 from .forms import FuraForm
 from .models import Fura, FuraMahsulot, FuraXarajati
-from .utils import ombor_qoldigi
+from .utils import fura_fifo_qoldiqlari, ombor_qoldigi
 
 
 @login_required
@@ -15,12 +15,18 @@ def ombor_royxati(request):
         return HttpResponseForbidden("Bu sahifani ko'rish uchun ruxsatingiz yo'q.")
 
     menejer = tegishli_menejer(request.user)
-    furalar = (
+    furalar = list(
         Fura.objects
         .filter(menejer=menejer)
         .prefetch_related('mahsulotlar')
         .order_by('-sana', '-yaratilgan_vaqt')
     )
+
+    fifo = fura_fifo_qoldiqlari(menejer)
+    for fura in furalar:
+        for mahsulot in fura.mahsulotlar.all():
+            mahsulot.fifo_qoldiq = fifo.get(fura.pk, {}).get(mahsulot.hajm, 0)
+
     return render(request, 'ombor/royxat.html', {
         'furalar': furalar,
         'qoldiq': ombor_qoldigi(menejer),
