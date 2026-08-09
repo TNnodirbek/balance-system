@@ -217,3 +217,62 @@ def harakat_qoshish(request, pk):
         izoh=request.POST.get('izoh', '').strip(),
     )
     return redirect('partiya_batafsil', pk=partiya.pk)
+
+
+@login_required
+def harakat_tahrirlash(request, pk):
+    menejer = tegishli_menejer(request.user)
+    harakat = get_object_or_404(
+        PartiyaHarakati.objects.select_related('partiya'),
+        pk=pk, partiya__menejer=menejer,
+    )
+    partiya = harakat.partiya
+    xato = None
+
+    if request.method == 'POST':
+        eski_soni = harakat.soni
+        soni = None
+        try:
+            soni = int(request.POST.get('soni', ''))
+            if soni <= 0:
+                raise ValueError
+        except (TypeError, ValueError):
+            xato = "Sonini to'g'ri kiriting."
+
+        mavjud_sigim = partiya.qoldiq + eski_soni
+        if not xato and soni > mavjud_sigim:
+            xato = f"Qoldiqdan ({mavjud_sigim}) ko'p miqdor kiritib bo'lmaydi."
+
+        sana = request.POST.get('sana')
+        if not xato and not sana:
+            xato = "Sanani kiriting."
+
+        if not xato:
+            if harakat.turi == PartiyaHarakati.Turi.SOTUV:
+                harakat.narx = request.POST.get('narx') or None
+                harakat.xaridor = request.POST.get('xaridor', '').strip()
+                harakat.izoh = ''
+            else:
+                harakat.narx = None
+                harakat.xaridor = ''
+                harakat.izoh = request.POST.get('izoh', '').strip()
+
+            harakat.soni = soni
+            harakat.sana = sana
+            harakat.save()
+            return redirect('partiya_batafsil', pk=partiya.pk)
+
+    return render(request, 'sotuv/harakat_tahrirlash.html', {
+        'harakat': harakat,
+        'partiya': partiya,
+        'xato': xato,
+    })
+
+
+@login_required
+def harakat_ochirish(request, pk):
+    menejer = tegishli_menejer(request.user)
+    harakat = get_object_or_404(PartiyaHarakati, pk=pk, partiya__menejer=menejer)
+    partiya_pk = harakat.partiya_id
+    harakat.delete()
+    return redirect('partiya_batafsil', pk=partiya_pk)
