@@ -213,11 +213,23 @@
                     {{ form.suv_narxi }}
                     {% if form.suv_narxi.errors %}<p class="maydon-xatosi">{{ form.suv_narxi.errors.0 }}</p>{% endif %}
                 </div>
-                <div class="maydon">
-                    <label for="{{ form.dastavka_narxi.id_for_label }}">Dastavka narxi</label>
-                    {{ form.dastavka_narxi }}
-                    {% if form.dastavka_narxi.errors %}<p class="maydon-xatosi">{{ form.dastavka_narxi.errors.0 }}</p>{% endif %}
+            </div>
+
+            <div class="bolim">
+                <p class="bolim-sarlavha">Qo'shimcha xarajatlar</p>
+                <div id="xarajat_qatorlari">
+                    <div class="mahsulot-qatori">
+                        <div class="maydon">
+                            <label>Nomi</label>
+                            <input type="text" name="xarajat_nomi[]" value="Dastavka" class="stil-input">
+                        </div>
+                        <div class="maydon">
+                            <label>Summa</label>
+                            <input type="number" name="xarajat_summa[]" value="0" step="0.01" min="0" class="stil-input">
+                        </div>
+                    </div>
                 </div>
+                <button type="button" class="qator-qoshish-tugma" onclick="xarajatQatorQoshish()">+ Yana xarajat qo'shish</button>
             </div>
 
             <div class="bolim">
@@ -259,6 +271,16 @@
             qator.innerHTML =
                 '<div class="maydon"><label>Hajm</label><input type="text" name="hajm[]" value="" class="stil-input"></div>' +
                 '<div class="maydon"><label>Miqdor</label><input type="number" name="miqdor[]" value="0" class="stil-input"></div>';
+            konteyner.appendChild(qator);
+        }
+
+        function xarajatQatorQoshish() {
+            var konteyner = document.getElementById('xarajat_qatorlari');
+            var qator = document.createElement('div');
+            qator.className = 'mahsulot-qatori';
+            qator.innerHTML =
+                '<div class="maydon"><label>Nomi</label><input type="text" name="xarajat_nomi[]" value="" class="stil-input"></div>' +
+                '<div class="maydon"><label>Summa</label><input type="number" name="xarajat_summa[]" value="0" step="0.01" min="0" class="stil-input"></div>';
             konteyner.appendChild(qator);
         }
     </script>

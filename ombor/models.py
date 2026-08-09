@@ -1,5 +1,8 @@
+from decimal import Decimal
+
 from django.conf import settings
 from django.db import models
+from django.db.models import Sum
 
 from foydalanuvchilar.models import Foydalanuvchi
 
@@ -13,7 +16,10 @@ class Fura(models.Model):
     )
     sana = models.DateField()
     suv_narxi = models.DecimalField(max_digits=12, decimal_places=2)
-    dastavka_narxi = models.DecimalField(max_digits=12, decimal_places=2)
+    dastavka_narxi = models.DecimalField(
+        max_digits=12, decimal_places=2, default=Decimal('0'), blank=True,
+        help_text="Eski maydon - endi qoshimcha_xarajatlar orqali kiritiladi, backward compatibility uchun saqlanmoqda",
+    )
     izoh = models.TextField(blank=True)
     yaratilgan_vaqt = models.DateTimeField(auto_now_add=True)
 
@@ -23,10 +29,32 @@ class Fura(models.Model):
 
     @property
     def jami_xarajat(self):
+        # qoshimcha_xarajatlar mavjud bo'lsa - hozirgi (yangi) hisob-kitob usuli shu.
+        # Aks holda (masalan bu migratsiyadan oldingi eski Fura yozuvi hali
+        # qoshimcha_xarajatlar bilan to'ldirilmagan bo'lsa) eski dastavka_narxi
+        # maydoniga qaytiladi - shu orqali ikkalasi HECH QACHON bir vaqtda
+        # qo'shilmaydi (ikki marta hisoblanish oldini olinadi).
+        if self.qoshimcha_xarajatlar.exists():
+            qoshimcha_jami = self.qoshimcha_xarajatlar.aggregate(jami=Sum('summa'))['jami'] or Decimal('0')
+            return self.suv_narxi + qoshimcha_jami
         return self.suv_narxi + self.dastavka_narxi
 
     def __str__(self):
         return f'Fura {self.sana}'
+
+
+class FuraXarajati(models.Model):
+    """Fura bilan birga keladigan qoshimcha xarajat qatori - masalan 'Dastavka', 'Yo'l haqi'"""
+    fura = models.ForeignKey(Fura, on_delete=models.CASCADE, related_name='qoshimcha_xarajatlar')
+    nomi = models.CharField(max_length=100)
+    summa = models.DecimalField(max_digits=12, decimal_places=2)
+
+    class Meta:
+        verbose_name = 'Fura xarajati'
+        verbose_name_plural = 'Fura xarajatlari'
+
+    def __str__(self):
+        return f'{self.fura} - {self.nomi}: {self.summa}'
 
 
 class FuraMahsulot(models.Model):

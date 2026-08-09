@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from foydalanuvchilar.utils import ruxsat_bor, tegishli_menejer
 
 from .forms import FuraForm
-from .models import Fura, FuraMahsulot
+from .models import Fura, FuraMahsulot, FuraXarajati
 from .utils import ombor_qoldigi
 
 
@@ -46,6 +46,13 @@ def fura_qoshish(request):
                 if hajm and miqdor and int(miqdor) > 0:
                     FuraMahsulot.objects.create(fura=fura, hajm=hajm, miqdor=int(miqdor))
 
+            xarajat_nomlari = request.POST.getlist('xarajat_nomi[]')
+            xarajat_summalari = request.POST.getlist('xarajat_summa[]')
+            for nomi, summa in zip(xarajat_nomlari, xarajat_summalari):
+                nomi = nomi.strip()
+                if nomi and summa:
+                    FuraXarajati.objects.create(fura=fura, nomi=nomi, summa=summa)
+
             return redirect('ombor_royxati')
         return render(request, 'ombor/fura_qoshish.html', {'form': form})
 
@@ -79,6 +86,15 @@ def fura_tahrirlash(request, pk):
                 hajm = hajm.strip()
                 if hajm and miqdor and int(miqdor) > 0:
                     FuraMahsulot.objects.create(fura=fura, hajm=hajm, miqdor=int(miqdor))
+
+            fura.qoshimcha_xarajatlar.all().delete()
+            xarajat_nomlari = request.POST.getlist('xarajat_nomi[]')
+            xarajat_summalari = request.POST.getlist('xarajat_summa[]')
+            for nomi, summa in zip(xarajat_nomlari, xarajat_summalari):
+                nomi = nomi.strip()
+                if nomi and summa:
+                    FuraXarajati.objects.create(fura=fura, nomi=nomi, summa=summa)
+
             return redirect('ombor_royxati')
         return render(request, 'ombor/fura_tahrirlash.html', {'form': form, 'fura': fura})
 

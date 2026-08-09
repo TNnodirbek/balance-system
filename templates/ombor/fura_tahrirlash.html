@@ -128,10 +128,33 @@
                 <label>Suv narxi</label>
                 <input type="number" step="0.01" name="suv_narxi" value="{{ fura.suv_narxi|unlocalize }}">
             </div>
-            <div class="maydon">
-                <label>Dastavka narxi</label>
-                <input type="number" step="0.01" name="dastavka_narxi" value="{{ fura.dastavka_narxi|unlocalize }}">
+            <p class="bolim-sarlavha">Qo'shimcha xarajatlar</p>
+            <div id="xarajat_qatorlari">
+                {% for xarajat in fura.qoshimcha_xarajatlar.all %}
+                <div class="mahsulot-qator">
+                    <div class="maydon">
+                        <label>Nomi</label>
+                        <input type="text" name="xarajat_nomi[]" value="{{ xarajat.nomi }}">
+                    </div>
+                    <div class="maydon">
+                        <label>Summa</label>
+                        <input type="number" name="xarajat_summa[]" value="{{ xarajat.summa|unlocalize }}">
+                    </div>
+                </div>
+                {% empty %}
+                <div class="mahsulot-qator">
+                    <div class="maydon">
+                        <label>Nomi</label>
+                        <input type="text" name="xarajat_nomi[]" value="Dastavka">
+                    </div>
+                    <div class="maydon">
+                        <label>Summa</label>
+                        <input type="number" name="xarajat_summa[]" value="{{ fura.dastavka_narxi|unlocalize }}">
+                    </div>
+                </div>
+                {% endfor %}
             </div>
+            <button type="button" class="qator-qoshish-tugma" onclick="xarajatQatorQoshish()">+ Yana xarajat qo'shish</button>
 
             <p class="bolim-sarlavha">Mahsulotlar</p>
             <div id="mahsulot_qatorlari">
@@ -162,6 +185,16 @@
             qator.innerHTML =
                 '<div class="maydon"><label>Hajm</label><input type="text" name="hajm[]" value=""></div>' +
                 '<div class="maydon"><label>Miqdor</label><input type="number" name="miqdor[]" value="0"></div>';
+            qobiq.appendChild(qator);
+        }
+
+        function xarajatQatorQoshish() {
+            const qobiq = document.getElementById('xarajat_qatorlari');
+            const qator = document.createElement('div');
+            qator.className = 'mahsulot-qator';
+            qator.innerHTML =
+                '<div class="maydon"><label>Nomi</label><input type="text" name="xarajat_nomi[]" value=""></div>' +
+                '<div class="maydon"><label>Summa</label><input type="number" name="xarajat_summa[]" value="0"></div>';
             qobiq.appendChild(qator);
         }
     </script>

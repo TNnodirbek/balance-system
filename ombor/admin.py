@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Fura, FuraMahsulot, NarxSozlamasi
+from .models import Fura, FuraMahsulot, FuraXarajati, NarxSozlamasi
 
 
 class FuraMahsulotInline(admin.TabularInline):
@@ -8,10 +8,15 @@ class FuraMahsulotInline(admin.TabularInline):
     extra = 1
 
 
+class FuraXarajatiInline(admin.TabularInline):
+    model = FuraXarajati
+    extra = 1
+
+
 @admin.register(Fura)
 class FuraAdmin(admin.ModelAdmin):
-    list_display = ('sana', 'menejer', 'suv_narxi', 'dastavka_narxi', 'yaratilgan_vaqt')
-    inlines = [FuraMahsulotInline]
+    list_display = ('sana', 'menejer', 'suv_narxi', 'jami_xarajat', 'yaratilgan_vaqt')
+    inlines = [FuraMahsulotInline, FuraXarajatiInline]
 
 
 @admin.register(NarxSozlamasi)
