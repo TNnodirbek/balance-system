@@ -1,4 +1,5 @@
 {% load summa_filtr %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="uz">
 <head>
@@ -129,9 +130,40 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 14px;
+        }
+
+        .moliyaviy-boshqaruv {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             margin-top: 14px;
             padding-top: 14px;
             border-top: 1px solid #F0F3F7;
+            margin-bottom: 10px;
+        }
+
+        .moliyaviy-matn {
+            font-size: 12px;
+            color: #7C8B9E;
+        }
+
+        .koz-tugma {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            background: #F0F8FF;
+            color: #185FA5;
+            border: none;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .koz-tugma svg {
+            width: 14px;
+            height: 14px;
         }
 
         .karta-son-kichik {
@@ -344,6 +376,41 @@
             margin-top: 4px;
         }
 
+        .harakat-amallar {
+            display: flex;
+            justify-content: flex-end;
+            gap: 6px;
+            margin-top: 8px;
+        }
+
+        .harakat-ikonka {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 26px;
+            height: 26px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+
+        .harakat-ikonka svg {
+            width: 13px;
+            height: 13px;
+        }
+
+        .harakat-ikonka.tahrirlash-ikonka {
+            background: #F0F8FF;
+            color: #185FA5;
+        }
+
+        .harakat-ikonka.ochirish-ikonka {
+            background: #FCEBEB;
+            color: #A32D2D;
+        }
+
         .bosh-matn {
             text-align: center;
             color: #94A7BD;
@@ -396,14 +463,23 @@
                     <p class="karta-son qoldiq{% if partiya.qoldiq == 0 %} tugagan{% endif %}">{{ partiya.qoldiq }}</p>
                 </div>
             </div>
+            <div class="moliyaviy-boshqaruv">
+                <span class="moliyaviy-matn">Moliyaviy</span>
+                <button type="button" class="koz-tugma" id="sotuv-koz-tugma" aria-label="Yashirish">
+                    <svg id="sotuv-koz-ikonka" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M2 12S5.5 5 12 5S22 12 22 12S18.5 19 12 19S2 12 2 12Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+                        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.7"/>
+                    </svg>
+                </button>
+            </div>
             <div class="karta-grid-ikkinchi">
                 <div>
                     <p class="karta-label">Umumiy tannarx</p>
-                    <p class="karta-son-kichik">{% if partiya.umumiy_tannarx %}{{ partiya.umumiy_tannarx|som_format }}{% else %}&mdash;{% endif %}</p>
+                    <p class="karta-son-kichik yashirin-qiymat">{% if partiya.umumiy_tannarx %}{{ partiya.umumiy_tannarx|som_format }}{% else %}&mdash;{% endif %}</p>
                 </div>
                 <div>
                     <p class="karta-label">Sotilgan puli</p>
-                    <p class="karta-son-kichik yashil">{{ partiya.sotilgan_puli|som_format }}</p>
+                    <p class="karta-son-kichik yashil yashirin-qiymat">{{ partiya.sotilgan_puli|som_format }}</p>
                 </div>
             </div>
             {% if partiya.izoh %}
@@ -476,13 +552,31 @@
                 {% if harakat.izoh %}
                     <div class="harakat-qoshimcha">{{ harakat.izoh }}</div>
                 {% endif %}
+                <div class="harakat-amallar">
+                    <a href="{% url 'harakat_tahrirlash' harakat.pk %}" class="harakat-ikonka tahrirlash-ikonka" aria-label="Tahrirlash">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M16.5 3.5A2.1 2.1 0 0 1 19.5 6.5L7 19L3 20L4 16L16.5 3.5Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+                        </svg>
+                    </a>
+                    <form method="post" action="{% url 'harakat_ochirish' harakat.pk %}" onsubmit="return confirm('Bu harakatni ochirishni tasdiqlaysizmi?');">
+                        {% csrf_token %}
+                        <button type="submit" class="harakat-ikonka ochirish-ikonka" aria-label="O'chirish">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M4 7H20M9 7V4.5A1.5 1.5 0 0 1 10.5 3H13.5A1.5 1.5 0 0 1 15 4.5V7M18 7L17.3 19A2 2 0 0 1 15.3 21H8.7A2 2 0 0 1 6.7 19L6 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                    </form>
+                </div>
             </div>
         {% empty %}
             <p class="bosh-matn">Hali harakat yo'q</p>
         {% endfor %}
     </div>
 
+    <script src="{% static 'js/koz_yashirish.js' %}"></script>
     <script>
+        kozYashirishSozla('sotuv-koz-tugma', 'sotuv-koz-ikonka', 'yashirin-qiymat');
+
         var sotishTugma = document.getElementById('sotish-tugma');
         var ishlatishTugma = document.getElementById('ishlatish-tugma');
         var sotishForma = document.getElementById('sotish-forma');
