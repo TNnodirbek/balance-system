@@ -249,7 +249,7 @@
         <h1>Balance System</h1>
         <p class="subtitle">Ombor va yetkazish tizimiga kirish</p>
 
-        <form method="post" autocomplete="off">
+        <form method="post">
             {% csrf_token %}
             <input type="hidden" name="next" value="{{ request.GET.next }}">
 
@@ -268,7 +268,7 @@
                     <svg class="chap-ikonka" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M20 21C20 17.134 16.4183 14 12 14C7.58172 14 4 17.134 4 21M12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7C16 9.20914 14.2091 11 12 11Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
-                    <input type="text" id="id_username" name="username" placeholder="Login" required autofocus>
+                    <input type="text" id="id_username" name="username" placeholder="Login" required autofocus autocomplete="username">
                 </div>
             </div>
 
@@ -279,7 +279,7 @@
                         <rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.7"/>
                         <path d="M8 11V7A4 4 0 0 1 16 7V11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
                     </svg>
-                    <input type="password" id="id_password" name="password" placeholder="Parol" required>
+                    <input type="password" id="id_password" name="password" placeholder="Parol" required autocomplete="current-password">
                     <button type="button" class="kozcha" id="parol-korsat" aria-label="Parolni ko'rsatish">
                         <svg id="koz-ochiq" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M1 12S5 4 12 4S23 12 23 12S19 20 12 20S1 12 1 12Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
@@ -334,6 +334,17 @@
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('/service-worker.js');
         }
+
+        // iOS'da ilovani (PWA) fondan qaytarganda WebKit sahifani tarmoqdan
+        // qayta yuklamay, bfcache'dan tiklashi mumkin - bu holda formadagi
+        // CSRF tokeni eskirib qolishi (403 xatosiga sabab bo'lishi) mumkin.
+        // event.persisted shu holatni bildiradi - sahifani majburan qayta
+        // yuklab, yangi tokenli forma olamiz.
+        window.addEventListener('pageshow', function (event) {
+            if (event.persisted) {
+                window.location.reload();
+            }
+        });
     </script>
 </body>
 </html>

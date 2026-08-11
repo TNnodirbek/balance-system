@@ -5,6 +5,7 @@ from django.http import HttpResponseForbidden
 from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.http import url_has_allowed_host_and_scheme
 
 from buyurtmalar.models import Buyurtma
 from dokonlar.models import Dokon
@@ -26,8 +27,18 @@ def login_view(request):
         else:
             login(request, user)
             if user.is_superuser:
-                next_url = request.POST.get('next') or request.GET.get('next') or reverse('admin:index')
-                return redirect(next_url)
+                # next parametri sessiya tugab qolgan eski sahifadan (masalan
+                # /dastavchik/...) qolib ketishi mumkin - shu sabab superuser
+                # faqat admin panel ichidagi manzillarga yo'naltiriladi, aks
+                # holda har doim admin bosh sahifasiga tushadi (rolidan
+                # qat'iy nazar noto'g'ri dashboard'ga tashlab qo'yilmasligi
+                # uchun).
+                next_url = request.POST.get('next') or request.GET.get('next') or ''
+                if next_url.startswith('/admin/') and url_has_allowed_host_and_scheme(
+                    next_url, allowed_hosts={request.get_host()}, require_https=request.is_secure()
+                ):
+                    return redirect(next_url)
+                return redirect('admin:index')
             if user.rol == Foydalanuvchi.Rol.MENEJER:
                 return redirect('menejer_bosh_sahifa')
             if user.rol == Foydalanuvchi.Rol.DASTAVCHIK:
