@@ -132,6 +132,12 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
+# service-worker.js sayt ildizidan (/) xizmat qilishi kerak - aks holda uning
+# scope'i /static/ bilan cheklanib qoladi va sahifalarni oflaynda ushlab
+# qololmaydi. WHITENOISE_ROOT shu papkadagi fayllarni to'g'ridan-to'g'ri
+# ildiz URL'da ham beradi (masalan /service-worker.js, /manifest.json).
+WHITENOISE_ROOT = BASE_DIR / 'static'
+
 STORAGES = {
     'default': {
         'BACKEND': 'django.core.files.storage.FileSystemStorage',

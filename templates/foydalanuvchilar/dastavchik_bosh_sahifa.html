@@ -5,6 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Dastavchik</title>
+    <link rel="manifest" href="/static/manifest.json">
+    <meta name="theme-color" content="#185FA5">
+    <link rel="apple-touch-icon" href="/static/icons/icon-192.png">
     <style>
         * { box-sizing: border-box; }
         body {
@@ -413,6 +416,10 @@
         function qoldiqToggle() {
             document.getElementById('qoldiq-detal').classList.toggle('ochiq');
             document.getElementById('qoldiq-strelka').classList.toggle('ochiq');
+        }
+
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/service-worker.js');
         }
     </script>
 </body>
