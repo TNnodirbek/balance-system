@@ -340,8 +340,25 @@
         // CSRF tokeni eskirib qolishi (403 xatosiga sabab bo'lishi) mumkin.
         // event.persisted shu holatni bildiradi - sahifani majburan qayta
         // yuklab, yangi tokenli forma olamiz.
+        //
+        // MUHIM: iOS standalone PWA'da (WKWebView) event.persisted ba'zan
+        // ODDIY (bfcache'siz) yuklanishda ham noto'g'ri true bo'lib chiqishi
+        // mumkin - bu holda login POST muvaffaqiyatsiz bo'lib, xato xabari
+        // bilan shu sahifa qayta render qilinganda, skript darhol reload
+        // qilib, xato xabarini yo'qotib yuborardi (foydalanuvchiga "hech
+        // narsa bo'lmagandek, bo'sh forma qaytadan chiqdi" bo'lib ko'rinardi).
+        // Shu sababli event.persisted'ni Navigation Timing API orqali
+        // ("back_forward" turi) qo'shimcha tasdiqlaymiz - haqiqiy bfcache
+        // tiklanishida ikkalasi ham to'g'ri keladi, oddiy yuklanishda esa
+        // navigation turi "navigate"/"reload" bo'lgani uchun reload
+        // chaqirilmaydi.
         window.addEventListener('pageshow', function (event) {
-            if (event.persisted) {
+            if (!event.persisted) {
+                return;
+            }
+            var navEntries = performance.getEntriesByType('navigation');
+            var navType = navEntries.length ? navEntries[0].type : null;
+            if (navType === 'back_forward') {
                 window.location.reload();
             }
         });
