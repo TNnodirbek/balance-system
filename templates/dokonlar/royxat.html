@@ -67,6 +67,15 @@
             color: #185FA5;
             flex-shrink: 0;
         }
+        .tel-tugma {
+            width: 36px; height: 36px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 999px;
+            background: #F0F8FF;
+            color: #185FA5;
+            flex-shrink: 0;
+            text-decoration: none;
+        }
         .bosh-holat {
             text-align: center;
             color: #7C8B9E;
@@ -93,6 +102,11 @@
                 <div class="nomi">{{ dokon.nomi }}</div>
                 <div class="tafsilot">{{ dokon.manzili }}{% if dokon.telefon %} &middot; {{ dokon.telefon }}{% endif %}</div>
             </div>
+            {% if dokon.telefon %}
+            <a href="tel:{{ dokon.telefon }}" class="tel-tugma" aria-label="Qo'ng'iroq qilish">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.92V19.92A2 2 0 0 1 19.78 21.91C17.24 21.64 14.8 20.77 12.66 19.38C10.68 18.11 9 16.43 7.73 14.45C6.33 12.3 5.46 9.85 5.2 7.3A2 2 0 0 1 7.18 5.08H10.18A2 2 0 0 1 12.18 6.82C12.29 7.79 12.51 8.75 12.83 9.66A2 2 0 0 1 12.38 11.75L11.07 13.06C12.24 15.16 13.94 16.86 16.04 18.03L17.35 16.72A2 2 0 0 1 19.44 16.27C20.35 16.59 21.31 16.81 22.28 16.92H22Z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+            {% endif %}
             {% if dokon_tahrirlash_ruxsati %}
             <a href="{% url 'dokon_tahrirlash' dokon.pk %}" class="tahrirlash-tugma" aria-label="Tahrirlash">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 4H4A2 2 0 0 0 2 6V20A2 2 0 0 0 4 22H18A2 2 0 0 0 20 20V13" stroke-linecap="round" stroke-linejoin="round"/><path d="M18.5 2.5A2.121 2.121 0 0 1 21.5 5.5L12 15L8 16L9 12L18.5 2.5Z" stroke-linecap="round" stroke-linejoin="round"/></svg>

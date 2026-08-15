@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿{% load static %}
+<!DOCTYPE html>
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
@@ -141,7 +142,7 @@
             </div>
             <div class="maydon">
                 <label>Telefon</label>
-                <input type="text" name="telefon" value="{{ dastavchik.telefon }}" placeholder="+998 90 123 45 67">
+                <input type="tel" inputmode="numeric" name="telefon" value="{{ dastavchik.telefon }}" class="telefon-input" placeholder="99-755-78-89">
             </div>
 
             <hr class="ajratuvchi">
@@ -172,5 +173,6 @@
             }
         }
     </script>
+    <script src="{% static 'js/telefon-format.js' %}"></script>
 </body>
 </html>
