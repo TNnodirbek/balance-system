@@ -9,6 +9,11 @@ class Foydalanuvchi(AbstractUser):
 
     rol = models.CharField(max_length=20, choices=Rol.choices)
     telefon = models.CharField(max_length=20, blank=True)
+    sessiya_muddati_kun = models.PositiveIntegerField(
+        default=14,
+        verbose_name="Sessiya muddati (kun)",
+        help_text="Necha kun login holatida qolish, 0 = brauzer yopilganda chiqadi",
+    )
     menejer = models.ForeignKey(
         'self',
         on_delete=models.SET_NULL,

@@ -13,7 +13,7 @@ from ombor.models import HajmNarxi
 from ombor.utils import menejer_hajmlari, ombor_qoldigi
 
 from .models import DastavchikRuxsatlari, Foydalanuvchi
-from .utils import ruxsat_bor, tegishli_menejer
+from .utils import ruxsat_bor, sessiya_muddatini_qoll, tegishli_menejer
 
 
 def login_view(request):
@@ -26,6 +26,7 @@ def login_view(request):
             xato = "Login yoki parol noto'g'ri"
         else:
             login(request, user)
+            sessiya_muddatini_qoll(request, tegishli_menejer(user))
             if user.is_superuser:
                 # next parametri sessiya tugab qolgan eski sahifadan (masalan
                 # /dastavchik/...) qolib ketishi mumkin - shu sabab superuser
@@ -238,10 +239,23 @@ def dastavchik_tahrirlash(request, pk):
 
 @login_required
 def sozlamalar_bosh(request):
+    xabar = None
+    if request.method == 'POST' and request.user.rol == Foydalanuvchi.Rol.MENEJER:
+        try:
+            yangi_muddat = int(request.POST.get('sessiya_muddati_kun', ''))
+        except (TypeError, ValueError):
+            yangi_muddat = None
+        if yangi_muddat is not None and yangi_muddat >= 0:
+            request.user.sessiya_muddati_kun = yangi_muddat
+            request.user.save(update_fields=['sessiya_muddati_kun'])
+            sessiya_muddatini_qoll(request, request.user)
+            xabar = 'Sessiya muddati saqlandi.'
+
     return render(request, 'foydalanuvchilar/sozlamalar_bosh.html', {
         'ombor_korish': ruxsat_bor(request.user, 'ombor_korish'),
         'narxlarni_korish': ruxsat_bor(request.user, 'narxlarni_korish'),
         'dastavchiklarni_korish': ruxsat_bor(request.user, 'dastavchiklarni_korish'),
+        'xabar': xabar,
     })
 
 
