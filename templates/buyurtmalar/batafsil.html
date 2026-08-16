@@ -262,11 +262,21 @@
             iconSize: [16, 16],
             iconAnchor: [8, 16],
         });
-        var navKokIkonka = L.divIcon({
+        // Yo'nalish strelkasi - joriy joylashuv markeri. 0deg = shimolga
+        // qaragan holat (SVG shu holatda chizilgan), watchPosition har
+        // yangilanganda position.coords.heading gradusiga aylantiriladi.
+        var navYonalishIkonka = L.divIcon({
             className: '',
-            html: '<div style="width:18px;height:18px;border-radius:50%;background:#185FA5;border:3px solid #fff;box-shadow:0 0 0 2px #185FA5;"></div>',
-            iconSize: [18, 18],
-            iconAnchor: [9, 9],
+            html:
+                '<div style="width:34px;height:34px;border-radius:50%;background:rgba(24,95,165,0.18);display:flex;align-items:center;justify-content:center;">' +
+                    '<div class="yonalish-strelka" style="width:22px;height:22px;transition:transform 0.3s ease;transform:rotate(0deg);">' +
+                        '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" xmlns="http://www.w3.org/2000/svg">' +
+                            '<path d="M12 2L19 21L12 17L5 21L12 2Z" fill="#185FA5" stroke="#FFFFFF" stroke-width="1.2" stroke-linejoin="round"/>' +
+                        '</svg>' +
+                    '</div>' +
+                '</div>',
+            iconSize: [34, 34],
+            iconAnchor: [17, 17],
         });
 
         function xaritaOch() {
@@ -343,10 +353,21 @@
                 function (position) {
                     var lat = position.coords.latitude;
                     var lng = position.coords.longitude;
+                    var heading = position.coords.heading;
                     if (navJoriyMarker) {
                         navJoriyMarker.setLatLng([lat, lng]);
                     } else {
-                        navJoriyMarker = L.marker([lat, lng], { icon: navKokIkonka }).addTo(navXaritaObj);
+                        navJoriyMarker = L.marker([lat, lng], { icon: navYonalishIkonka }).addTo(navXaritaObj);
+                    }
+                    // heading ba'zi qurilmalarda/holatlarda (masalan turgan
+                    // holatda) null/undefined/NaN bo'ladi - bu holda strelka
+                    // avvalgi bilingan yo'nalishida qolaveradi, xato bermaydi.
+                    if (heading !== null && heading !== undefined && !isNaN(heading)) {
+                        var markerEl = navJoriyMarker.getElement();
+                        var strelka = markerEl ? markerEl.querySelector('.yonalish-strelka') : null;
+                        if (strelka) {
+                            strelka.style.transform = 'rotate(' + heading + 'deg)';
+                        }
                     }
                     masofaniYangila(lat, lng);
                 },
