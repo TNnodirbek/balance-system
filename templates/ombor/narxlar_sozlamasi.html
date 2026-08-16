@@ -133,7 +133,7 @@
                 <div class="hajm-qatori">
                     <span class="hajm-nomi-belgi">{{ item.hajm }}</span>
                     <input type="hidden" name="hajm[]" value="{{ item.hajm }}">
-                    <input type="number" step="0.01" name="narx[]" value="{{ item.narx|unlocalize }}">
+                    <input type="number" step="0.01" name="narx[]" value="{{ item.narx|unlocalize }}" class="nol-tozalanadigan">
                 </div>
                 {% endfor %}
             </div>
@@ -149,10 +149,11 @@
             qator.className = 'hajm-qatori';
             qator.innerHTML =
                 '<input type="text" name="hajm[]" placeholder="Masalan: 1.5L" class="hajm-yangi-input">' +
-                '<input type="number" step="0.01" name="narx[]" value="0">';
+                '<input type="number" step="0.01" name="narx[]" value="0" class="nol-tozalanadigan">';
             konteyner.appendChild(qator);
         }
     </script>
     <script src="{% static 'js/forma-himoya.js' %}"></script>
+    <script src="{% static 'js/nol-tozalash.js' %}"></script>
 </body>
 </html>

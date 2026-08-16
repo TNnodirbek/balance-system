@@ -559,13 +559,13 @@
                         <span class="mahsulot-nomi">{{ item.hajm }} suv</span>
                         <div class="narx-maydoni">
                             <label for="narx_{{ forloop.counter0 }}">Narx</label>
-                            <input type="number" step="0.01" min="0" name="narx[]" id="narx_{{ forloop.counter0 }}" value="{{ item.narx_standart|unlocalize }}" class="mahsulot-narx-input">
+                            <input type="number" step="0.01" min="0" name="narx[]" id="narx_{{ forloop.counter0 }}" value="{{ item.narx_standart|unlocalize }}" class="mahsulot-narx-input nol-tozalanadigan">
                         </div>
                     </div>
                     <input type="hidden" name="hajm[]" value="{{ item.hajm }}">
                     <div class="stepper">
                         <button type="button" class="stepper-tugma" data-target="soni_{{ forloop.counter0 }}" data-delta="-1">&minus;</button>
-                        <input type="number" min="0" name="soni[]" id="soni_{{ forloop.counter0 }}" value="0" class="stepper-input mahsulot-soni-input" data-qoldiq="{{ item.qoldiq|default:0 }}">
+                        <input type="number" min="0" name="soni[]" id="soni_{{ forloop.counter0 }}" value="0" class="stepper-input mahsulot-soni-input nol-tozalanadigan" data-qoldiq="{{ item.qoldiq|default:0 }}">
                         <button type="button" class="stepper-tugma" data-target="soni_{{ forloop.counter0 }}" data-delta="1">+</button>
                     </div>
                     <p class="omborda-xabar"></p>
@@ -833,6 +833,7 @@
     </script>
     <script src="{% static 'js/telefon-format.js' %}"></script>
     <script src="{% static 'js/forma-himoya.js' %}"></script>
+    <script src="{% static 'js/nol-tozalash.js' %}"></script>
 </body>
 </html>
 

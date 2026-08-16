@@ -141,11 +141,11 @@
             <div class="mahsulot-qator">
                 <div class="maydon">
                     <label>Miqdor</label>
-                    <input type="number" name="soni_{{ qator.hajm }}" min="0" value="{{ qator.soni|unlocalize }}">
+                    <input type="number" name="soni_{{ qator.hajm }}" min="0" value="{{ qator.soni|unlocalize }}" class="nol-tozalanadigan">
                 </div>
                 <div class="maydon">
                     <label>Narx</label>
-                    <input type="number" step="0.01" name="narx_{{ qator.hajm }}" min="0" value="{{ qator.narx|unlocalize }}">
+                    <input type="number" step="0.01" name="narx_{{ qator.hajm }}" min="0" value="{{ qator.narx|unlocalize }}" class="nol-tozalanadigan">
                 </div>
             </div>
             {% endfor %}
@@ -170,13 +170,14 @@
             </div>
             <div class="maydon">
                 <label>Qarz summasi</label>
-                <input type="number" step="0.01" name="qarz_summasi" min="0" value="{{ buyurtma.qarz_summasi|unlocalize }}">
+                <input type="number" step="0.01" name="qarz_summasi" min="0" value="{{ buyurtma.qarz_summasi|unlocalize }}" class="nol-tozalanadigan">
             </div>
 
             <button type="submit" class="saqlash-tugma">Saqlash</button>
         </form>
     </div>
     <script src="{% static 'js/forma-himoya.js' %}"></script>
+    <script src="{% static 'js/nol-tozalash.js' %}"></script>
 </body>
 </html>
 

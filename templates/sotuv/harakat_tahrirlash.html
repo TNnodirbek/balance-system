@@ -164,13 +164,13 @@
 
             <div class="maydon">
                 <label for="id_soni">Soni</label>
-                <input type="number" min="1" name="soni" id="id_soni" value="{{ harakat.soni }}" required>
+                <input type="number" min="1" name="soni" id="id_soni" value="{{ harakat.soni }}" class="nol-tozalanadigan" required>
             </div>
 
             {% if harakat.turi == 'sotuv' %}
                 <div class="maydon">
                     <label for="id_narx">Narx (bir dona)</label>
-                    <input type="number" step="0.01" min="0" name="narx" id="id_narx" value="{{ harakat.narx|unlocalize|default:'' }}">
+                    <input type="number" step="0.01" min="0" name="narx" id="id_narx" value="{{ harakat.narx|unlocalize|default:'' }}" class="nol-tozalanadigan">
                 </div>
                 <div class="maydon">
                     <label for="id_xaridor">Xaridor (ixtiyoriy)</label>
@@ -192,5 +192,6 @@
         </form>
     </div>
     <script src="{% static 'js/forma-himoya.js' %}"></script>
+    <script src="{% static 'js/nol-tozalash.js' %}"></script>
 </body>
 </html>

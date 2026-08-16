@@ -109,7 +109,7 @@
                 {% for m in buyurtma.mahsulotlar.all %}
                 <div class="qator" style="display:block;padding:8px 0;">
                     <label style="font-size:12px;font-weight:600;display:block;margin-bottom:4px;">{{ m.hajm }} - yetkazilgan miqdor</label>
-                    <input type="number" name="soni_yetkazilgan_{{ m.pk }}" min="0" value="{{ m.soni_buyurtma_qilingan }}" class="yetkazilgan-miqdor-input" data-narx="{{ m.narx|unlocalize }}" data-mahsulot-pk="{{ m.pk }}" style="width:100%;height:40px;border:1px solid #E4EDF6;border-radius:8px;padding:0 10px;font-family:'Manrope',sans-serif;">
+                    <input type="number" name="soni_yetkazilgan_{{ m.pk }}" min="0" value="{{ m.soni_buyurtma_qilingan }}" class="yetkazilgan-miqdor-input nol-tozalanadigan" data-narx="{{ m.narx|unlocalize }}" data-mahsulot-pk="{{ m.pk }}" style="width:100%;height:40px;border:1px solid #E4EDF6;border-radius:8px;padding:0 10px;font-family:'Manrope',sans-serif;">
                 </div>
                 {% endfor %}
                 <div style="display:flex;gap:8px;margin:10px 0;">
@@ -359,6 +359,7 @@
     </script>
     {% endif %}
     <script src="{% static 'js/forma-himoya.js' %}"></script>
+    <script src="{% static 'js/nol-tozalash.js' %}"></script>
 </body>
 </html>
 

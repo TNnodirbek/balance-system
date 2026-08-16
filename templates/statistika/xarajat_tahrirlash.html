@@ -160,7 +160,7 @@
             <div class="maydon">
                 <label for="id_summa">Summa</label>
                 <div class="input-qobiq summa-qobiq">
-                    <input type="number" step="0.01" name="summa" id="id_summa" value="{{ xarajat.summa|unlocalize }}" required>
+                    <input type="number" step="0.01" name="summa" id="id_summa" value="{{ xarajat.summa|unlocalize }}" class="nol-tozalanadigan" required>
                     <span class="som-belgisi">so'm</span>
                 </div>
             </div>
@@ -183,5 +183,6 @@
         </form>
     </div>
     <script src="{% static 'js/forma-himoya.js' %}"></script>
+    <script src="{% static 'js/nol-tozalash.js' %}"></script>
 </body>
 </html>
