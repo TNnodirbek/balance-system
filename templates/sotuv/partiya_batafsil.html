@@ -327,9 +327,20 @@
         .harakat-qatori {
             background: #FFFFFF;
             border: 1px solid #E4EDF6;
+            border-left: 4px solid #E4EDF6;
             border-radius: 14px;
             padding: 12px 14px;
             margin-bottom: 8px;
+        }
+
+        .harakat-qatori.sotuv {
+            border-left-color: #2E7D32;
+            background: #EDF7ED;
+        }
+
+        .harakat-qatori.ishlatish {
+            border-left-color: #7C8B9E;
+            background: #F5F6F8;
         }
 
         .harakat-tepa {
@@ -535,7 +546,7 @@
 
         <p class="bolim-sarlavha">Tarix</p>
         {% for harakat in harakatlar %}
-            <div class="harakat-qatori">
+            <div class="harakat-qatori {{ harakat.turi }}">
                 <div class="harakat-tepa">
                     <span class="turi-pill {{ harakat.turi }}">{{ harakat.get_turi_display }}</span>
                     <span class="harakat-sana">{{ harakat.sana|date:"d.m.Y" }}</span>
@@ -603,5 +614,6 @@
             formaToggle('ishlatish');
         {% endif %}
     </script>
+    <script src="{% static 'js/forma-himoya.js' %}"></script>
 </body>
 </html>

@@ -1,5 +1,6 @@
 ﻿{% load l10n %}
 {% load summa_filtr %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="uz">
 <head>
@@ -185,10 +186,26 @@
         .buyurtma-karta {
             background: #FFFFFF;
             border: 1px solid #E4EDF6;
+            border-left: 4px solid #E4EDF6;
             border-radius: 16px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
             padding: 16px;
             margin-bottom: 12px;
+        }
+
+        .buyurtma-karta.karta-holat-yangi {
+            border-left-color: #B8860B;
+            background: #FFF9E8;
+        }
+
+        .buyurtma-karta.karta-holat-yetkazilmoqda {
+            border-left-color: #185FA5;
+            background: #EAF3FB;
+        }
+
+        .buyurtma-karta.karta-holat-yetkazildi {
+            border-left-color: #2E7D32;
+            background: #EDF7ED;
         }
 
         .karta-tepa {
@@ -790,6 +807,7 @@
             navigator.serviceWorker.register('/service-worker.js');
         }
     </script>
+    <script src="{% static 'js/forma-himoya.js' %}"></script>
 </body>
 </html>
 

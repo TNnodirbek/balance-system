@@ -1,4 +1,5 @@
 ﻿{% load summa_filtr %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="uz">
 <head>
@@ -398,6 +399,7 @@
             navigator.serviceWorker.register('/service-worker.js');
         }
     </script>
+    <script src="{% static 'js/forma-himoya.js' %}"></script>
 </body>
 </html>
 

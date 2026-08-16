@@ -1,5 +1,6 @@
 {% load l10n %}
 {% load summa_filtr %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="uz">
 <head>
@@ -162,5 +163,6 @@
             document.getElementById('id_summa').value = '{{ buyurtma.qarz_summasi|unlocalize }}';
         });
     </script>
+    <script src="{% static 'js/forma-himoya.js' %}"></script>
 </body>
 </html>

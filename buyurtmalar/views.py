@@ -264,8 +264,14 @@ def _miqdor_biriktirish(buyurtmalar):
 
 
 def _qidiruv_jamlari(buyurtmalar):
+    # Faqat "yangi" (hali yetkazilmagan, mashinaga yuklab ketish kerak
+    # bo'lgan) buyurtmalar hisoblanadi - yetkazilmoqda/yetkazildi holatidagi
+    # buyurtmalar bu statistikaga kirmaydi. Ro'yxatning o'zi (kartalar)
+    # bundan mustaqil, barcha holatlarni ko'rsatishda davom etadi.
     hajm_jami = {}
     for b in buyurtmalar:
+        if b.holat != Buyurtma.Holat.YANGI:
+            continue
         for m in b.mahsulotlar.all():
             hajm_jami[m.hajm] = hajm_jami.get(m.hajm, 0) + m.soni_buyurtma_qilingan
     return {
