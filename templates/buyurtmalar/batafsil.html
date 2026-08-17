@@ -27,17 +27,22 @@
         .qator span:first-child { color: #7C8B9E; }
         .qator span:last-child { font-weight: 600; }
         .jami-qator span:last-child { color: #185FA5; font-size: 16px; }
-        .xarita-tugma { display: block; text-align: center; width: 100%; height: 48px; line-height: 48px; background: #F0F8FF; color: #185FA5; border-radius: 12px; font-weight: 600; font-size: 13px; text-decoration: none; margin-top: 8px; }
+        .xarita-tugma { display: block; text-align: center; width: 100%; height: 48px; line-height: 48px; background: #F0F8FF; color: #185FA5; border-radius: 12px; font-weight: 600; font-size: 13px; text-decoration: none; margin-top: 8px; transition: background-color 0.2s ease; }
+        .xarita-tugma:hover { background: #E0EEFA; }
         .joylashuv-yoq { text-align: center; padding: 12px; color: #B9C6D6; font-size: 12px; background: #F7F8FA; border-radius: 12px; margin-top: 8px; }
         .harakat-qatori { display: flex; gap: 8px; margin-top: 8px; }
-        .harakat-qatori a, .harakat-qatori button { flex: 1; height: 46px; border-radius: 10px; font-size: 13px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center; border: none; cursor: pointer; }
+        .harakat-qatori a, .harakat-qatori button { flex: 1; height: 46px; border-radius: 10px; font-size: 13px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center; border: none; cursor: pointer; transition: background-color 0.2s ease; }
         .tahrirlash-b { background: #F0F8FF; color: #185FA5; }
+        .tahrirlash-b:hover { background: #E0EEFA; }
         .ochirish-b { background: #FCEBEB; color: #A32D2D; }
-        .qarz-tolash-link { display: inline-block; margin-top: 8px; font-size: 12px; font-weight: 600; color: #A32D2D; border: 1px solid #F0C4C4; border-radius: 8px; padding: 5px 10px; text-decoration: none; }
+        .ochirish-b:hover { background: #F9DADA; }
+        .qarz-tolash-link { display: inline-block; margin-top: 8px; font-size: 12px; font-weight: 600; color: #A32D2D; border: 1px solid #F0C4C4; border-radius: 8px; padding: 5px 10px; text-decoration: none; transition: background-color 0.2s ease; }
+        .qarz-tolash-link:hover { background: #FCEBEB; }
         .xarita-qatlam { position: fixed; inset: 0; background: #FFFFFF; z-index: 1000; display: none; flex-direction: column; }
         .xarita-qatlam.ochiq { display: flex; }
         .xarita-panel { display: flex; align-items: center; gap: 12px; padding: 16px; border-bottom: 1px solid #E4EDF6; flex-shrink: 0; }
-        .xarita-orqaga { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 10px; background: #F0F8FF; color: #185FA5; border: none; cursor: pointer; flex-shrink: 0; }
+        .xarita-orqaga { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 10px; background: #F0F8FF; color: #185FA5; border: none; cursor: pointer; flex-shrink: 0; transition: background-color 0.2s ease; }
+        .xarita-orqaga:hover { background: #E0EEFA; }
         .xarita-panel h2 { font-size: 15px; font-weight: 700; color: #0C2340; margin: 0; }
         .xarita-korpus { flex: 1; position: relative; min-height: 0; }
         .xarita-korpus iframe { width: 100%; height: 100%; }
@@ -45,8 +50,12 @@
         .xarita-pastki-panel { flex-shrink: 0; padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid #E4EDF6; background: #FFFFFF; }
         .nav-masofa-blok { display: none; align-items: center; justify-content: space-between; background: #F0F8FF; border-radius: 12px; padding: 10px 14px; margin-bottom: 10px; font-size: 13px; font-weight: 600; color: #0C2340; }
         .nav-masofa-blok span:last-child { color: #185FA5; font-weight: 700; }
-        .harakat-tugma { width: 100%; height: 48px; border: none; border-radius: 12px; background: #2E7D32; color: #FFFFFF; font-family: 'Manrope', 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; }
+        .harakat-tugma { width: 100%; height: 48px; border: none; border-radius: 12px; background: #2E7D32; color: #FFFFFF; font-family: 'Manrope', 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; transition: background-color 0.2s ease; }
+        .harakat-tugma:hover { background: #256B29; }
         .harakat-tugma.faol { background: #A32D2D; }
+        .harakat-tugma.faol:hover { background: #8B2626; }
+        .tolov-band { transition: border-color 0.2s ease, background-color 0.2s ease; }
+        .tolov-band:hover { border-color: #B5D4F4; background: #F7FAFD; }
     </style>
 </head>
 <body>
