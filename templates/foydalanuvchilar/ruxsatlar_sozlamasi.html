@@ -3,7 +3,7 @@
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Ruxsatlar</title>
     <style>
         * { box-sizing: border-box; }
@@ -48,6 +48,46 @@
             margin-bottom: 16px;
             background: #E8F5E9;
             color: #2E7D32;
+        }
+        .bolim-sarlavha {
+            font-size: 12px;
+            font-weight: 600;
+            color: #7C8B9E;
+            margin: 0 0 10px 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .kirish-karta {
+            background: #FFFFFF;
+            border: 1px solid #E4EDF6;
+            border-radius: 14px;
+            padding: 14px 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            margin-bottom: 20px;
+        }
+        .kirish-karta label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #7C8B9E;
+            margin-bottom: 8px;
+        }
+        .kirish-karta select {
+            width: 100%;
+            height: 44px;
+            border: 1px solid #E4EDF6;
+            border-radius: 10px;
+            padding: 0 12px;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            color: #0C2340;
+            background: #FFFFFF;
+            outline: none;
+        }
+        .kirish-karta select:focus {
+            border-color: #185FA5;
+            box-shadow: 0 0 0 3px rgba(24, 95, 165, 0.15);
         }
         .band {
             display: flex;
@@ -122,6 +162,21 @@
 
         <form method="post">
             {% csrf_token %}
+
+            <p class="bolim-sarlavha">Kirish sozlamalari</p>
+            <div class="kirish-karta">
+                <label for="id_sessiya_muddati_kun">Necha kun login holatida qolish (butun jamoa uchun)</label>
+                <select name="sessiya_muddati_kun" id="id_sessiya_muddati_kun">
+                    <option value="0" {% if user.sessiya_muddati_kun == 0 %}selected{% endif %}>Brauzer yopilganda chiqarish</option>
+                    <option value="7" {% if user.sessiya_muddati_kun == 7 %}selected{% endif %}>7 kun</option>
+                    <option value="14" {% if user.sessiya_muddati_kun == 14 %}selected{% endif %}>14 kun</option>
+                    <option value="30" {% if user.sessiya_muddati_kun == 30 %}selected{% endif %}>30 kun</option>
+                    <option value="90" {% if user.sessiya_muddati_kun == 90 %}selected{% endif %}>90 kun</option>
+                    <option value="3650" {% if user.sessiya_muddati_kun == 3650 %}selected{% endif %}>Har doim eslab qol</option>
+                </select>
+            </div>
+
+            <p class="bolim-sarlavha">Ruxsatlar</p>
             {% for ruxsat in ruxsat_royxati %}
             <div class="band">
                 <div>

@@ -4,7 +4,7 @@
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Sozlamalar</title>
     <link rel="manifest" href="/static/manifest.json">
     <meta name="theme-color" content="#185FA5">
@@ -112,67 +112,6 @@
             padding: 6px 14px; border-radius: 999px; cursor: pointer;
         }
         .til-pill button.faol { background: #FFFFFF; box-shadow: 0 1px 3px rgba(12,35,64,0.12); }
-        .xabar-quti {
-            border-radius: 10px;
-            padding: 12px 14px;
-            font-size: 13px;
-            font-weight: 600;
-            margin-bottom: 16px;
-            background: #E8F5E9;
-            color: #2E7D32;
-        }
-        .sessiya-karta {
-            background: #FFFFFF;
-            border: 1px solid #E4EDF6;
-            border-radius: 14px;
-            padding: 14px 16px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-            margin-bottom: 20px;
-        }
-        .sessiya-karta label {
-            display: block;
-            font-size: 12px;
-            font-weight: 600;
-            color: #7C8B9E;
-            margin-bottom: 8px;
-        }
-        .sessiya-tanlov {
-            display: flex;
-            gap: 8px;
-        }
-        .sessiya-tanlov select {
-            flex: 1;
-            height: 44px;
-            border: 1px solid #E4EDF6;
-            border-radius: 10px;
-            padding: 0 12px;
-            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
-            font-size: 14px;
-            font-weight: 600;
-            color: #0C2340;
-            background: #FFFFFF;
-            outline: none;
-        }
-        .sessiya-tanlov select:focus {
-            border-color: #185FA5;
-            box-shadow: 0 0 0 3px rgba(24, 95, 165, 0.15);
-        }
-        .sessiya-saqlash-tugma {
-            height: 44px;
-            padding: 0 18px;
-            border: none;
-            border-radius: 10px;
-            background: #185FA5;
-            color: #FFFFFF;
-            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            flex-shrink: 0;
-        }
-        .sessiya-saqlash-tugma:hover {
-            background: #1B6BBA;
-        }
         .chiqish-tugma {
             display: block;
             width: 100%;
@@ -214,10 +153,6 @@
             <h1>Sozlamalar</h1>
         </div>
 
-        {% if xabar %}
-        <div class="xabar-quti">{{ xabar }}</div>
-        {% endif %}
-
         <div class="profil-karta">
             <div class="avatar">{{ user.first_name|default:user.username|first|upper }}</div>
             <div class="profil-info">
@@ -225,27 +160,6 @@
                 <div class="rol">{% if user.rol == 'menejer' %}Menejer{% else %}Dastavchik{% endif %}</div>
             </div>
         </div>
-
-        {% if user.rol == 'menejer' %}
-        <p class="bolim-sarlavha">Sessiya muddati</p>
-        <div class="sessiya-karta">
-            <form method="post">
-                {% csrf_token %}
-                <label for="id_sessiya_muddati_kun">Necha kun login holatida qolish (butun jamoa uchun)</label>
-                <div class="sessiya-tanlov">
-                    <select name="sessiya_muddati_kun" id="id_sessiya_muddati_kun">
-                        <option value="0" {% if user.sessiya_muddati_kun == 0 %}selected{% endif %}>Brauzer yopilganda chiqarish</option>
-                        <option value="7" {% if user.sessiya_muddati_kun == 7 %}selected{% endif %}>7 kun</option>
-                        <option value="14" {% if user.sessiya_muddati_kun == 14 %}selected{% endif %}>14 kun</option>
-                        <option value="30" {% if user.sessiya_muddati_kun == 30 %}selected{% endif %}>30 kun</option>
-                        <option value="90" {% if user.sessiya_muddati_kun == 90 %}selected{% endif %}>90 kun</option>
-                        <option value="3650" {% if user.sessiya_muddati_kun == 3650 %}selected{% endif %}>Har doim eslab qol</option>
-                    </select>
-                    <button type="submit" class="sessiya-saqlash-tugma">Saqlash</button>
-                </div>
-            </form>
-        </div>
-        {% endif %}
 
         {% if user.rol == 'menejer' or dastavchiklarni_korish %}
         <p class="bolim-sarlavha">Boshqaruv</p>

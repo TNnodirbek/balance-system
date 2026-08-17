@@ -239,23 +239,10 @@ def dastavchik_tahrirlash(request, pk):
 
 @login_required
 def sozlamalar_bosh(request):
-    xabar = None
-    if request.method == 'POST' and request.user.rol == Foydalanuvchi.Rol.MENEJER:
-        try:
-            yangi_muddat = int(request.POST.get('sessiya_muddati_kun', ''))
-        except (TypeError, ValueError):
-            yangi_muddat = None
-        if yangi_muddat is not None and yangi_muddat >= 0:
-            request.user.sessiya_muddati_kun = yangi_muddat
-            request.user.save(update_fields=['sessiya_muddati_kun'])
-            sessiya_muddatini_qoll(request, request.user)
-            xabar = 'Sessiya muddati saqlandi.'
-
     return render(request, 'foydalanuvchilar/sozlamalar_bosh.html', {
         'ombor_korish': ruxsat_bor(request.user, 'ombor_korish'),
         'narxlarni_korish': ruxsat_bor(request.user, 'narxlarni_korish'),
         'dastavchiklarni_korish': ruxsat_bor(request.user, 'dastavchiklarni_korish'),
-        'xabar': xabar,
     })
 
 
@@ -401,7 +388,17 @@ def ruxsatlar_sozlamasi(request):
         for maydon in RUXSAT_MAYDONLARI:
             setattr(ruxsatlar, maydon, bool(request.POST.get(maydon)))
         ruxsatlar.save()
-        xabar = 'Ruxsatlar muvaffaqiyatli saqlandi.'
+
+        try:
+            yangi_muddat = int(request.POST.get('sessiya_muddati_kun', ''))
+        except (TypeError, ValueError):
+            yangi_muddat = None
+        if yangi_muddat is not None and yangi_muddat >= 0:
+            request.user.sessiya_muddati_kun = yangi_muddat
+            request.user.save(update_fields=['sessiya_muddati_kun'])
+            sessiya_muddatini_qoll(request, request.user)
+
+        xabar = 'Sozlamalar muvaffaqiyatli saqlandi.'
 
     ruxsat_royxati = [
         {
