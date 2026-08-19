@@ -56,6 +56,24 @@
         .harakat-tugma.faol:hover { background: #8B2626; }
         .tolov-band { transition: border-color 0.2s ease, background-color 0.2s ease; }
         .tolov-band:hover { border-color: #B5D4F4; background: #F7FAFD; }
+        .bd-input {
+            width: 100%;
+            height: 40px;
+            border: 1.5px solid #E4EDF6;
+            border-radius: 8px;
+            padding: 0 10px;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            font-size: 14px;
+            color: #0C2340;
+            background: #FFFFFF;
+            outline: none;
+            box-shadow: 0 1px 3px rgba(12, 35, 64, 0.04);
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+        .bd-input:focus {
+            border-color: #185FA5;
+            box-shadow: 0 0 0 3px rgba(24, 95, 165, 0.1);
+        }
     </style>
 </head>
 <body>
@@ -118,7 +136,7 @@
                 {% for m in buyurtma.mahsulotlar.all %}
                 <div class="qator" style="display:block;padding:8px 0;">
                     <label style="font-size:12px;font-weight:600;display:block;margin-bottom:4px;">{{ m.hajm }} - yetkazilgan miqdor</label>
-                    <input type="number" name="soni_yetkazilgan_{{ m.pk }}" min="0" value="{{ m.soni_buyurtma_qilingan }}" class="yetkazilgan-miqdor-input nol-tozalanadigan" data-narx="{{ m.narx|unlocalize }}" data-mahsulot-pk="{{ m.pk }}" style="width:100%;height:40px;border:1px solid #E4EDF6;border-radius:8px;padding:0 10px;font-family:'Manrope',sans-serif;">
+                    <input type="number" name="soni_yetkazilgan_{{ m.pk }}" min="0" value="{{ m.soni_buyurtma_qilingan }}" class="yetkazilgan-miqdor-input nol-tozalanadigan bd-input" data-narx="{{ m.narx|unlocalize }}" data-mahsulot-pk="{{ m.pk }}">
                 </div>
                 {% endfor %}
                 <div style="display:flex;gap:8px;margin:10px 0;">
@@ -133,7 +151,7 @@
                     To'landi: <span id="bd-tolandi-son">{{ buyurtma.umumiy_summa|som_format }}</span>
                 </div>
                 <div id="bd-qarz-blok" style="display:none;margin-bottom:10px;">
-                    <input type="number" step="0.01" name="qarz_summasi" placeholder="Qarz summasi" style="width:100%;height:40px;border:1px solid #E4EDF6;border-radius:8px;padding:0 10px;">
+                    <input type="number" step="0.01" name="qarz_summasi" placeholder="Qarz summasi" class="bd-input">
                 </div>
                 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
                     <span style="font-size:13px;font-weight:600;color:#7C8B9E;">Jami</span>
