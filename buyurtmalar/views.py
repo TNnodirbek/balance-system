@@ -56,29 +56,35 @@ def buyurtma_tahrirlash(request, pk):
     xato = None
 
     if request.method == 'POST':
-        buyurtma.holat = request.POST.get('holat', buyurtma.holat)
-        tolov_holati = request.POST.get('tolov_holati')
-        buyurtma.tolov_holati = tolov_holati if tolov_holati else None
-        qarz_summasi = request.POST.get('qarz_summasi') or 0
-        try:
-            buyurtma.qarz_summasi = Decimal(qarz_summasi)
-        except InvalidOperation:
-            buyurtma.qarz_summasi = 0
+        buyurtma.dokon.nomi = request.POST.get('dokon_nomi', buyurtma.dokon.nomi).strip()
+        buyurtma.dokon.manzili = request.POST.get('dokon_manzil', buyurtma.dokon.manzili).strip()
+        buyurtma.dokon.telefon = request.POST.get('dokon_telefon', buyurtma.dokon.telefon).strip()
+        buyurtma.dokon.save()
+
+        joylashuv_lat = request.POST.get('joylashuv_lat')
+        joylashuv_lng = request.POST.get('joylashuv_lng')
+        if joylashuv_lat and joylashuv_lng:
+            buyurtma.joylashuv_lat = joylashuv_lat
+            buyurtma.joylashuv_lng = joylashuv_lng
         buyurtma.save()
 
-        for hajm in HAJMLAR:
-            soni = request.POST.get(f'soni_{hajm}')
-            narx = request.POST.get(f'narx_{hajm}')
-            mahsulot = buyurtma.mahsulotlar.filter(hajm=hajm).first()
-            if soni and int(soni) > 0:
+        mavjud_mahsulotlar = {m.hajm: m for m in buyurtma.mahsulotlar.all()}
+        hajmlar = request.POST.getlist('hajm[]')
+        sonlar = request.POST.getlist('soni[]')
+        narxlar = request.POST.getlist('narx[]')
+        for hajm, soni, narx in zip(hajmlar, sonlar, narxlar):
+            hajm = hajm.strip()
+            soni_son = int(soni) if soni and soni.isdigit() else 0
+            mahsulot = mavjud_mahsulotlar.get(hajm)
+            if soni_son > 0:
                 if mahsulot:
-                    mahsulot.soni_buyurtma_qilingan = int(soni)
-                    mahsulot.narx = narx or mahsulot.narx
+                    mahsulot.soni_buyurtma_qilingan = soni_son
+                    mahsulot.narx = narx or 0
                     mahsulot.save()
                 else:
                     BuyurtmaMahsulot.objects.create(
                         buyurtma=buyurtma, hajm=hajm,
-                        soni_buyurtma_qilingan=int(soni), narx=narx or 0,
+                        soni_buyurtma_qilingan=soni_son, narx=narx or 0,
                     )
             elif mahsulot:
                 mahsulot.delete()
@@ -91,23 +97,28 @@ def buyurtma_tahrirlash(request, pk):
         return redirect('buyurtmalar_royxati')
 
     mavjud_mahsulotlar = {m.hajm: m for m in buyurtma.mahsulotlar.all()}
-    qatorlar = []
-    for hajm in HAJMLAR:
+    narx_dict = {h.hajm: h.narx for h in HajmNarxi.objects.filter(menejer=menejer)}
+    qoldiqlar = ombor_qoldigi(menejer)
+    mahsulot_qatorlari = []
+    for hajm in menejer_hajmlari(menejer):
         mahsulot = mavjud_mahsulotlar.get(hajm)
-        qatorlar.append({
+        buyurtmadagi_soni = mahsulot.soni_buyurtma_qilingan if mahsulot else 0
+        mahsulot_qatorlari.append({
             'hajm': hajm,
-            'soni': mahsulot.soni_buyurtma_qilingan if mahsulot else '',
-            'narx': mahsulot.narx if mahsulot else '',
+            'narx': mahsulot.narx if mahsulot else narx_dict.get(hajm, 0),
+            'soni': buyurtmadagi_soni,
+            # o'zining allaqachon ajratgan miqdorini qoldiqqa qaytarib
+            # qo'shamiz, aks holda ombor_qoldigi() buni "sotilgan" deb
+            # hisoblab, tahrirlashda soxta "omborda yo'q" xatosi chiqaradi.
+            'qoldiq': qoldiqlar.get(hajm, 0) + buyurtmadagi_soni,
         })
 
     return render(request, 'buyurtmalar/tahrirlash.html', {
         'buyurtma': buyurtma,
-        'qatorlar': qatorlar,
+        'mahsulot_qatorlari': mahsulot_qatorlari,
         'xato': xato,
         'qaytish_manzili': request.META.get('HTTP_REFERER', ''),
     })
-
-HAJMLAR = ['5L', '10L']
 
 
 @login_required
