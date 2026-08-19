@@ -8,6 +8,7 @@ from django.http import HttpResponseForbidden, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.utils import timezone
+from django.utils.dateparse import parse_date
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
 
@@ -248,14 +249,21 @@ def _buyurtmalar_bazaviy_queryset(menejer):
 def _buyurtmalar_filtrlangan(request, menejer):
     buyurtmalar = _buyurtmalar_bazaviy_queryset(menejer)
 
-    filtr = request.GET.get('filter')
-    bugun = timezone.localdate()
-    if filtr == 'bugun':
-        buyurtmalar = buyurtmalar.filter(yaratilgan_vaqt__date=bugun)
-    elif filtr == 'kecha':
-        buyurtmalar = buyurtmalar.filter(yaratilgan_vaqt__date=bugun - timezone.timedelta(days=1))
-    elif filtr == 'hafta':
-        buyurtmalar = buyurtmalar.filter(yaratilgan_vaqt__gte=timezone.now() - timezone.timedelta(days=7))
+    boshlanish = parse_date(request.GET.get('boshlanish', '') or '')
+    tugash = parse_date(request.GET.get('tugash', '') or '')
+
+    if boshlanish and tugash:
+        filtr = 'oraliq'
+        buyurtmalar = buyurtmalar.filter(yaratilgan_vaqt__date__gte=boshlanish, yaratilgan_vaqt__date__lte=tugash)
+    else:
+        filtr = request.GET.get('filter')
+        bugun = timezone.localdate()
+        if filtr == 'bugun':
+            buyurtmalar = buyurtmalar.filter(yaratilgan_vaqt__date=bugun)
+        elif filtr == 'kecha':
+            buyurtmalar = buyurtmalar.filter(yaratilgan_vaqt__date=bugun - timezone.timedelta(days=1))
+        elif filtr == 'hafta':
+            buyurtmalar = buyurtmalar.filter(yaratilgan_vaqt__gte=timezone.now() - timezone.timedelta(days=7))
 
     qidiruv = request.GET.get('q', '').strip()
     if qidiruv:
@@ -263,7 +271,7 @@ def _buyurtmalar_filtrlangan(request, menejer):
             Q(dokon__nomi__icontains=qidiruv) | Q(dokon__manzili__icontains=qidiruv) | Q(dokon__telefon__icontains=qidiruv)
         )
 
-    return buyurtmalar, filtr, qidiruv
+    return buyurtmalar, filtr, qidiruv, boshlanish, tugash
 
 
 def _miqdor_biriktirish(buyurtmalar):
@@ -294,13 +302,15 @@ def _qidiruv_jamlari(buyurtmalar):
 @login_required
 def buyurtmalar_royxati(request):
     menejer = tegishli_menejer(request.user)
-    buyurtmalar, filtr, qidiruv = _buyurtmalar_filtrlangan(request, menejer)
+    buyurtmalar, filtr, qidiruv, boshlanish, tugash = _buyurtmalar_filtrlangan(request, menejer)
     buyurtmalar = _miqdor_biriktirish(buyurtmalar)
 
     kontekst = {
         'buyurtmalar': buyurtmalar,
         'filtr': filtr or 'barchasi',
         'qidiruv': qidiruv,
+        'boshlanish': boshlanish,
+        'tugash': tugash,
     }
     if qidiruv:
         kontekst.update(_qidiruv_jamlari(buyurtmalar))
@@ -311,7 +321,7 @@ def buyurtmalar_royxati(request):
 @login_required
 def buyurtmalar_qidiruv_ajax(request):
     menejer = tegishli_menejer(request.user)
-    buyurtmalar, filtr, qidiruv = _buyurtmalar_filtrlangan(request, menejer)
+    buyurtmalar, filtr, qidiruv, boshlanish, tugash = _buyurtmalar_filtrlangan(request, menejer)
     buyurtmalar = _miqdor_biriktirish(buyurtmalar)
 
     html = render_to_string(

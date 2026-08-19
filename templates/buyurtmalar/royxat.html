@@ -145,6 +145,74 @@
             border-color: #185FA5;
         }
 
+        .oraliq-detail {
+            margin-bottom: 14px;
+        }
+
+        .oraliq-detail summary {
+            font-size: 12px;
+            font-weight: 600;
+            color: #185FA5;
+            cursor: pointer;
+            list-style: none;
+        }
+
+        .oraliq-detail summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .oraliq-forma {
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .oraliq-maydon {
+            flex: 1;
+        }
+
+        .oraliq-maydon label {
+            display: block;
+            font-size: 11px;
+            font-weight: 600;
+            color: #7C8B9E;
+            margin-bottom: 4px;
+        }
+
+        .oraliq-maydon input {
+            width: 100%;
+            height: 40px;
+            border: 1.5px solid #E4EDF6;
+            border-radius: 10px;
+            padding: 0 10px;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            font-size: 13px;
+            color: #0C2340;
+            background: #FFFFFF;
+            outline: none;
+            box-shadow: 0 1px 3px rgba(12, 35, 64, 0.04);
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+
+        .oraliq-maydon input:focus {
+            border-color: #185FA5;
+            box-shadow: 0 0 0 3px rgba(24, 95, 165, 0.1);
+        }
+
+        .oraliq-tugma {
+            height: 40px;
+            padding: 0 16px;
+            border: none;
+            border-radius: 10px;
+            background: #185FA5;
+            color: #FFFFFF;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
         /* Qidiruv */
         .qidiruv-qobiq {
             margin-bottom: 14px;
@@ -630,7 +698,25 @@
             <a href="?filter=kecha" class="filtr-pill{% if filtr == 'kecha' %} faol{% endif %}">Kecha</a>
             <a href="?filter=hafta" class="filtr-pill{% if filtr == 'hafta' %} faol{% endif %}">Hafta</a>
             <a href="?" class="filtr-pill{% if filtr == 'barchasi' %} faol{% endif %}">Barchasi</a>
+            {% if filtr == 'oraliq' %}
+                <span class="filtr-pill faol">{{ boshlanish|date:"d.m" }} &ndash; {{ tugash|date:"d.m" }}</span>
+            {% endif %}
         </div>
+
+        <details class="oraliq-detail">
+            <summary>Oraliq tanlash</summary>
+            <form method="get" class="oraliq-forma">
+                <div class="oraliq-maydon">
+                    <label for="boshlanish">Boshlanish</label>
+                    <input type="date" name="boshlanish" id="boshlanish" value="{{ boshlanish|date:'Y-m-d' }}">
+                </div>
+                <div class="oraliq-maydon">
+                    <label for="tugash">Tugash</label>
+                    <input type="date" name="tugash" id="tugash" value="{{ tugash|date:'Y-m-d' }}">
+                </div>
+                <button type="submit" class="oraliq-tugma">Ko'rsatish</button>
+            </form>
+        </details>
 
         <form method="get" class="qidiruv-qobiq" id="qidiruv-forma">
             <input type="text" name="q" id="qidiruv-input" class="qidiruv-input" placeholder="Manzil, do'kon nomi yoki telefon bo'yicha qidirish..." value="{{ qidiruv|default:'' }}" autocomplete="off">
@@ -802,8 +888,12 @@
             var q = qidiruvInput.value.trim();
             var joriyParametrlar = new URLSearchParams(window.location.search);
             var filtrQiymati = joriyParametrlar.get('filter') || '';
+            var boshlanishQiymati = joriyParametrlar.get('boshlanish') || '';
+            var tugashQiymati = joriyParametrlar.get('tugash') || '';
             var url = '{% url "buyurtmalar_qidiruv_ajax" %}?q=' + encodeURIComponent(q);
-            if (filtrQiymati) {
+            if (boshlanishQiymati && tugashQiymati) {
+                url += '&boshlanish=' + encodeURIComponent(boshlanishQiymati) + '&tugash=' + encodeURIComponent(tugashQiymati);
+            } else if (filtrQiymati) {
                 url += '&filter=' + encodeURIComponent(filtrQiymati);
             }
 
