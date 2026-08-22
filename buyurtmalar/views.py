@@ -3,6 +3,7 @@ from decimal import Decimal, InvalidOperation
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.db import transaction
 from django.db.models import Q
 from django.http import HttpResponseForbidden, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -440,15 +441,42 @@ def buyurtma_yetkazish(request, pk):
                 'xato': xato,
             })
 
-        for mahsulot, soni in yangilanishlar:
-            mahsulot.soni_yetkazilgan = soni
-            mahsulot.save()
+        with transaction.atomic():
+            for mahsulot, soni in yangilanishlar:
+                mahsulot.soni_yetkazilgan = soni
+                mahsulot.save()
 
-        buyurtma.tolov_holati = tolov_holati
-        buyurtma.qarz_summasi = qarz_summasi
-        buyurtma.holat = Buyurtma.Holat.YETKAZILDI
-        buyurtma.yetkazilgan_vaqt = timezone.now()
-        buyurtma.save()
+            buyurtma.tolov_holati = tolov_holati
+            buyurtma.qarz_summasi = qarz_summasi
+            buyurtma.holat = Buyurtma.Holat.YETKAZILDI
+            buyurtma.yetkazilgan_vaqt = timezone.now()
+            buyurtma.save()
+
+            qoldiqlar = [
+                (mahsulot, mahsulot.soni_buyurtma_qilingan - soni)
+                for mahsulot, soni in yangilanishlar
+                if mahsulot.soni_buyurtma_qilingan - soni > 0
+            ]
+
+            qoldiq_buyurtma = None
+            if qoldiqlar:
+                qoldiq_buyurtma = Buyurtma.objects.create(
+                    dokon=buyurtma.dokon,
+                    menejer=buyurtma.menejer,
+                    zakaz_olgan=request.user,
+                    holat=Buyurtma.Holat.YANGI,
+                    joylashuv_lat=buyurtma.joylashuv_lat,
+                    joylashuv_lng=buyurtma.joylashuv_lng,
+                    asl_buyurtma=buyurtma,
+                    izoh=f"Buyurtma #{buyurtma.pk} dan qisman yetkazilmagan qoldiq",
+                )
+                for mahsulot, qolgan_miqdor in qoldiqlar:
+                    BuyurtmaMahsulot.objects.create(
+                        buyurtma=qoldiq_buyurtma,
+                        hajm=mahsulot.hajm,
+                        soni_buyurtma_qilingan=qolgan_miqdor,
+                        narx=mahsulot.narx,
+                    )
 
         if tolov_holati == Buyurtma.TolovHolati.QARZ:
             bildirishnoma_yarat(
@@ -456,6 +484,16 @@ def buyurtma_yetkazish(request, pk):
                 f"{buyurtma.dokon.nomi} - {qarz_summasi} so'm qarz qoldi",
                 havola='/statistika/',
             )
+
+        if qoldiq_buyurtma:
+            dastavchiklar = Foydalanuvchi.objects.filter(menejer=buyurtma.menejer, rol=Foydalanuvchi.Rol.DASTAVCHIK)
+            for d in dastavchiklar:
+                if d.id != request.user.id:
+                    bildirishnoma_yarat(
+                        d, Bildirishnoma.Turi.YANGI_BUYURTMA,
+                        f"{buyurtma.dokon.nomi} uchun qoldiq buyurtma tushdi",
+                        havola='/buyurtmalar/',
+                    )
 
         if request.user.rol == Foydalanuvchi.Rol.DASTAVCHIK:
             return redirect('dastavchik_bosh_sahifa')

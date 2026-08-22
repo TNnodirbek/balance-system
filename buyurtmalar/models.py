@@ -44,6 +44,15 @@ class Buyurtma(models.Model):
     yetkazilgan_vaqt = models.DateTimeField(null=True, blank=True)
     joylashuv_lat = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
     joylashuv_lng = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    izoh = models.CharField(max_length=255, blank=True, default='')
+    asl_buyurtma = models.ForeignKey(
+        'self',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='qoldiq_buyurtmalar',
+        verbose_name="Qisman yetkazilgandan qolgan asl buyurtma",
+    )
 
     class Meta:
         verbose_name = 'Buyurtma'
@@ -56,6 +65,14 @@ class Buyurtma(models.Model):
     @property
     def umumiy_soni(self):
         return sum(m.soni_buyurtma_qilingan for m in self.mahsulotlar.all())
+
+    @property
+    def qoldiq_buyurtma(self):
+        return self.qoldiq_buyurtmalar.first()
+
+    @property
+    def qisman_yetkazilganmi(self):
+        return self.holat == self.Holat.YETKAZILDI and self.qoldiq_buyurtmalar.exists()
 
     def __str__(self):
         return f'Buyurtma #{self.pk} - {self.dokon}'

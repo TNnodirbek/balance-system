@@ -38,6 +38,8 @@
         .ochirish-b:hover { background: #F9DADA; }
         .qarz-tolash-link { display: inline-block; margin-top: 8px; font-size: 12px; font-weight: 600; color: #A32D2D; border: 1px solid #F0C4C4; border-radius: 8px; padding: 5px 10px; text-decoration: none; transition: background-color 0.2s ease; }
         .qarz-tolash-link:hover { background: #FCEBEB; }
+        .qoldiq-havola { display: inline-block; margin-bottom: 14px; font-size: 12px; font-weight: 600; color: #185FA5; border: 1px solid #B5D4F4; background: #F0F8FF; border-radius: 8px; padding: 5px 10px; text-decoration: none; transition: background-color 0.2s ease; }
+        .qoldiq-havola:hover { background: #E1EFFB; }
         .xarita-qatlam { position: fixed; inset: 0; background: #FFFFFF; z-index: 1000; display: none; flex-direction: column; }
         .xarita-qatlam.ochiq { display: flex; }
         .xarita-panel { display: flex; align-items: center; gap: 12px; padding: 16px; border-bottom: 1px solid #E4EDF6; flex-shrink: 0; }
@@ -85,7 +87,13 @@
             <h1>Buyurtma #{{ buyurtma.pk }}</h1>
         </div>
 
-        <span class="holat-pill holat-{{ buyurtma.holat }}">{{ buyurtma.get_holat_display }}</span>
+        <span class="holat-pill holat-{{ buyurtma.holat }}">{% if buyurtma.qisman_yetkazilganmi %}&#9888; Qisman yetkazildi{% else %}{{ buyurtma.get_holat_display }}{% endif %}</span>
+
+        {% with qoldiq=buyurtma.qoldiq_buyurtma %}
+        {% if qoldiq %}
+        <a href="{% url 'buyurtma_batafsil' qoldiq.pk %}" class="qoldiq-havola">Qolgan qism: Buyurtma #{{ qoldiq.pk }} (hali olinmagan)</a>
+        {% endif %}
+        {% endwith %}
 
         <div class="karta">
             <h3>Do'kon</h3>
