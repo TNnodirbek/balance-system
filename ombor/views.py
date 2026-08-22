@@ -47,10 +47,14 @@ def fura_qoshish(request):
 
             hajmlar = request.POST.getlist('hajm[]')
             miqdorlar = request.POST.getlist('miqdor[]')
-            for hajm, miqdor in zip(hajmlar, miqdorlar):
+            dona_narxlari = request.POST.getlist('dona_narxi[]')
+            for hajm, miqdor, dona_narxi in zip(hajmlar, miqdorlar, dona_narxlari):
                 hajm = hajm.strip()
                 if hajm and miqdor and int(miqdor) > 0:
-                    FuraMahsulot.objects.create(fura=fura, hajm=hajm, miqdor=int(miqdor))
+                    FuraMahsulot.objects.create(
+                        fura=fura, hajm=hajm, miqdor=int(miqdor),
+                        dona_narxi=dona_narxi or None,
+                    )
 
             xarajat_nomlari = request.POST.getlist('xarajat_nomi[]')
             xarajat_summalari = request.POST.getlist('xarajat_summa[]')
@@ -88,10 +92,14 @@ def fura_tahrirlash(request, pk):
             fura.mahsulotlar.all().delete()
             hajmlar = request.POST.getlist('hajm[]')
             miqdorlar = request.POST.getlist('miqdor[]')
-            for hajm, miqdor in zip(hajmlar, miqdorlar):
+            dona_narxlari = request.POST.getlist('dona_narxi[]')
+            for hajm, miqdor, dona_narxi in zip(hajmlar, miqdorlar, dona_narxlari):
                 hajm = hajm.strip()
                 if hajm and miqdor and int(miqdor) > 0:
-                    FuraMahsulot.objects.create(fura=fura, hajm=hajm, miqdor=int(miqdor))
+                    FuraMahsulot.objects.create(
+                        fura=fura, hajm=hajm, miqdor=int(miqdor),
+                        dona_narxi=dona_narxi or None,
+                    )
 
             fura.qoshimcha_xarajatlar.all().delete()
             xarajat_nomlari = request.POST.getlist('xarajat_nomi[]')

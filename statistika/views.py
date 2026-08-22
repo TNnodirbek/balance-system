@@ -10,6 +10,7 @@ from django.utils.dateparse import parse_date
 from buyurtmalar.models import Buyurtma
 from foydalanuvchilar.utils import tegishli_menejer
 from ombor.models import Fura
+from ombor.utils import suv_sof_foyda_fifo
 
 from .models import QarzTolovi, Xarajat
 
@@ -116,6 +117,7 @@ def hisobot(request):
         'mahsulot_kesimida': {},
         'qarzlar_royxati': Buyurtma.objects.none(),
         'dastavchiklar_statistikasi': {},
+        'suv_sof_foyda_fifo': {},
     }
     if menejer is None:
         return render(request, 'statistika/hisobot.html', kontekst)
@@ -182,6 +184,7 @@ def hisobot(request):
         'mahsulot_kesimida': mahsulot_kesimida,
         'qarzlar_royxati': qarzlar_royxati,
         'dastavchiklar_statistikasi': dastavchiklar_statistikasi,
+        'suv_sof_foyda_fifo': suv_sof_foyda_fifo(menejer, boshlanish, tugash),
     })
     return render(request, 'statistika/hisobot.html', kontekst)
 

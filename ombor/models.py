@@ -15,7 +15,11 @@ class Fura(models.Model):
         limit_choices_to={'rol': Foydalanuvchi.Rol.MENEJER},
     )
     sana = models.DateField()
-    suv_narxi = models.DecimalField(max_digits=12, decimal_places=2)
+    suv_narxi = models.DecimalField(
+        max_digits=12, decimal_places=2, default=Decimal('0'), blank=True,
+        help_text="Eski maydon - butun partiya uchun umumiy suv narxi. Yangi furalarda "
+                   "endi FuraMahsulot.dona_narxi ishlatiladi, backward compatibility uchun saqlanmoqda",
+    )
     dastavka_narxi = models.DecimalField(
         max_digits=12, decimal_places=2, default=Decimal('0'), blank=True,
         help_text="Eski maydon - endi qoshimcha_xarajatlar orqali kiritiladi, backward compatibility uchun saqlanmoqda",
@@ -28,6 +32,17 @@ class Fura(models.Model):
         verbose_name_plural = 'Furalar'
 
     @property
+    def suv_qismi_xarajat(self):
+        # Agar mahsulot qatorlarida dona_narxi kiritilgan bo'lsa (yangi usul) -
+        # har bir hajm uchun miqdor x dona_narxi yig'indisi hisoblanadi. Aks
+        # holda (eski, dona_narxi kiritilmagan furalar) eski suv_narxi
+        # maydoniga qaytiladi - backward compatibility uchun.
+        dona_narxli = [m for m in self.mahsulotlar.all() if m.dona_narxi is not None]
+        if dona_narxli:
+            return sum(m.miqdor * m.dona_narxi for m in dona_narxli)
+        return self.suv_narxi
+
+    @property
     def jami_xarajat(self):
         # qoshimcha_xarajatlar mavjud bo'lsa - hozirgi (yangi) hisob-kitob usuli shu.
         # Aks holda (masalan bu migratsiyadan oldingi eski Fura yozuvi hali
@@ -36,8 +51,8 @@ class Fura(models.Model):
         # qo'shilmaydi (ikki marta hisoblanish oldini olinadi).
         if self.qoshimcha_xarajatlar.exists():
             qoshimcha_jami = self.qoshimcha_xarajatlar.aggregate(jami=Sum('summa'))['jami'] or Decimal('0')
-            return self.suv_narxi + qoshimcha_jami
-        return self.suv_narxi + self.dastavka_narxi
+            return self.suv_qismi_xarajat + qoshimcha_jami
+        return self.suv_qismi_xarajat + self.dastavka_narxi
 
     def __str__(self):
         return f'Fura {self.sana}'
@@ -61,6 +76,10 @@ class FuraMahsulot(models.Model):
     fura = models.ForeignKey(Fura, on_delete=models.CASCADE, related_name='mahsulotlar')
     hajm = models.CharField(max_length=10)
     miqdor = models.IntegerField()
+    dona_narxi = models.DecimalField(
+        max_digits=12, decimal_places=2, null=True, blank=True,
+        help_text="Bir dona suvning kelish narxi",
+    )
 
     class Meta:
         verbose_name = 'Fura mahsuloti'

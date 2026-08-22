@@ -302,6 +302,109 @@
             color: #185FA5;
         }
 
+        /* Hajm bo'yicha sof foyda (FIFO) */
+        .fifo-belgi {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 700;
+            color: #185FA5;
+            background: #F0F8FF;
+            border-radius: 6px;
+            padding: 2px 6px;
+            margin-left: 6px;
+            vertical-align: middle;
+            letter-spacing: 0.3px;
+        }
+
+        .fifo-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+
+        .fifo-karta {
+            background: #FFFFFF;
+            border: 1px solid #E4EDF6;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            padding: 14px 16px;
+        }
+
+        .fifo-tepa {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .fifo-hajm {
+            font-size: 15px;
+            font-weight: 700;
+            color: #0C2340;
+        }
+
+        .fifo-foiz {
+            font-size: 12px;
+            font-weight: 700;
+            padding: 3px 9px;
+            border-radius: 999px;
+            background: #E8F5E9;
+            color: #2E7D32;
+        }
+
+        .fifo-foiz.manfiy {
+            background: #FCEBEB;
+            color: #A32D2D;
+        }
+
+        .fifo-qator {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #0C2340;
+            padding: 3px 0;
+        }
+
+        .fifo-label {
+            color: #7C8B9E;
+        }
+
+        .fifo-sof-foyda {
+            font-weight: 700;
+            color: #2E7D32;
+        }
+
+        .fifo-sof-foyda.manfiy {
+            color: #A32D2D;
+        }
+
+        .fifo-progress-qobiq {
+            height: 6px;
+            border-radius: 999px;
+            background: #F0F3F7;
+            margin: 8px 0 6px;
+            overflow: hidden;
+        }
+
+        .fifo-progress-bar {
+            height: 100%;
+            border-radius: 999px;
+            background: #2E7D32;
+            transition: width 0.3s ease;
+        }
+
+        .fifo-progress-bar.manfiy {
+            background: #A32D2D;
+        }
+
+        .fifo-dona-taxmin {
+            font-size: 11px;
+            color: #94A7BD;
+            margin: 0;
+        }
+
         .dastavchik-qatori {
             display: flex;
             align-items: center;
@@ -485,6 +588,36 @@
                     <span class="kesim-hajm">{{ hajm }}</span>
                     <span class="kesim-son">{{ malumot.soni }}</span>
                     <span class="kesim-summa">{{ malumot.summa|som_format }}</span>
+                </div>
+            {% empty %}
+                <p class="bosh-matn">Ma'lumot yo'q</p>
+            {% endfor %}
+        </div>
+
+        <p class="bolim-sarlavha">Hajm bo'yicha sof foyda <span class="fifo-belgi">FIFO</span></p>
+        <div class="fifo-grid">
+            {% for hajm, malumot in suv_sof_foyda_fifo.items %}
+                <div class="fifo-karta">
+                    <div class="fifo-tepa">
+                        <span class="fifo-hajm">{{ hajm }}</span>
+                        <span class="fifo-foiz{% if malumot.sof_foyda < 0 %} manfiy{% endif %}">{{ malumot.sof_foyda_foizi|floatformat:1 }}%</span>
+                    </div>
+                    <div class="fifo-qator">
+                        <span class="fifo-label">Sotilgan</span>
+                        <span>{{ malumot.sotilgan_soni }} dona &middot; {{ malumot.sotilgan_puli|som_format }}</span>
+                    </div>
+                    <div class="fifo-qator">
+                        <span class="fifo-label">Tannarx</span>
+                        <span>{{ malumot.tannarx|som_format }}</span>
+                    </div>
+                    <div class="fifo-qator">
+                        <span class="fifo-label">Sof foyda</span>
+                        <span class="fifo-sof-foyda{% if malumot.sof_foyda < 0 %} manfiy{% endif %}">{{ malumot.sof_foyda|som_format }}</span>
+                    </div>
+                    <div class="fifo-progress-qobiq">
+                        <div class="fifo-progress-bar{% if malumot.sof_foyda < 0 %} manfiy{% endif %}" style="width: {{ malumot.sof_foyda_foizi_progress|floatformat:0 }}%;"></div>
+                    </div>
+                    <p class="fifo-dona-taxmin">&asymp; {{ malumot.sof_foyda_dona_taxminiy|floatformat:0 }} dona sof foydaga to'g'ri keladi (taxminiy)</p>
                 </div>
             {% empty %}
                 <p class="bosh-matn">Ma'lumot yo'q</p>

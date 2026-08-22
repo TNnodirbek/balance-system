@@ -128,10 +128,6 @@
                 <label>Sana</label>
                 <input type="date" name="sana" value="{{ fura.sana|date:'Y-m-d' }}">
             </div>
-            <div class="maydon">
-                <label>Suv narxi</label>
-                <input type="number" step="0.01" name="suv_narxi" value="{{ fura.suv_narxi|unlocalize }}" class="nol-tozalanadigan">
-            </div>
             <p class="bolim-sarlavha">Qo'shimcha xarajatlar</p>
             <div id="xarajat_qatorlari">
                 {% for xarajat in fura.qoshimcha_xarajatlar.all %}
@@ -172,6 +168,10 @@
                         <label>Miqdor</label>
                         <input type="number" name="miqdor[]" value="{{ mahsulot.miqdor }}" class="nol-tozalanadigan">
                     </div>
+                    <div class="maydon">
+                        <label>Dona narxi</label>
+                        <input type="number" step="0.01" min="0" name="dona_narxi[]" value="{% if mahsulot.dona_narxi is not None %}{{ mahsulot.dona_narxi|unlocalize }}{% endif %}" class="nol-tozalanadigan">
+                    </div>
                 </div>
                 {% endfor %}
             </div>
@@ -188,7 +188,8 @@
             qator.className = 'mahsulot-qator';
             qator.innerHTML =
                 '<div class="maydon"><label>Hajm</label><input type="text" name="hajm[]" value=""></div>' +
-                '<div class="maydon"><label>Miqdor</label><input type="number" name="miqdor[]" value="0" class="nol-tozalanadigan"></div>';
+                '<div class="maydon"><label>Miqdor</label><input type="number" name="miqdor[]" value="0" class="nol-tozalanadigan"></div>' +
+                '<div class="maydon"><label>Dona narxi</label><input type="number" step="0.01" min="0" name="dona_narxi[]" value="0" class="nol-tozalanadigan"></div>';
             qobiq.appendChild(qator);
         }
 

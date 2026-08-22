@@ -210,11 +210,6 @@
                     {{ form.sana }}
                     {% if form.sana.errors %}<p class="maydon-xatosi">{{ form.sana.errors.0 }}</p>{% endif %}
                 </div>
-                <div class="maydon">
-                    <label for="{{ form.suv_narxi.id_for_label }}">Suv narxi</label>
-                    {{ form.suv_narxi }}
-                    {% if form.suv_narxi.errors %}<p class="maydon-xatosi">{{ form.suv_narxi.errors.0 }}</p>{% endif %}
-                </div>
             </div>
 
             <div class="bolim">
@@ -246,6 +241,10 @@
                             <label>Miqdor</label>
                             <input type="number" name="miqdor[]" value="0" class="stil-input nol-tozalanadigan">
                         </div>
+                        <div class="maydon">
+                            <label>Dona narxi</label>
+                            <input type="number" name="dona_narxi[]" value="0" step="0.01" min="0" class="stil-input nol-tozalanadigan">
+                        </div>
                     </div>
                     <div class="mahsulot-qatori">
                         <div class="maydon">
@@ -255,6 +254,10 @@
                         <div class="maydon">
                             <label>Miqdor</label>
                             <input type="number" name="miqdor[]" value="0" class="stil-input nol-tozalanadigan">
+                        </div>
+                        <div class="maydon">
+                            <label>Dona narxi</label>
+                            <input type="number" name="dona_narxi[]" value="0" step="0.01" min="0" class="stil-input nol-tozalanadigan">
                         </div>
                     </div>
                 </div>
@@ -272,7 +275,8 @@
             qator.className = 'mahsulot-qatori';
             qator.innerHTML =
                 '<div class="maydon"><label>Hajm</label><input type="text" name="hajm[]" value="" class="stil-input"></div>' +
-                '<div class="maydon"><label>Miqdor</label><input type="number" name="miqdor[]" value="0" class="stil-input nol-tozalanadigan"></div>';
+                '<div class="maydon"><label>Miqdor</label><input type="number" name="miqdor[]" value="0" class="stil-input nol-tozalanadigan"></div>' +
+                '<div class="maydon"><label>Dona narxi</label><input type="number" name="dona_narxi[]" value="0" step="0.01" min="0" class="stil-input nol-tozalanadigan"></div>';
             konteyner.appendChild(qator);
         }
 
