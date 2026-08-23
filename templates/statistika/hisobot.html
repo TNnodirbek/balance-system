@@ -74,6 +74,41 @@
             text-decoration: none;
         }
 
+        .akkordeon-sarlavha {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            border: none;
+            background: transparent;
+            padding: 0;
+            margin: 0 0 12px;
+            cursor: pointer;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+            color: #0C2340;
+            text-align: left;
+        }
+
+        .akkordeon-strelka {
+            color: #7C8B9E;
+            transition: transform 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .akkordeon-sarlavha.ochiq .akkordeon-strelka {
+            transform: rotate(180deg);
+        }
+
+        .akkordeon-tarkib {
+            display: none;
+        }
+
+        .akkordeon-tarkib.ochiq {
+            display: block;
+        }
+
         /* Filtr pillari */
         .filtr-qatori {
             display: flex;
@@ -568,8 +603,11 @@
             </div>
         </div>
 
-        <p class="bolim-sarlavha">Xarajatlar tafsiloti</p>
-        <div class="karta">
+        <button type="button" class="akkordeon-sarlavha" data-target="xarajatlar-tarkib">
+            Xarajatlar tafsiloti
+            <svg class="akkordeon-strelka" width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="karta akkordeon-tarkib" id="xarajatlar-tarkib">
             <div class="qator">
                 <span class="qator-label">Kunlik xarajatlar</span>
                 <span>{{ umumiy_kunlik_xarajat|som_format }}</span>
@@ -581,8 +619,11 @@
             <a href="{% url 'xarajat_qoshish' %}" class="xarajat-link">+ Xarajat qo'shish</a>
         </div>
 
-        <p class="bolim-sarlavha">Mahsulot kesimida</p>
-        <div class="karta">
+        <button type="button" class="akkordeon-sarlavha" data-target="mahsulot-kesimi-tarkib">
+            Mahsulot kesimida
+            <svg class="akkordeon-strelka" width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="karta akkordeon-tarkib" id="mahsulot-kesimi-tarkib">
             {% for hajm, malumot in mahsulot_kesimida.items %}
                 <div class="kesim-qatori">
                     <span class="kesim-hajm">{{ hajm }}</span>
@@ -624,8 +665,11 @@
             {% endfor %}
         </div>
 
-        <p class="bolim-sarlavha">Dastavchiklar statistikasi</p>
-        <div class="karta">
+        <button type="button" class="akkordeon-sarlavha" data-target="dastavchiklar-tarkib">
+            Dastavchiklar statistikasi
+            <svg class="akkordeon-strelka" width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="karta akkordeon-tarkib" id="dastavchiklar-tarkib">
             {% for ism, malumot in dastavchiklar_statistikasi.items %}
                 <div class="dastavchik-qatori">
                     <span class="dastavchik-ism">{{ ism }}</span>
@@ -686,6 +730,15 @@
     <script src="{% static 'js/koz_yashirish.js' %}"></script>
     <script>
         kozYashirishSozla('koz-tugma', 'koz-ikonka', 'yashirin-qiymat');
+
+        document.querySelectorAll('.akkordeon-sarlavha').forEach(function (sarlavha) {
+            var tarkib = document.getElementById(sarlavha.dataset.target);
+            if (!tarkib) return;
+            sarlavha.addEventListener('click', function () {
+                var ochiqmi = tarkib.classList.toggle('ochiq');
+                sarlavha.classList.toggle('ochiq', ochiqmi);
+            });
+        });
 
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('/service-worker.js');
