@@ -589,6 +589,7 @@
                 <p class="korsatkich-sarlavha">Umumiy savdo</p>
                 <p class="korsatkich-son yashirin-qiymat">{{ umumiy_savdo|som_format }}</p>
             </div>
+            {% if is_menejer %}
             <div class="korsatkich-karta">
                 <p class="korsatkich-sarlavha">Sof foyda</p>
                 <p class="korsatkich-son yashirin-qiymat{% if sof_foyda < 0 %} manfiy{% else %} musbat{% endif %}">{{ sof_foyda|som_format }}</p>
@@ -597,6 +598,7 @@
                 <p class="korsatkich-sarlavha">Jami xarajat</p>
                 <p class="korsatkich-son yashirin-qiymat">{{ jami_xarajat|som_format }}</p>
             </div>
+            {% endif %}
             <div class="korsatkich-karta">
                 <p class="korsatkich-sarlavha">Yig'ilgan qarz</p>
                 <p class="korsatkich-son yashirin-qiymat">{{ yig_ilgan_qarz|som_format }}</p>
@@ -635,6 +637,7 @@
             {% endfor %}
         </div>
 
+        {% if is_menejer %}
         <p class="bolim-sarlavha">Hajm bo'yicha sof foyda <span class="fifo-belgi">FIFO</span></p>
         <div class="fifo-grid">
             {% for hajm, malumot in suv_sof_foyda_fifo.items %}
@@ -679,6 +682,7 @@
                 <p class="bosh-matn">Ma'lumot yo'q</p>
             {% endfor %}
         </div>
+        {% endif %}
 
         <a href="{% url 'qarzdorlar_royxati' %}" class="bolim-sarlavha bolim-sarlavha-havola">Qarzlar ro'yxati &rsaquo;</a>
         <div class="karta">

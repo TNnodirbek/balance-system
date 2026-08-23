@@ -8,6 +8,7 @@ from django.utils import timezone
 from django.utils.dateparse import parse_date
 
 from buyurtmalar.models import Buyurtma
+from foydalanuvchilar.models import Foydalanuvchi
 from foydalanuvchilar.utils import tegishli_menejer
 from ombor.models import Fura
 from ombor.utils import suv_sof_foyda_fifo
@@ -87,6 +88,7 @@ def xarajat_ochirish(request, pk):
 @login_required
 def hisobot(request):
     menejer = tegishli_menejer(request.user)
+    is_menejer = request.user.rol == Foydalanuvchi.Rol.MENEJER
     bugun = timezone.localdate()
 
     boshlanish = parse_date(request.GET.get('boshlanish', '') or '')
@@ -108,6 +110,7 @@ def hisobot(request):
         'filtr': filtr,
         'boshlanish': boshlanish,
         'tugash': tugash,
+        'is_menejer': is_menejer,
         'umumiy_savdo': Decimal('0'),
         'umumiy_kunlik_xarajat': Decimal('0'),
         'umumiy_fura_xarajat': Decimal('0'),
@@ -151,10 +154,13 @@ def hisobot(request):
 
         umumiy_savdo += buyurtma_summa
 
-        dastavchik_nomi = buyurtma.yetkazishga_olgan.username if buyurtma.yetkazishga_olgan else "Noma'lum"
-        stat = dastavchiklar_statistikasi.setdefault(dastavchik_nomi, {'soni': 0, 'summa': Decimal('0')})
-        stat['soni'] += 1
-        stat['summa'] += buyurtma_summa
+        if is_menejer:
+            # Dastavchik uchun bu statistika umuman korsatilmaydi - hisoblab
+            # ortiqcha ish qilmaymiz.
+            dastavchik_nomi = buyurtma.yetkazishga_olgan.username if buyurtma.yetkazishga_olgan else "Noma'lum"
+            stat = dastavchiklar_statistikasi.setdefault(dastavchik_nomi, {'soni': 0, 'summa': Decimal('0')})
+            stat['soni'] += 1
+            stat['summa'] += buyurtma_summa
 
     umumiy_kunlik_xarajat = Xarajat.objects.filter(
         menejer=menejer, sana__gte=boshlanish, sana__lte=tugash,
@@ -184,7 +190,9 @@ def hisobot(request):
         'mahsulot_kesimida': mahsulot_kesimida,
         'qarzlar_royxati': qarzlar_royxati,
         'dastavchiklar_statistikasi': dastavchiklar_statistikasi,
-        'suv_sof_foyda_fifo': suv_sof_foyda_fifo(menejer, boshlanish, tugash),
+        # FIFO sof foyda hisoboti faqat menejerga korsatiladi - dastavchik
+        # uchun bu og'ir hisob-kitobni umuman ishga tushirmaymiz.
+        'suv_sof_foyda_fifo': suv_sof_foyda_fifo(menejer, boshlanish, tugash) if is_menejer else {},
     })
     return render(request, 'statistika/hisobot.html', kontekst)
 
