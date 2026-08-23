@@ -10,6 +10,7 @@ urlpatterns = [
     path('dastavchiklar/', views.dastavchiklar_royxati, name='dastavchiklar_royxati'),
     path('dastavchik-qoshish/', views.dastavchik_qoshish, name='dastavchik_qoshish'),
     path('dastavchik/<int:pk>/tahrirlash/', views.dastavchik_tahrirlash, name='dastavchik_tahrirlash'),
+    path('dastavchik/<int:pk>/ochirish/', views.dastavchik_ochirish, name='dastavchik_ochirish'),
     path('sozlamalar/', views.sozlamalar_bosh, name='sozlamalar_bosh'),
     path('sozlamalar/profil/', views.profil_tahrirlash, name='profil_tahrirlash'),
     path('sozlamalar/narxlar/', views.narxlar_sozlamasi, name='narxlar_sozlamasi'),

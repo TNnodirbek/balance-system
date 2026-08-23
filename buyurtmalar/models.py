@@ -25,7 +25,9 @@ class Buyurtma(models.Model):
     )
     zakaz_olgan = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         related_name='zakaz_olgan_buyurtmalar',
     )
     yetkazishga_olgan = models.ForeignKey(

@@ -78,7 +78,7 @@
         </div>
 
         <p class="info-qatori">
-            Zakaz: {{ buyurtma.zakaz_olgan.username }}{% if buyurtma.yetkazishga_olgan %} &middot; Yetkazmoqda: {{ buyurtma.yetkazishga_olgan.username }}{% endif %}
+            Zakaz: {{ buyurtma.zakaz_olgan.username|default:"o'chirilgan foydalanuvchi" }}{% if buyurtma.yetkazishga_olgan %} &middot; Yetkazmoqda: {{ buyurtma.yetkazishga_olgan.username }}{% endif %}
         </p>
 
     </div>

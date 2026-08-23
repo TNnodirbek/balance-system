@@ -15,7 +15,9 @@ class Xarajat(models.Model):
     )
     kim_yozgan = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         related_name='yozgan_xarajatlar',
     )
     summa = models.DecimalField(max_digits=12, decimal_places=2)
@@ -42,7 +44,9 @@ class QarzTolovi(models.Model):
     summa = models.DecimalField(max_digits=12, decimal_places=2)
     qabul_qilgan = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         related_name='qabul_qilingan_qarz_tolovlari',
     )
     sana = models.DateField(default=timezone.localdate)

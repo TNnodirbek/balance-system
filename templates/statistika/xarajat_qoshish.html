@@ -350,7 +350,7 @@
                 <div class="xarajat-qatori">
                     <div>
                         <div class="xarajat-izoh">{{ xarajat.izoh }}</div>
-                        <div class="xarajat-kim">{{ xarajat.kim_yozgan.username }}</div>
+                        <div class="xarajat-kim">{{ xarajat.kim_yozgan.username|default:"o'chirilgan foydalanuvchi" }}</div>
                     </div>
                     <div class="xarajat-ong">
                         <span class="xarajat-summa">{{ xarajat.summa }} so'm</span>

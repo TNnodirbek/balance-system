@@ -1,4 +1,5 @@
-﻿from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
+﻿from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
 from django.http import HttpResponseForbidden
@@ -200,6 +201,16 @@ def dastavchiklar_royxati(request):
     return render(request, 'foydalanuvchilar/dastavchiklar_royxati.html', {
         'dastavchiklar': dastavchiklar,
     })
+
+
+@login_required
+def dastavchik_ochirish(request, pk):
+    if request.user.rol != Foydalanuvchi.Rol.MENEJER:
+        return HttpResponseForbidden("Bu sahifa faqat menejer uchun.")
+    dastavchik = get_object_or_404(Foydalanuvchi, pk=pk, menejer=request.user, rol=Foydalanuvchi.Rol.DASTAVCHIK)
+    dastavchik.delete()
+    messages.success(request, "Dastavchik o'chirildi.")
+    return redirect('dastavchiklar_royxati')
 
 
 @login_required

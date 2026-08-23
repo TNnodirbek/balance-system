@@ -103,6 +103,25 @@
             color: #185FA5;
             flex-shrink: 0;
         }
+        .ochirish-tugma {
+            width: 32px; height: 32px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 8px;
+            background: #FCEBEB;
+            color: #A32D2D;
+            border: none;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        .xabar-quti {
+            border-radius: 10px;
+            padding: 12px 14px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            background: #E8F5E9;
+            color: #2E7D32;
+        }
         .bosh-holat {
             text-align: center;
             color: #7C8B9E;
@@ -121,6 +140,12 @@
             <a href="{% url 'dastavchik_qoshish' %}" class="qoshish-tugma">+ Qo'shish</a>
         </div>
 
+        {% if messages %}
+        {% for message in messages %}
+        <div class="xabar-quti">{{ message }}</div>
+        {% endfor %}
+        {% endif %}
+
         {% for dastavchik in dastavchiklar %}
         <div class="dastavchik-karta">
             <div class="avatar">{{ dastavchik.first_name|default:dastavchik.username|first|upper }}</div>
@@ -134,6 +159,12 @@
             <a href="{% url 'dastavchik_tahrirlash' dastavchik.pk %}" class="tahrirlash-tugma" aria-label="Tahrirlash">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M11 4H4A2 2 0 0 0 2 6V20A2 2 0 0 0 4 22H18A2 2 0 0 0 20 20V13" stroke-linecap="round" stroke-linejoin="round"/><path d="M18.5 2.5A2.121 2.121 0 0 1 21.5 5.5L12 15L8 16L9 12L18.5 2.5Z" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </a>
+            <form method="post" action="{% url 'dastavchik_ochirish' dastavchik.pk %}" onsubmit="return confirm('Bu dastavchikni ochirishni tasdiqlaysizmi? Uning barcha buyurtma tarixi saqlanib qoladi, lekin hisobga kira olmaydi.');" style="display:inline;margin-left:-8px;">
+                {% csrf_token %}
+                <button type="submit" class="ochirish-tugma" aria-label="Ochirish">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 6H21M8 6V4A2 2 0 0 1 10 2H14A2 2 0 0 1 16 4V6M19 6V20A2 2 0 0 1 17 22H7A2 2 0 0 1 5 20V6H19Z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+            </form>
         </div>
         {% empty %}
         <div class="bosh-holat">Dastavchiklar hali qo'shilmagan</div>
