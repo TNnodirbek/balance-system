@@ -162,6 +162,13 @@ def hisobot(request):
             stat['soni'] += 1
             stat['summa'] += buyurtma_summa
 
+    # Eng ko'p buyurtma yetkazgan dastavchik birinchi bo'lib chiqishi uchun
+    # - shablon FAQAT birinchi 3 tasini korsatadi, qolganini "Barchasini
+    # ko'rish" tugmasi ochadi.
+    dastavchiklar_statistikasi = dict(
+        sorted(dastavchiklar_statistikasi.items(), key=lambda item: item[1]['soni'], reverse=True)
+    )
+
     umumiy_kunlik_xarajat = Xarajat.objects.filter(
         menejer=menejer, sana__gte=boshlanish, sana__lte=tugash,
     ).aggregate(jami=Sum('summa'))['jami'] or Decimal('0')

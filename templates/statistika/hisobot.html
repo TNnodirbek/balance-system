@@ -453,6 +453,24 @@
             border-bottom: none;
         }
 
+        .dastavchik-qatori-yashirin {
+            display: none;
+        }
+
+        .barchasini-korish-tugma {
+            display: block;
+            width: 100%;
+            border: none;
+            background: transparent;
+            padding: 10px 0 0;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            color: #185FA5;
+            cursor: pointer;
+            text-align: center;
+        }
+
         .dastavchik-ism {
             font-weight: 600;
             color: #0C2340;
@@ -674,13 +692,16 @@
         </button>
         <div class="karta akkordeon-tarkib" id="dastavchiklar-tarkib">
             {% for ism, malumot in dastavchiklar_statistikasi.items %}
-                <div class="dastavchik-qatori">
+                <div class="dastavchik-qatori{% if forloop.counter > 3 %} dastavchik-qatori-yashirin{% endif %}">
                     <span class="dastavchik-ism">{{ ism }}</span>
                     <span class="dastavchik-detal">{{ malumot.soni }} buyurtma &middot; {{ malumot.summa|som_format }}</span>
                 </div>
             {% empty %}
                 <p class="bosh-matn">Ma'lumot yo'q</p>
             {% endfor %}
+            {% if dastavchiklar_statistikasi|length > 3 %}
+                <button type="button" class="barchasini-korish-tugma" id="dastavchik-barchasi-tugma">Barchasini ko'rish ({{ dastavchiklar_statistikasi|length }})</button>
+            {% endif %}
         </div>
         {% endif %}
 
@@ -743,6 +764,16 @@
                 sarlavha.classList.toggle('ochiq', ochiqmi);
             });
         });
+
+        var dastavchikBarchasiTugma = document.getElementById('dastavchik-barchasi-tugma');
+        if (dastavchikBarchasiTugma) {
+            dastavchikBarchasiTugma.addEventListener('click', function () {
+                document.querySelectorAll('.dastavchik-qatori-yashirin').forEach(function (qator) {
+                    qator.classList.remove('dastavchik-qatori-yashirin');
+                });
+                dastavchikBarchasiTugma.style.display = 'none';
+            });
+        }
 
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('/service-worker.js');
