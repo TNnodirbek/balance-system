@@ -21,7 +21,12 @@
                 <p class="buyurtma-raqam">Buyurtma #{{ buyurtma.pk }}</p>
                 <p class="dokon-nomi">{{ buyurtma.dokon.nomi }}</p>
             </div>
-            <span class="holat-pill holat-{{ buyurtma.holat }}">{% if buyurtma.qisman_yetkazilganmi %}&#9888; Qisman yetkazildi{% else %}{{ buyurtma.get_holat_display }}{% endif %}</span>
+            <div class="holat-pillar-qobiq">
+                <span class="holat-pill holat-{{ buyurtma.holat }}">{% if buyurtma.qisman_yetkazilganmi %}&#9888; Qisman yetkazildi{% else %}{{ buyurtma.get_holat_display }}{% endif %}</span>
+                {% if buyurtma.holat == 'yetkazildi' and buyurtma.tolov_holati == 'qarz' and buyurtma.qarz_summasi > 0 %}
+                <span class="qarz-mini-pill">Qarz: {{ buyurtma.qarz_summasi|som_format }}</span>
+                {% endif %}
+            </div>
             {% if user.rol == 'menejer' or buyurtma.zakaz_olgan_id == user.id or buyurtma.yetkazishga_olgan_id == user.id %}
             <div class="amallar-qobiq-buyurtma">
                 <a href="{% url 'buyurtma_tahrirlash' buyurtma.pk %}" class="tahrirlash-tugma-buyurtma" aria-label="Tahrirlash">
