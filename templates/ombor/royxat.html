@@ -219,7 +219,17 @@
         .fura-xarajat {
             font-size: 16px;
             font-weight: 700;
-            color: #185FA5;
+            color: #2E7D32;
+            animation: porlash 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes porlash {
+            from {
+                text-shadow: 0 0 8px rgba(46, 125, 50, 0.3);
+            }
+            to {
+                text-shadow: 0 0 2px rgba(46, 125, 50, 0.1);
+            }
         }
 
         .fura-mahsulotlar {
@@ -228,18 +238,32 @@
             gap: 8px;
         }
 
-        .mahsulot-pill {
-            background: #F0F8FF;
-            color: #185FA5;
+        .mahsulot-pill-guruh {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .mahsulot-pill-guruh-tugagan {
+            opacity: 0.5;
+        }
+
+        .mahsulot-kelgan-pill {
+            background: #E8F5E9;
+            color: #2E7D32;
             font-size: 13px;
             font-weight: 600;
             padding: 5px 10px;
             border-radius: 999px;
         }
 
-        .mahsulot-pill-xira {
-            background: #F1F3F5;
-            color: #9AA5B1;
+        .mahsulot-qoldiq-pill {
+            background: #FFF4E5;
+            color: #B8860B;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 9px;
+            border-radius: 999px;
         }
 
         /* Bo'sh holat */
@@ -362,7 +386,12 @@
 
                 <div class="fura-mahsulotlar">
                     {% for mahsulot in fura.mahsulotlar.all %}
-                        <span class="mahsulot-pill{% if mahsulot.fifo_qoldiq == 0 %} mahsulot-pill-xira{% endif %}">{{ mahsulot.hajm }}: {{ mahsulot.miqdor }}</span>
+                        <div class="mahsulot-pill-guruh{% if mahsulot.fifo_qoldiq == 0 %} mahsulot-pill-guruh-tugagan{% endif %}">
+                            <span class="mahsulot-kelgan-pill">{{ mahsulot.hajm }}: {{ mahsulot.miqdor }}</span>
+                            {% if mahsulot.fifo_qoldiq < mahsulot.miqdor %}
+                                <span class="mahsulot-qoldiq-pill">{{ mahsulot.fifo_qoldiq }}</span>
+                            {% endif %}
+                        </div>
                     {% endfor %}
                 </div>
             </div>
