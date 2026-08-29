@@ -11,7 +11,6 @@ from buyurtmalar.models import Buyurtma
 from foydalanuvchilar.models import Foydalanuvchi
 from foydalanuvchilar.utils import tegishli_menejer
 from ombor.models import Fura
-from ombor.utils import suv_sof_foyda_fifo
 
 from .models import QarzTolovi, Xarajat
 
@@ -120,7 +119,6 @@ def hisobot(request):
         'mahsulot_kesimida': {},
         'qarzlar_royxati': Buyurtma.objects.none(),
         'dastavchiklar_statistikasi': {},
-        'suv_sof_foyda_fifo': {},
     }
     if menejer is None:
         return render(request, 'statistika/hisobot.html', kontekst)
@@ -197,9 +195,6 @@ def hisobot(request):
         'mahsulot_kesimida': mahsulot_kesimida,
         'qarzlar_royxati': qarzlar_royxati,
         'dastavchiklar_statistikasi': dastavchiklar_statistikasi,
-        # FIFO sof foyda hisoboti faqat menejerga korsatiladi - dastavchik
-        # uchun bu og'ir hisob-kitobni umuman ishga tushirmaymiz.
-        'suv_sof_foyda_fifo': suv_sof_foyda_fifo(menejer, boshlanish, tugash) if is_menejer else {},
     })
     return render(request, 'statistika/hisobot.html', kontekst)
 
