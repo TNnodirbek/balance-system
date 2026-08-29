@@ -189,3 +189,68 @@ def suv_sof_foyda_fifo(menejer, boshlanish_sana=None, tugash_sana=None):
         }
 
     return natija
+
+
+def fura_sof_foydasi(menejer):
+    """Har bir Fura uchun, hajmlar bo'yicha, hozirgacha (butun tarix
+    davomida) FIFO tartibida sotilgan qismidan olingan sof foydani
+    hisoblaydi. Furalar sana bo'yicha eskidan yangiga qarab ko'rib
+    chiqiladi, har bir hajm uchun sotuvlar navbati ham xronologik tartibda
+    (eng eski sotuvdan boshlab) shu furalarga mos ravishda "yechiladi" -
+    shu orqali qaysi sotuv qaysi furadan chiqqani aniqlanadi va shu
+    sotuv narxi asosida haqiqiy tushum hisoblanadi (o'rtacha emas)."""
+    sotilganlar = (
+        BuyurtmaMahsulot.objects
+        .filter(buyurtma__menejer=menejer, buyurtma__holat=Buyurtma.Holat.YETKAZILDI)
+        .select_related('buyurtma')
+        .order_by('buyurtma__yetkazilgan_vaqt')
+    )
+
+    sotuv_navbatlari = {}
+    for mahsulot in sotilganlar:
+        soni = mahsulot.soni_yetkazilgan if mahsulot.soni_yetkazilgan is not None else mahsulot.soni_buyurtma_qilingan
+        sotuv_navbatlari.setdefault(mahsulot.hajm, []).append([soni, mahsulot.narx])
+
+    furalar = (
+        Fura.objects
+        .filter(menejer=menejer)
+        .order_by('sana', 'yaratilgan_vaqt')
+        .prefetch_related('mahsulotlar')
+    )
+
+    fura_jami_miqdor_keshi = {}
+    natija = {}
+    for fura in furalar:
+        natija[fura.pk] = {'fura': fura, 'hajmlar': {}}
+        for mahsulot in fura.mahsulotlar.all():
+            hajm = mahsulot.hajm
+            dona_narxi = _fura_mahsulot_dona_narxi(mahsulot, fura_jami_miqdor_keshi)
+            navbat = sotuv_navbatlari.setdefault(hajm, [])
+
+            qoldiq = mahsulot.miqdor
+            sotilgan_soni = 0
+            sotilgan_puli = Decimal('0')
+            while qoldiq > 0 and navbat:
+                sotuv_soni, sotuv_narx = navbat[0]
+                if sotuv_soni <= 0:
+                    navbat.pop(0)
+                    continue
+                shu_qism = min(qoldiq, sotuv_soni)
+                sotilgan_puli += shu_qism * sotuv_narx
+                sotilgan_soni += shu_qism
+                qoldiq -= shu_qism
+                navbat[0][0] -= shu_qism
+                if navbat[0][0] <= 0:
+                    navbat.pop(0)
+
+            tannarx = dona_narxi * sotilgan_soni
+            natija[fura.pk]['hajmlar'][hajm] = {
+                'kelgan': mahsulot.miqdor,
+                'sotilgan_soni': sotilgan_soni,
+                'qoldiq': qoldiq,
+                'sotilgan_puli': sotilgan_puli,
+                'tannarx': tannarx,
+                'sof_foyda': sotilgan_puli - tannarx,
+            }
+
+    return natija

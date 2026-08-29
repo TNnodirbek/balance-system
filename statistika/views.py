@@ -3,6 +3,7 @@ from decimal import Decimal, InvalidOperation
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
+from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.utils.dateparse import parse_date
@@ -11,8 +12,24 @@ from buyurtmalar.models import Buyurtma
 from foydalanuvchilar.models import Foydalanuvchi
 from foydalanuvchilar.utils import tegishli_menejer
 from ombor.models import Fura
+from ombor.utils import fura_sof_foydasi, suv_sof_foyda_fifo
 
 from .models import QarzTolovi, Xarajat
+
+OY_NOMLARI_UZ = {
+    1: 'yanvar', 2: 'fevral', 3: 'mart', 4: 'aprel', 5: 'may', 6: 'iyun',
+    7: 'iyul', 8: 'avgust', 9: 'sentabr', 10: 'oktabr', 11: 'noyabr', 12: 'dekabr',
+}
+
+
+def _uz_sana_matni(kun):
+    bugun = timezone.localdate()
+    matn = f"{kun.day}-{OY_NOMLARI_UZ[kun.month]}"
+    if kun == bugun:
+        return f"Bugun, {matn}"
+    if kun == bugun - timezone.timedelta(days=1):
+        return f"Kecha, {matn}"
+    return matn
 
 
 @login_required
@@ -197,6 +214,59 @@ def hisobot(request):
         'dastavchiklar_statistikasi': dastavchiklar_statistikasi,
     })
     return render(request, 'statistika/hisobot.html', kontekst)
+
+
+@login_required
+def sof_foyda_royxati(request):
+    if request.user.rol != Foydalanuvchi.Rol.MENEJER:
+        return HttpResponseForbidden("Bu sahifa faqat menejer uchun.")
+    menejer = tegishli_menejer(request.user)
+
+    korinish = request.GET.get('korinish', 'kunlik')
+    kontekst = {'korinish': korinish}
+
+    if korinish == 'furalar':
+        furalar_malumoti = fura_sof_foydasi(menejer) if menejer else {}
+        furalar_royxati = []
+        for malumot in furalar_malumoti.values():
+            hajmlar = malumot['hajmlar']
+            jami_sof_foyda = sum((h['sof_foyda'] for h in hajmlar.values()), Decimal('0'))
+            toliq_sotilgan = bool(hajmlar) and all(h['qoldiq'] <= 0 for h in hajmlar.values())
+            furalar_royxati.append({
+                'fura': malumot['fura'],
+                'hajmlar': hajmlar,
+                'jami_sof_foyda': jami_sof_foyda,
+                'toliq_sotilgan': toliq_sotilgan,
+            })
+        furalar_royxati.reverse()
+        kontekst['furalar_royxati'] = furalar_royxati
+    else:
+        tanlangan_sana = request.GET.get('sana')
+        if tanlangan_sana:
+            kun = parse_date(tanlangan_sana) or timezone.localdate()
+        else:
+            kun = timezone.localdate()
+
+        hajm_natijalari = suv_sof_foyda_fifo(menejer, boshlanish_sana=kun, tugash_sana=kun) if menejer else {}
+        jami_sof_foyda = sum((m['sof_foyda'] for m in hajm_natijalari.values()), Decimal('0'))
+        jami_blok = sum(m['sotilgan_soni'] for m in hajm_natijalari.values())
+
+        buyurtmalar_soni = 0
+        if menejer:
+            buyurtmalar_soni = Buyurtma.objects.filter(
+                menejer=menejer, holat=Buyurtma.Holat.YETKAZILDI, yetkazilgan_vaqt__date=kun,
+            ).count()
+
+        kontekst.update({
+            'kun': kun,
+            'sana_matni': _uz_sana_matni(kun),
+            'jami_sof_foyda': jami_sof_foyda,
+            'buyurtmalar_soni': buyurtmalar_soni,
+            'jami_blok': jami_blok,
+            'hajm_natijalari': hajm_natijalari,
+        })
+
+    return render(request, 'statistika/sof_foyda.html', kontekst)
 
 
 @login_required

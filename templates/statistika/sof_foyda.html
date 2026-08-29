@@ -1,0 +1,368 @@
+{% load summa_filtr %}
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sof foyda</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            background: #FFFFFF;
+            color: #0C2340;
+        }
+
+        .sahifa { max-width: 480px; margin: 0 auto; padding: 20px 16px 40px; }
+
+        .sarlavha-panel { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+
+        .orqaga {
+            width: 36px; height: 36px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 10px; background: #F0F8FF; color: #185FA5;
+            text-decoration: none; flex-shrink: 0;
+        }
+
+        h1 { font-size: 18px; font-weight: 700; color: #0C2340; margin: 0; }
+
+        /* Asosiy kunlik karta */
+        .asosiy-karta {
+            background: #FFFFFF;
+            border: 1px solid #E4EDF6;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .asosiy-sana {
+            font-size: 13px;
+            font-weight: 600;
+            color: #7C8B9E;
+            margin: 0 0 8px;
+        }
+
+        @keyframes sof-foyda-porlash {
+            0%, 100% { text-shadow: 0 0 0 rgba(46, 125, 50, 0); }
+            50% { text-shadow: 0 0 14px rgba(46, 125, 50, 0.35); }
+        }
+
+        .asosiy-summa {
+            font-size: 26px;
+            font-weight: 800;
+            color: #2E7D32;
+            margin: 0;
+            animation: sof-foyda-porlash 2.4s ease-in-out infinite;
+        }
+
+        .asosiy-izoh {
+            font-size: 12px;
+            color: #94A7BD;
+            margin: 6px 0 0;
+        }
+
+        .hajm-royxati {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #F0F3F7;
+        }
+
+        .hajm-qatori {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 8px 0;
+        }
+
+        .hajm-qatori:not(:last-child) {
+            border-bottom: 1px solid #F5F8FB;
+        }
+
+        .hajm-nomi {
+            font-size: 14px;
+            font-weight: 700;
+            color: #0C2340;
+        }
+
+        .hajm-detal {
+            font-size: 11px;
+            color: #94A7BD;
+            margin-top: 2px;
+        }
+
+        .hajm-sof-foyda {
+            font-size: 15px;
+            font-weight: 700;
+            color: #2E7D32;
+            white-space: nowrap;
+        }
+
+        .hajm-sof-foyda.manfiy {
+            color: #A32D2D;
+        }
+
+        .bosh-matn {
+            text-align: center;
+            color: #94A7BD;
+            font-size: 13px;
+            padding: 10px 0;
+        }
+
+        /* Ikkita pastki tugma */
+        .tugmalar-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .rejim-tugma {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            height: 46px;
+            border-radius: 12px;
+            border: 1.5px solid #DCE9F5;
+            background: #F0F8FF;
+            color: #185FA5;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .rejim-tugma.faol {
+            background: #185FA5;
+            color: #FFFFFF;
+            border-color: #185FA5;
+        }
+
+        .sana-forma {
+            display: none;
+            align-items: flex-end;
+            gap: 8px;
+            margin: -6px 0 16px;
+        }
+
+        .sana-forma.ochiq {
+            display: flex;
+        }
+
+        .sana-maydon { flex: 1; }
+
+        .sana-maydon label {
+            display: block;
+            font-size: 11px;
+            font-weight: 600;
+            color: #7C8B9E;
+            margin-bottom: 4px;
+        }
+
+        .sana-maydon input {
+            width: 100%;
+            height: 42px;
+            border: 1.5px solid #E4EDF6;
+            border-radius: 10px;
+            padding: 0 10px;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            font-size: 13px;
+            color: #0C2340;
+            background: #FFFFFF;
+            outline: none;
+        }
+
+        .sana-forma-tugma {
+            height: 42px;
+            padding: 0 16px;
+            border: none;
+            border-radius: 10px;
+            background: #185FA5;
+            color: #FFFFFF;
+            font-family: 'Manrope', 'Segoe UI', Arial, sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .kunlik-korinish-link {
+            display: inline-block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #185FA5;
+            text-decoration: none;
+            margin-bottom: 16px;
+        }
+
+        /* Furalar korinishi */
+        .fura-karta {
+            background: #FFFFFF;
+            border: 1px solid #E4EDF6;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .fura-tepa {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .fura-sana {
+            font-size: 14px;
+            font-weight: 700;
+            color: #0C2340;
+        }
+
+        .fura-holat-pill {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 999px;
+        }
+
+        .fura-holat-pill.toliq {
+            background: #EEF1F5;
+            color: #7C8B9E;
+        }
+
+        .fura-holat-pill.jarayonda {
+            background: #FFF4DE;
+            color: #B8790A;
+        }
+
+        .fura-qator {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #7C8B9E;
+            padding: 3px 0;
+        }
+
+        .fura-qator span:last-child {
+            color: #0C2340;
+            font-weight: 600;
+        }
+
+        .fura-sof-foyda-blok {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #F0F3F7;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .fura-sof-foyda-label {
+            font-size: 12px;
+            color: #7C8B9E;
+        }
+
+        .fura-sof-foyda-summa {
+            font-size: 17px;
+            font-weight: 800;
+            color: #2E7D32;
+        }
+
+        .fura-sof-foyda-summa.manfiy {
+            color: #A32D2D;
+        }
+    </style>
+</head>
+<body>
+    <div class="sahifa">
+        <div class="sarlavha-panel">
+            <a href="javascript:history.back()" class="orqaga" aria-label="Orqaga">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+            <h1>Sof foyda</h1>
+        </div>
+
+        {% if korinish == 'furalar' %}
+            <a href="{% url 'sof_foyda_royxati' %}" class="kunlik-korinish-link">&larr; Kunlik ko'rinishga qaytish</a>
+
+            {% for f in furalar_royxati %}
+                <div class="fura-karta">
+                    <div class="fura-tepa">
+                        <span class="fura-sana">Fura &middot; {{ f.fura.sana|date:"d.m.Y" }}</span>
+                        {% if f.toliq_sotilgan %}
+                            <span class="fura-holat-pill toliq">To'liq sotilgan</span>
+                        {% else %}
+                            <span class="fura-holat-pill jarayonda">Jarayonda</span>
+                        {% endif %}
+                    </div>
+                    <div class="fura-qator">
+                        <span>Kelgan</span>
+                        <span>{% for hajm, h in f.hajmlar.items %}{{ hajm }}: {{ h.kelgan }}{% if not forloop.last %} &middot; {% endif %}{% endfor %}</span>
+                    </div>
+                    <div class="fura-qator">
+                        <span>Sotilgan</span>
+                        <span>{% for hajm, h in f.hajmlar.items %}{{ hajm }}: {{ h.sotilgan_soni }}{% if not forloop.last %} &middot; {% endif %}{% endfor %}</span>
+                    </div>
+                    <div class="fura-sof-foyda-blok">
+                        <span class="fura-sof-foyda-label">{% if f.toliq_sotilgan %}Bu furadan sof foyda{% else %}Hozirgacha sof foyda{% endif %}</span>
+                        <span class="fura-sof-foyda-summa{% if f.jami_sof_foyda < 0 %} manfiy{% endif %}">{{ f.jami_sof_foyda|som_format }}</span>
+                    </div>
+                </div>
+            {% empty %}
+                <p class="bosh-matn">Fura ma'lumoti yo'q</p>
+            {% endfor %}
+        {% else %}
+            <div class="asosiy-karta">
+                <p class="asosiy-sana">{{ sana_matni }}</p>
+                <p class="asosiy-summa">{{ jami_sof_foyda|som_format }}</p>
+                <p class="asosiy-izoh">{{ buyurtmalar_soni }} buyurtma yetkazildi, {{ jami_blok }} blok suv</p>
+
+                <div class="hajm-royxati">
+                    {% for hajm, malumot in hajm_natijalari.items %}
+                        <div class="hajm-qatori">
+                            <div>
+                                <div class="hajm-nomi">{{ hajm }} &middot; {{ malumot.sotilgan_soni }} dona</div>
+                                <div class="hajm-detal">Sotilgan: {{ malumot.sotilgan_puli|som_format }} &middot; Kelgan: {{ malumot.tannarx|som_format }}</div>
+                            </div>
+                            <span class="hajm-sof-foyda{% if malumot.sof_foyda < 0 %} manfiy{% endif %}">{{ malumot.sof_foyda|som_format }}</span>
+                        </div>
+                    {% empty %}
+                        <p class="bosh-matn">Bu kunda sotuv bo'lmagan</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <form method="get" class="sana-forma" id="sana-forma">
+                <div class="sana-maydon">
+                    <label for="sana">Sana tanlang</label>
+                    <input type="date" name="sana" id="sana" value="{{ kun|date:'Y-m-d' }}">
+                </div>
+                <button type="submit" class="sana-forma-tugma">Ko'rsatish</button>
+            </form>
+
+            <div class="tugmalar-grid">
+                <button type="button" class="rejim-tugma" id="oraliq-tugma">&#128197; Vaqt oralig'i</button>
+                <a href="?korinish=furalar" class="rejim-tugma">&#128666; Furalar</a>
+            </div>
+        {% endif %}
+    </div>
+
+    <script>
+        var oraliqTugma = document.getElementById('oraliq-tugma');
+        var sanaForma = document.getElementById('sana-forma');
+        if (oraliqTugma && sanaForma) {
+            oraliqTugma.addEventListener('click', function () {
+                var ochiqmi = sanaForma.classList.toggle('ochiq');
+                oraliqTugma.classList.toggle('faol', ochiqmi);
+            });
+        }
+    </script>
+</body>
+</html>
