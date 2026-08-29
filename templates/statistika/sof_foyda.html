@@ -193,15 +193,6 @@
             cursor: pointer;
         }
 
-        .kunlik-korinish-link {
-            display: inline-block;
-            font-size: 13px;
-            font-weight: 600;
-            color: #185FA5;
-            text-decoration: none;
-            margin-bottom: 16px;
-        }
-
         /* Furalar korinishi */
         .fura-karta {
             background: #FFFFFF;
@@ -290,8 +281,6 @@
         </div>
 
         {% if korinish == 'furalar' %}
-            <a href="{% url 'sof_foyda_royxati' %}" class="kunlik-korinish-link">&larr; Kunlik ko'rinishga qaytish</a>
-
             {% for f in furalar_royxati %}
                 <div class="fura-karta">
                     <div class="fura-tepa">
