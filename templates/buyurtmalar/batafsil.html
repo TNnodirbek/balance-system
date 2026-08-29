@@ -52,6 +52,8 @@
         .xarita-pastki-panel { flex-shrink: 0; padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid #E4EDF6; background: #FFFFFF; }
         .nav-masofa-blok { display: none; align-items: center; justify-content: space-between; background: #F0F8FF; border-radius: 12px; padding: 10px 14px; margin-bottom: 10px; font-size: 13px; font-weight: 600; color: #0C2340; }
         .nav-masofa-blok span:last-child { color: #185FA5; font-weight: 700; }
+        .nav-xato { font-size: 12px; color: #A32D2D; text-align: center; margin: 0 0 8px; }
+        .nav-xato:empty { display: none; margin: 0; }
         .harakat-tugma { width: 100%; height: 48px; border: none; border-radius: 12px; background: #2E7D32; color: #FFFFFF; font-family: 'Manrope', 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; transition: background-color 0.2s ease; }
         .harakat-tugma:hover { background: #256B29; }
         .harakat-tugma.faol { background: #A32D2D; }
@@ -277,6 +279,7 @@
                 <span>Qolgan masofa</span>
                 <span id="nav-masofa-son">&mdash;</span>
             </div>
+            <p class="nav-xato" id="nav-xato"></p>
             <button type="button" class="harakat-tugma" id="harakat-tugma">🚗 Harakatni boshlash</button>
         </div>
     </div>
@@ -356,9 +359,32 @@
 
         var harakatTugma = document.getElementById('harakat-tugma');
         var navMasofaBlok = document.getElementById('nav-masofa-blok');
+        var navXato = document.getElementById('nav-xato');
+
+        function navStandaloneRejimdami() {
+            return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+        }
+
+        function navGeolocationXatoMatni(error) {
+            // error.code: 1=PERMISSION_DENIED, 2=POSITION_UNAVAILABLE, 3=TIMEOUT
+            if (error.code === error.PERMISSION_DENIED) {
+                if (navStandaloneRejimdami()) {
+                    return "Joylashuvga ruxsat berilmagan. iPhone'da: Sozlamalar → Maxfiylik va xavfsizlik → Joylashuv xizmatlari → Safari → \"Ilova ishlatilganda\" ni tanlang, so'ngra ilovani yopib qayta oching.";
+                }
+                return "Joylashuvga ruxsat berilmagan. Brauzeringiz sozlamalaridan bu sayt uchun joylashuv ruxsatini yoqing.";
+            }
+            if (error.code === error.POSITION_UNAVAILABLE) {
+                return "Joylashuvni aniqlab bo'lmadi (GPS signali topilmadi). Ochiq joyda qayta urinib ko'ring.";
+            }
+            if (error.code === error.TIMEOUT) {
+                return "Joylashuvni aniqlash vaqti tugadi. Qayta urinib ko'ring.";
+            }
+            return "Joylashuvni aniqlab bo'lmadi, xaritadan qo'lda kuzating.";
+        }
 
         function navigatsiyaToxtat() {
             navFaolMi = false;
+            harakatTugma.disabled = false;
             harakatTugma.textContent = '🚗 Harakatni boshlash';
             harakatTugma.classList.remove('faol');
             navMasofaBlok.style.display = 'none';
@@ -366,6 +392,51 @@
                 navigator.geolocation.clearWatch(navWatchId);
                 navWatchId = null;
             }
+        }
+
+        function navPozitsiyaniQoBul(position) {
+            var lat = position.coords.latitude;
+            var lng = position.coords.longitude;
+            var heading = position.coords.heading;
+            if (navJoriyMarker) {
+                navJoriyMarker.setLatLng([lat, lng]);
+            } else {
+                navJoriyMarker = L.marker([lat, lng], { icon: navYonalishIkonka }).addTo(navXaritaObj);
+            }
+            // heading ba'zi qurilmalarda/holatlarda (masalan turgan
+            // holatda) null/undefined/NaN bo'ladi - bu holda strelka
+            // avvalgi bilingan yo'nalishida qolaveradi, xato bermaydi.
+            if (heading !== null && heading !== undefined && !isNaN(heading)) {
+                var markerEl = navJoriyMarker.getElement();
+                var strelka = markerEl ? markerEl.querySelector('.yonalish-strelka') : null;
+                if (strelka) {
+                    strelka.style.transform = 'rotate(' + heading + 'deg)';
+                }
+            }
+            masofaniYangila(lat, lng);
+        }
+
+        function navKuzatuvniBoshla() {
+            navFaolMi = true;
+            harakatTugma.disabled = false;
+            harakatTugma.textContent = "⛔ Navigatsiyani to'xtatish";
+            harakatTugma.classList.add('faol');
+            navMasofaBlok.style.display = 'flex';
+
+            navWatchId = navigator.geolocation.watchPosition(
+                function (position) {
+                    navXato.textContent = '';
+                    navPozitsiyaniQoBul(position);
+                },
+                function (error) {
+                    console.warn('Geolocation xatosi (watch): code=' + error.code + ' message=' + error.message);
+                    navXato.textContent = navGeolocationXatoMatni(error);
+                    if (error.code === error.PERMISSION_DENIED) {
+                        navigatsiyaToxtat();
+                    }
+                },
+                { enableHighAccuracy: true, maximumAge: 5000, timeout: 15000 }
+            );
         }
 
         harakatTugma.addEventListener('click', function () {
@@ -379,37 +450,26 @@
                 return;
             }
 
-            navFaolMi = true;
-            harakatTugma.textContent = "⛔ Navigatsiyani to'xtatish";
-            harakatTugma.classList.add('faol');
-            navMasofaBlok.style.display = 'flex';
+            navXato.textContent = '';
+            harakatTugma.disabled = true;
+            harakatTugma.textContent = 'Joylashuv aniqlanmoqda...';
 
-            navWatchId = navigator.geolocation.watchPosition(
+            // Avval getCurrentPosition bilan tez, bitta natija olamiz - bu
+            // GPS'ni "uyg'otadi". To'g'ridan-to'g'ri watchPosition'dan
+            // boshlash ba'zi qurilmalarda (sovuq holatda) timeout yoki
+            // aniqlanmagan xato beradi.
+            navigator.geolocation.getCurrentPosition(
                 function (position) {
-                    var lat = position.coords.latitude;
-                    var lng = position.coords.longitude;
-                    var heading = position.coords.heading;
-                    if (navJoriyMarker) {
-                        navJoriyMarker.setLatLng([lat, lng]);
-                    } else {
-                        navJoriyMarker = L.marker([lat, lng], { icon: navYonalishIkonka }).addTo(navXaritaObj);
-                    }
-                    // heading ba'zi qurilmalarda/holatlarda (masalan turgan
-                    // holatda) null/undefined/NaN bo'ladi - bu holda strelka
-                    // avvalgi bilingan yo'nalishida qolaveradi, xato bermaydi.
-                    if (heading !== null && heading !== undefined && !isNaN(heading)) {
-                        var markerEl = navJoriyMarker.getElement();
-                        var strelka = markerEl ? markerEl.querySelector('.yonalish-strelka') : null;
-                        if (strelka) {
-                            strelka.style.transform = 'rotate(' + heading + 'deg)';
-                        }
-                    }
-                    masofaniYangila(lat, lng);
+                    navKuzatuvniBoshla();
+                    navPozitsiyaniQoBul(position);
                 },
-                function () {
-                    document.getElementById('nav-masofa-son').textContent = "Joylashuvni aniqlab bo'lmadi";
+                function (error) {
+                    harakatTugma.disabled = false;
+                    harakatTugma.textContent = '🚗 Harakatni boshlash';
+                    console.warn('Geolocation xatosi: code=' + error.code + ' message=' + error.message);
+                    navXato.textContent = navGeolocationXatoMatni(error);
                 },
-                { enableHighAccuracy: true, maximumAge: 5000, timeout: 15000 }
+                { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 }
             );
         });
     </script>
